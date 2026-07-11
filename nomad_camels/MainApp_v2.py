@@ -307,46 +307,42 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.preferences["last_shown_notes"] = version
             load_save_functions.save_preferences(self.preferences)
         if start_proxy_bool:
-            # Setup a single ZMQ proxy, dispatcher and publisher for all plots
-            from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
-            from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
-            from threading import Thread
-            from zmq.error import ZMQError
+            from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
+            import multiprocessing
+            import threading
             import asyncio
+            from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 
+            # Apply Windows asyncio fix (prevents the ProactorEventLoop warning)
             if sys.platform == "win32":
                 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+            # Setup queue to receive dynamic ports
+            port_queue = multiprocessing.Queue()
+            # Start the Proxy Process
+            # We store it as self.proxy_proc so we can terminate it later
+            self.proxy_proc = multiprocessing.Process(
+                target=run_zmq_proxy,
+                args=(port_queue,),
+                daemon=True,
+            )
+            self.proxy_proc.start()
+            # Give the proxy 200ms to bind to the ports
+            time.sleep(0.2)
+            # Retrieve the dynamically assigned ports
+            in_port, out_port = port_queue.get()
+            print(f"Proxy started on ports: Publisher={in_port}, Dispatcher={out_port}")
+            # Setup Publisher and Dispatcher using the dynamic ports once for all plots and measurements run from the main app.
+            # Measurements only create their own if the Python script is run 'standalone', so without the main app.
+            self.publisher = Publisher(f"localhost:{in_port}")
+            self.dispatcher = RemoteDispatcher(f"localhost:{out_port}")
 
-            def setup_threads():
-                try:
-                    proxy = Proxy(5577, 5578)
-                    proxy_created = True
-                except ZMQError as e:
-                    # If the proxy is already running, a ZMQError will be raised.
-                    proxy = None  # We will use the already running proxy.
-                    proxy_created = False
-
-                def start_proxy():
-                    if proxy_created and proxy is not None:
-                        proxy.start()
-
-                dispatcher = RemoteDispatcher("localhost:5578")
-
-                def start_dispatcher():
-                    try:
-                        dispatcher.start()
-                    except asyncio.exceptions.CancelledError:
-                        # This error is raised when the dispatcher is stopped. It can therefore be ignored
-                        pass
-
-                return proxy, dispatcher, start_proxy, start_dispatcher
-
-            self.publisher = Publisher("localhost:5577")
-            self.proxy, self.dispatcher, start_proxy, start_dispatcher = setup_threads()
-            proxy_thread = Thread(target=start_proxy, daemon=True)
-            dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
-            proxy_thread.start()
-            dispatcher_thread.start()
+            # 4. Start Dispatcher in a Thread
+            # We store the thread as self.dispatcher_thread to join it later
+            self.dispatcher_thread = threading.Thread(
+                target=self.dispatcher.start,
+                daemon=True,
+            )
+            self.dispatcher_thread.start()
 
     def add_tag(self):
         """
@@ -770,8 +766,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             a0 (QCloseEvent): The close event.
         """
-        if hasattr(self, "proxy") and self.proxy is not None:
-            self.proxy.stop()
+        # Clean up ZMQ infrastructure
+        # Stop the dispatcher thread gracefully
+        if hasattr(self, "dispatcher") and self.dispatcher is not None:
+            self.dispatcher.stop()
+            # If you stored the thread, join it to ensure it finishes
+            if hasattr(self, "dispatcher_thread") and self.dispatcher_thread.is_alive():
+                self.dispatcher_thread.join(timeout=1.0)
+
+        # Terminate the proxy process
+        if hasattr(self, "proxy_proc") and self.proxy_proc is not None:
+            self.proxy_proc.terminate()
+            self.proxy_proc.join(timeout=1.0)
         for window in list(self.open_windows):
             window.close()
         if self.open_windows:
@@ -2002,7 +2008,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = self.get_user_name_data()[0]
         sample, sampledata = self.get_sample_name_data(prompt_on_missing=False)
         protocol = self.protocols_dict[protocol_name]
-        session = (getattr(protocol, "session_name", None) or self.lineEdit_session.text() or "").strip()
+        session = (
+            getattr(protocol, "session_name", None)
+            or self.lineEdit_session.text()
+            or ""
+        ).strip()
         if protocol.use_nexus:
             file_ending = ".nxs"
         else:
@@ -2025,11 +2035,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not os.path.isdir(os.path.dirname(savepath)):
             os.makedirs(os.path.dirname(savepath))
         files = [
-                entry.path  # scandir entries already have a .path attribute
-                for entry in os.scandir(os.path.dirname(savepath))
-                if entry.is_file()
-                and entry.name.startswith(filename or "data")
-            ]
+            entry.path  # scandir entries already have a .path attribute
+            for entry in os.scandir(os.path.dirname(savepath))
+            if entry.is_file() and entry.name.startswith(filename or "data")
+        ]
         if files:
             savepath = max(files, key=os.path.getmtime)
         while not os.path.exists(savepath):
@@ -2120,7 +2129,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.pushButton_resume.setEnabled(False)
             self.pushButton_pause.setEnabled(False)
             self.pushButton_stop.setEnabled(True)
-            if not self.build_protocol(protocol_name, ask_file=False, variables=variables):
+            if not self.build_protocol(
+                protocol_name, ask_file=False, variables=variables
+            ):
                 self.setCursor(Qt.ArrowCursor)
                 self.button_area_meas.enable_run_buttons()
                 return
@@ -2663,11 +2674,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             device_handling.close_devices(for_close)
 
     def formatted_iso_time(self, timestamp=None):
-        start_time = datetime.fromtimestamp(timestamp, tz=datetime.now().astimezone().tzinfo)
+        start_time = datetime.fromtimestamp(
+            timestamp, tz=datetime.now().astimezone().tzinfo
+        )
         start_time_formatted = start_time.isoformat(timespec="seconds")
         start_time_formatted = start_time_formatted.replace(":", "-")
         return start_time_formatted
-        
+
     def build_protocol(self, protocol_name, ask_file=True, variables=None):
         """
         Build the protocol file for the specified protocol.
@@ -2714,15 +2727,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         filename = protocol.filename.format(
             sample=sample,
             sample_id=sampledata.get("sample_id", ""),
-            user=user, protocol=protocol_name,
+            user=user,
+            protocol=protocol_name,
             session=protocol.session_name,
-            time=self.formatted_iso_time(self._protocol_start_time)
+            time=self.formatted_iso_time(self._protocol_start_time),
         )
         session_name = (protocol.session_name or "").strip()
         parts = [self.preferences["meas_files_path"], user, sample]
         if session_name:
             parts.append(session_name)
-        filename = (filename or "data")
+        filename = filename or "data"
         filename = clean_filename(filename)
         savepath = os.path.join(*parts, filename)
         self.protocol_savepath = savepath
@@ -2805,7 +2819,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         sampledata = self.sampledata[s]
                         break
             if not sampledata:
-                if  prompt_on_missing:
+                if prompt_on_missing:
                     # Create a popup window to warn the user that no sample was found and that "default sample" will be used
                     from PySide6.QtWidgets import QMessageBox
 

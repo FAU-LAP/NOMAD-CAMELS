@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.11.0
+
+Fixes:
+- Removed deprecated calls to `bluesky.callbacks.zmq` that broke installs when using `bluesky > 1.15.1`. Replaced with a new and cleaner implementation of the ZMQ proxy. Cleanup is also improved. ZMQ implementation for testing was adapted accordingly.
+
 ### 1.10.9
 Fixes:
 - Fixed variables of the protocol not always appearing and being saved. 
