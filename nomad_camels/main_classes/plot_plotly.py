@@ -19,7 +19,7 @@ from plotly import graph_objs as go
 from plotly.subplots import make_subplots
 
 # Core components for building Dash layout and interactive elements.
-from dash import dcc, html, Dash
+from dash import callback_context, dcc, html, Dash
 
 # For reactive callbacks in Dash (linking outputs to inputs).
 from dash.dependencies import Input, Output
@@ -123,6 +123,28 @@ def run_dash_app(
     # Define the layout of the Dash application, including the Graph and an Interval component.
     dash_app.layout = html.Div(
         [
+            html.Div(
+                [
+                    html.Span("Clear plot: "),
+                    dcc.Dropdown(
+                        id="clear-mode",
+                        options=[
+                            {"label": "Automatic", "value": "automatic"},
+                            {"label": "Manual", "value": "manual"},
+                        ],
+                        value="automatic",
+                        clearable=False,
+                        style={"width": "150px", "display": "inline-block"},
+                    ),
+                    html.Button(
+                        "Clear plot",
+                        id="clear-plot",
+                        n_clicks=0,
+                        style={"display": "none", "marginLeft": "12px"},
+                    ),
+                ],
+                style={"display": "flex", "alignItems": "center", "marginBottom": "8px"},
+            ),
             dcc.Graph(id="scatter-plot"),
             dcc.Interval(
                 id="graph-update",
@@ -206,14 +228,22 @@ def run_dash_app(
     @dash_app.callback(
         Output("scatter-plot", "figure"),
         Input("graph-update", "n_intervals"),
+        Input("clear-plot", "n_clicks"),
+        Input("clear-mode", "value"),
     )
-    def update_scatter_plot(_):
+    def update_scatter_plot(_, __, clear_mode):
         """
         Dash callback to update the scatter plot at each interval.
         It creates or updates the figure with x vs. multiple y data
         and (if present) the corresponding fit curves.
         """
         nonlocal data, title, xlabel, ylabel, ylabel2, logX, logY, logY2, maxlen, y_axes, fits, fit_model_dict
+
+        if callback_context.triggered_id == "clear-plot" and clear_mode == "manual":
+            data = {x_name: [], **{y_name: [] for y_name in y_names}}
+
+        # Automatic mode starts each CAMELS run with this process' fresh data
+        # dictionary. Manual mode only clears when its button is pressed.
 
         # Build an lmfit model dictionary for each fit definition found in fits.
         for fit in fits:
@@ -304,6 +334,13 @@ def run_dash_app(
             "layout": layout,
         }
 
+    @dash_app.callback(Output("clear-plot", "style"), Input("clear-mode", "value"))
+    def show_clear_button(clear_mode):
+        return {
+            "display": "inline-block" if clear_mode == "manual" else "none",
+            "marginLeft": "12px",
+        }
+
     # Signal to the main process that the Dash server is up.
     wait_for_dash_app_event.set()
 
@@ -385,11 +422,36 @@ class PlotlyLiveCallback(CallbackBase):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
 
+    def _stop_dash_process(self):
+        """Synchronously release this plot's Dash port before another run."""
+        process = getattr(self, "dash_process", None)
+        if process is None:
+            return
+        if process.is_alive():
+            process.terminate()
+        process.join(timeout=5)
+        if process.is_alive():
+            process.kill()
+            process.join(timeout=1)
+        self.dash_process = None
+
     def start(self, doc):
         """
         Called at the beginning of a Bluesky run (when the 'start' document is emitted).
         Creates and starts the Dash server process, ensuring the app is set up.
         """
+        run_uid = doc.get("uid")
+        if (
+            run_uid
+            and run_uid == getattr(self, "_dash_run_uid", None)
+            and getattr(self, "dash_process", None) is not None
+            and self.dash_process.is_alive()
+        ):
+            # The same callback can receive a duplicate start document through
+            # subscriptions. It must not create a second Dash app for one run.
+            return
+        self._stop_dash_process()
+        self._dash_run_uid = run_uid
         wait_for_dash_app_event = Event()
         self.setup()
         self.dash_process = Process(
@@ -472,15 +534,9 @@ class PlotlyLiveCallback(CallbackBase):
         Called when the Bluesky run ends (at 'stop' document).
         Terminates the Dash process if it is still alive.
         """
-        import time
-
-        if hasattr(self, "dash_process") and self.dash_process.is_alive():
-            # Give a short pause before terminating.
-            time.sleep(1)
-            self.dash_process.terminate()
-            self.dash_process.join()
-            self.dash_process = None
-            print("Terminated the web plot app process.")
+        self._stop_dash_process()
+        self._dash_run_uid = None
+        print("Terminated the web plot app process.")
 
     def clear_data(self):
         """
@@ -572,6 +628,28 @@ def run_dash_app_2d(
     # Define the layout with a Graph and an Interval for periodic updates.
     dash_app.layout = html.Div(
         [
+            html.Div(
+                [
+                    html.Span("Clear plot: "),
+                    dcc.Dropdown(
+                        id="clear-mode",
+                        options=[
+                            {"label": "Automatic", "value": "automatic"},
+                            {"label": "Manual", "value": "manual"},
+                        ],
+                        value="automatic",
+                        clearable=False,
+                        style={"width": "150px", "display": "inline-block"},
+                    ),
+                    html.Button(
+                        "Clear plot",
+                        id="clear-plot",
+                        n_clicks=0,
+                        style={"display": "none", "marginLeft": "12px"},
+                    ),
+                ],
+                style={"display": "flex", "alignItems": "center", "marginBottom": "8px"},
+            ),
             dcc.Graph(id="scatter-plot"),
             dcc.Interval(
                 id="graph-update",
@@ -616,12 +694,17 @@ def run_dash_app_2d(
     @dash_app.callback(
         Output("scatter-plot", "figure"),
         Input("graph-update", "n_intervals"),
+        Input("clear-plot", "n_clicks"),
+        Input("clear-mode", "value"),
     )
-    def update_scatter_plot(_):
+    def update_scatter_plot(_, __, clear_mode):
         """
         Periodic callback that regenerates the figure based on the data dictionary.
         """
         nonlocal data, title, xlabel, ylabel, maxlen
+
+        if callback_context.triggered_id == "clear-plot" and clear_mode == "manual":
+            data = {x_name: [], y_name: [], z_name: []}
 
         if xlabel == "":
             xlabel = x_name
@@ -643,6 +726,13 @@ def run_dash_app_2d(
         # Update layout to include axis labels and title
         fig.update_layout(title=title, xaxis_title=xlabel, yaxis_title=ylabel)
         return fig
+
+    @dash_app.callback(Output("clear-plot", "style"), Input("clear-mode", "value"))
+    def show_clear_button(clear_mode):
+        return {
+            "display": "inline-block" if clear_mode == "manual" else "none",
+            "marginLeft": "12px",
+        }
 
     # Signal that the Dash server has started.
     wait_for_dash_app_event.set()
@@ -757,10 +847,33 @@ class PlotlyLiveCallback_2d(CallbackBase):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
 
+    def _stop_dash_process(self):
+        """Synchronously release this plot's Dash port before another run."""
+        process = getattr(self, "dash_process", None)
+        if process is None:
+            return
+        if process.is_alive():
+            process.terminate()
+        process.join(timeout=5)
+        if process.is_alive():
+            process.kill()
+            process.join(timeout=1)
+        self.dash_process = None
+
     def start(self, doc):
         """
         Called at run start, spawns the Dash app for 2D data visualization.
         """
+        run_uid = doc.get("uid")
+        if (
+            run_uid
+            and run_uid == getattr(self, "_dash_run_uid", None)
+            and getattr(self, "dash_process", None) is not None
+            and self.dash_process.is_alive()
+        ):
+            return
+        self._stop_dash_process()
+        self._dash_run_uid = run_uid
         wait_for_dash_app_event = Event()
         self.setup()
         self.dash_process = Process(
@@ -837,11 +950,9 @@ class PlotlyLiveCallback_2d(CallbackBase):
         Called when the Bluesky run ends.
         Terminates the Dash process if it is still alive.
         """
-        if hasattr(self, "dash_process") and self.dash_process.is_alive():
-            self.dash_process.terminate()
-            self.dash_process.join()
-            self.dash_process = None
-            print("Terminated the web plot app process.")
+        self._stop_dash_process()
+        self._dash_run_uid = None
+        print("Terminated the web plot app process.")
 
     def clear_data(self):
         """
