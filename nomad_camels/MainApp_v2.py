@@ -2199,6 +2199,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
         """
+        # The OASIS bridge uses this to associate browser Plotly dashboards
+        # with the API run id while this protocol is active.
+        self.active_api_uuid = str(api_uuid) if api_uuid is not None else None
         additionals = {}
         try:
             devs = self.instantiate_devices_thread.devices

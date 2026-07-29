@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QMessageBox, QStyle
+from PySide6.QtWidgets import QApplication, QWidget, QMessageBox, QStyle
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QIcon
 
@@ -85,6 +85,9 @@ class Measurement_Protocol:
         self.allow_live_comments = (
             kwargs["allow_live_comments"] if "allow_live_comments" in kwargs else False
         )
+        # A protocol must be explicitly opted in before an external OASIS
+        # installation can discover or start it through the CAMELS API.
+        self.oasis_remote_control = kwargs.get("oasis_remote_control", False)
         self.flyer_data = kwargs.get("flyer_data", [])
 
         self.instrument_aliases = (
@@ -552,10 +555,20 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     name_changed = Signal()
 
-    def __init__(self, parent=None, protocol=Measurement_Protocol()):
+    def __init__(
+        self, parent=None, protocol=Measurement_Protocol(), source_protocol=None
+    ):
         super(General_Protocol_Settings, self).__init__(parent)
         self.setupUi(self)
         self.protocol = protocol
+        # Protocol_Config edits a deep copy. Keep the original object so the
+        # running CAMELS API can immediately see the OASIS opt-in.
+        self.source_protocol = source_protocol
+        self._source_oasis_remote_control = (
+            source_protocol.oasis_remote_control
+            if source_protocol is not None
+            else None
+        )
         self.lineEdit_filename.setText(self.protocol.filename)
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
@@ -616,6 +629,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
         self.checkBox_live_comments.setChecked(self.protocol.allow_live_comments)
+        if hasattr(self, "checkBox_create_oasis_api"):
+            self.checkBox_create_oasis_api.setChecked(
+                self.protocol.oasis_remote_control
+            )
 
         if self.protocol.h5_during_run:
             self.comboBox_h5.setCurrentIndex(0)
@@ -638,6 +655,125 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.update_variable_select
         )
         self.check_aliases_defined()
+        if hasattr(self, 'checkBox_create_oasis_api'):
+            self._oasis_api_key = None
+            self.checkBox_create_oasis_api.setToolTip(
+                "When enabled, CAMELS automatically generates and copies an API key. "
+                "This API key can only access and run this protocol."
+            )
+            self.checkBox_create_oasis_api.toggled.connect(self.on_oasis_api_toggled)
+            if hasattr(self, 'textEdit_oasis_api'):
+                self.textEdit_oasis_api.setVisible(False)
+            if hasattr(self, 'pushButton_copy_oasis_api'):
+                self.pushButton_copy_oasis_api.setVisible(False)
+                self.pushButton_copy_oasis_api.clicked.connect(self.copy_oasis_api_key)
+            self.label_oasis_url.setVisible(False)
+            self.lineEdit_oasis_url.setVisible(False)
+            self.label_oasis_setup_path.setVisible(False)
+            self.pushButton_go_to_oasis_remote_control.setVisible(False)
+            self.pushButton_go_to_oasis_remote_control.clicked.connect(
+                self.go_to_oasis_remote_control
+            )
+            self.show_oasis_api_details(
+                self.checkBox_create_oasis_api.isChecked(), generate_key=False
+            )
+
+    def on_oasis_api_toggled(self, checked):
+        # The API server reads this object directly. Apply the opt-in now,
+        # rather than waiting for the configuration dialog to be accepted.
+        self.protocol.oasis_remote_control = checked
+        if self.source_protocol is not None:
+            self.source_protocol.oasis_remote_control = checked
+        self.show_oasis_api_details(checked, generate_key=True)
+
+    def copy_oasis_api_key(self):
+        """Copy the newly generated protocol-scoped API key."""
+        if not self._oasis_api_key:
+            return
+        QApplication.clipboard().setText(self._oasis_api_key)
+        self.pushButton_copy_oasis_api.setText("Copied!")
+
+    def restore_source_oasis_remote_control(self):
+        """Undo the immediate API exposure update when editing is discarded."""
+        if self.source_protocol is not None:
+            self.source_protocol.oasis_remote_control = (
+                self._source_oasis_remote_control
+            )
+
+    def go_to_oasis_remote_control(self):
+        """Open the OASIS CAMELS setup page using the user-provided host."""
+        oasis_url = self.lineEdit_oasis_url.text().strip() or "localhost/"
+        if not oasis_url.startswith(("http://", "https://")):
+            oasis_url = f"http://{oasis_url}"
+        oasis_url = oasis_url.rstrip("/")
+        variables_handling.open_link(f"{oasis_url}/nomad-oasis/camels/setup")
+
+    def show_oasis_api_details(self, checked, generate_key):
+        """Show OASIS connection details and create a key on explicit opt-in."""
+        if checked:
+            self.label_oasis_url.setVisible(True)
+            self.lineEdit_oasis_url.setVisible(True)
+            self.label_oasis_setup_path.setVisible(True)
+            self.pushButton_go_to_oasis_remote_control.setVisible(True)
+            protocol_name = self.protocol.name
+            if generate_key:
+                # Import only after CAMELS has finished its startup imports.
+                # settings_window depends on load_save_functions, which imports
+                # this module while building the application.
+                from nomad_camels.frontpanels.settings_window import (
+                    create_and_store_api_key,
+                )
+
+                api_key = create_and_store_api_key(protocol_name=protocol_name)
+            else:
+                api_key = None
+            self._oasis_api_key = api_key
+            if api_key:
+                key_info = f'''Protocol-scoped CAMELS API key for "{protocol_name}" (copied to clipboard; save it now):
+{api_key}
+
+'''
+            else:
+                key_info = '''This protocol is exposed to OASIS.
+Use the API key generated when this option was enabled, or generate a new key in Settings → API.
+
+'''
+            api_snippet = key_info + f'''# OASIS backend API example (do not put CAMELS_API_KEY in browser code)
+import requests
+
+CAMELS_API_URL = "http://<CAMELS_HOST>:<CAMELS_API_PORT>"
+CAMELS_API_KEY = "<CAMELS_API_KEY>"
+headers = {{"Authorization": f"Bearer {{CAMELS_API_KEY}}"}}
+
+# Inspect the parameters/default values that OASIS needs to render its form.
+schema = requests.get(
+    f"{{CAMELS_API_URL}}/api/v1/protocols/{protocol_name}/schema",
+    headers=headers,
+    timeout=10,
+).json()
+
+# Start this protocol with the values selected in OASIS.
+run = requests.post(
+    f"{{CAMELS_API_URL}}/api/v1/actions/run/protocols/{protocol_name}",
+    headers=headers,
+    json={{"variables": {{}}}},
+    timeout=10,
+).json()
+print(run)  # contains run_id and status_url
+'''
+
+            self.textEdit_oasis_api.setPlainText(api_key or "")
+            self.textEdit_oasis_api.setVisible(bool(api_key))
+            self.pushButton_copy_oasis_api.setText("Copy API")
+            self.pushButton_copy_oasis_api.setVisible(bool(api_key))
+        else:
+            self._oasis_api_key = None
+            self.label_oasis_url.setVisible(False)
+            self.lineEdit_oasis_url.setVisible(False)
+            self.label_oasis_setup_path.setVisible(False)
+            self.pushButton_go_to_oasis_remote_control.setVisible(False)
+            self.textEdit_oasis_api.setVisible(False)
+            self.pushButton_copy_oasis_api.setVisible(False)
 
     def check_aliases_defined(self):
         if (
@@ -745,6 +881,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
         self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
         self.protocol.allow_live_comments = self.checkBox_live_comments.isChecked()
+        if hasattr(self, "checkBox_create_oasis_api"):
+            self.protocol.oasis_remote_control = (
+                self.checkBox_create_oasis_api.isChecked()
+            )
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

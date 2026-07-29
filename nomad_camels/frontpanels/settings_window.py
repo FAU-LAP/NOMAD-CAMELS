@@ -21,6 +21,40 @@ import sqlite3
 import os
 
 
+def create_and_store_api_key(protocol_name=None):
+    """Create a CAMELS API key and store only its hash in the local database.
+
+    The plaintext key is deliberately returned only to the caller. It cannot be
+    recovered from ``CAMELS_API.db`` after this point.
+    """
+    api_key = secrets.token_urlsafe(40)
+    data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
+    conn = sqlite3.connect(data_base_path, check_same_thread=False)
+    try:
+        c = conn.cursor()
+        c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS api_keys (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                key TEXT NOT NULL,
+                protocol_name TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        conn.commit()
+        # Existing CAMELS installations may have created the table before
+        # protocol-scoped keys were introduced.
+        columns = {row[1] for row in c.execute("PRAGMA table_info(api_keys)")}
+        if "protocol_name" not in columns:
+            c.execute("ALTER TABLE api_keys ADD COLUMN protocol_name TEXT")
+            conn.commit()
+        store_api_key(api_key, conn, protocol_name=protocol_name)
+    finally:
+        conn.close()
+    return api_key
+
+
 class Settings_Window(Ui_settings_window, QDialog):
     """Dialog to change the settings used in CAMELS."""
 
@@ -361,27 +395,9 @@ class Settings_Window(Ui_settings_window, QDialog):
         super().keyPressEvent(a0)
 
     def generate_api_key(self):
-        # Generate a random API key (example: 40 characters long)
-        api_key = secrets.token_urlsafe(40)
+        # The protocol editor uses the same helper when OASIS access is enabled.
+        api_key = create_and_store_api_key()
         self.Api_key_lineEdit.setText(api_key)
-        # Save hash of the API key to the SQlite database file
-        # Database setup
-        data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
-        conn = sqlite3.connect(data_base_path, check_same_thread=False)
-        c = conn.cursor()
-        c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS api_keys (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                key TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        """
-        )
-        conn.commit()
-        # Store hashed API Key
-        store_api_key(api_key, conn)
-        conn.close()
         # Disable the "Generate API Key" button and enable the "Copy to Clipboard" button
         self.pushButton_generate_Api_key.setEnabled(False)
         self.pushButton_copy_Api_key_clipboard.setEnabled(True)
@@ -532,10 +548,13 @@ def hash_api_key(api_key):
 
 
 # Store API Key
-def store_api_key(api_key, conn):
+def store_api_key(api_key, conn, protocol_name=None):
     hashed_key = hash_api_key(api_key)
     c = conn.cursor()
-    c.execute("INSERT INTO api_keys (key) VALUES (?)", (hashed_key,))
+    c.execute(
+        "INSERT INTO api_keys (key, protocol_name) VALUES (?, ?)",
+        (hashed_key, protocol_name),
+    )
     conn.commit()
 
 

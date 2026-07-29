@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
@@ -78,6 +78,18 @@ class ProtocolRunResponse(BaseModel):
     )
 
 
+def protocol_run_response(protocol_uuid: str) -> dict:
+    """Build the stable response used by OASIS after a protocol was started."""
+    status_url = f"/api/v1/protocols/results/{protocol_uuid}"
+    return {
+        # Keep the existing field for backwards compatibility with API clients.
+        "check protocol status here": status_url,
+        "run_id": protocol_uuid,
+        "status_url": status_url,
+        "result_url": f"{status_url}/file",
+    }
+
+
 def validate_api_key(api_key: str) -> bool:
     """
     Validate the given API key by checking its hashed value in the database.
@@ -113,7 +125,30 @@ def validate_api_key(api_key: str) -> bool:
     return result is not None
 
 
-def write_protocol_result_path_to_db(api_uuid, message="currently running"):
+def get_api_key_protocol_scope(api_key: str):
+    """Return the protocols allowed by a key, or ``None`` for a global key."""
+    data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
+    conn = sqlite3.connect(data_base_path)
+    try:
+        c = conn.cursor()
+        columns = {row[1] for row in c.execute("PRAGMA table_info(api_keys)")}
+        # Keys created by older CAMELS versions were global keys.
+        if "protocol_name" not in columns:
+            return None
+        hashed_key = hash_api_key(api_key)
+        rows = c.execute(
+            "SELECT protocol_name FROM api_keys WHERE key = ?", (hashed_key,)
+        ).fetchall()
+    finally:
+        conn.close()
+    if any(row[0] is None for row in rows):
+        return None
+    return {row[0] for row in rows if row[0]}
+
+
+def write_protocol_result_path_to_db(
+    api_uuid, message="currently running", protocol_name=None
+):
     """
     Write or update the protocol run status in the database.
 
@@ -135,19 +170,28 @@ def write_protocol_result_path_to_db(api_uuid, message="currently running"):
         CREATE TABLE IF NOT EXISTS protocol_run_status (
             uuid TEXT PRIMARY KEY,
             status TEXT NOT NULL,
+            protocol_name TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
         """
     )
     conn.commit()
 
-    # Insert new entry with UUID and status "currently running"
+    columns = {row[1] for row in c.execute("PRAGMA table_info(protocol_run_status)")}
+    if "protocol_name" not in columns:
+        c.execute("ALTER TABLE protocol_run_status ADD COLUMN protocol_name TEXT")
+        conn.commit()
+
+    # Preserve the protocol name when the GUI later replaces the status with a file path.
     c.execute(
         """
-        INSERT OR REPLACE INTO protocol_run_status (uuid, status)
-        VALUES (?, ?)
+        INSERT INTO protocol_run_status (uuid, status, protocol_name)
+        VALUES (?, ?, ?)
+        ON CONFLICT(uuid) DO UPDATE SET
+            status = excluded.status,
+            protocol_name = COALESCE(excluded.protocol_name, protocol_run_status.protocol_name)
         """,
-        (api_uuid, message),
+        (api_uuid, message, protocol_name),
     )
     conn.commit()
     # Close the database connection
@@ -208,7 +252,7 @@ async def validate_credentials(
     api_key = credentials.credentials
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
-        return True
+        return api_key
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid API Key",
@@ -328,6 +372,48 @@ class FastapiThread(QThread):
             and various helper endpoints (e.g., for user and sample management).
         """
 
+        def get_protocol_by_name(protocol_name: str):
+            """Find a protocol by its current display name or dictionary key."""
+            protocol = self.main_window.protocols_dict.get(protocol_name)
+            if protocol is not None:
+                return protocol
+            return next(
+                (
+                    candidate
+                    for candidate in self.main_window.protocols_dict.values()
+                    if candidate.name == protocol_name
+                ),
+                None,
+            )
+
+        def get_oasis_protocol(protocol_name: str, api_key: str):
+            """Return an externally enabled protocol or a non-enumerating 404."""
+            protocol = get_protocol_by_name(protocol_name)
+            allowed_protocols = get_api_key_protocol_scope(api_key)
+            if (
+                protocol is None
+                or not getattr(protocol, "oasis_remote_control", False)
+                or (
+                    allowed_protocols is not None
+                    and protocol_name not in allowed_protocols
+                )
+            ):
+                raise HTTPException(status_code=404, detail="Protocol not found")
+            return protocol
+
+        def require_global_api_key(api_key: str):
+            """Protect legacy global-control endpoints from protocol-scoped keys."""
+            if get_api_key_protocol_scope(api_key) is not None:
+                raise HTTPException(
+                    status_code=403,
+                    detail="This API key is limited to a specific protocol.",
+                )
+
+        @app.get("/api/v1/health")
+        async def health():
+            """Unauthenticated liveness endpoint for the OASIS backend."""
+            return {"status": "ok", "api_version": "v1"}
+
         @app.get("/api/v1/protocols")
         async def get_protocols(api_key: str = Depends(validate_credentials)):
             """
@@ -339,9 +425,17 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the list of protocol names.
             """
-            return JSONResponse(
-                content={"Protocols": list(self.main_window.protocols_dict.keys())}
-            )
+            allowed_protocols = get_api_key_protocol_scope(api_key)
+            protocols = [
+                protocol.name
+                for protocol in self.main_window.protocols_dict.values()
+                if getattr(protocol, "oasis_remote_control", False)
+                and (
+                    allowed_protocols is None
+                    or protocol.name in allowed_protocols
+                )
+            ]
+            return JSONResponse(content={"Protocols": protocols})
 
         @app.get("/api/v1/protocols/variables/{protocol_name}")
         async def get_protocol_variables(
@@ -357,11 +451,24 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing a list of acceptable variables for the protocol.
             """
+            protocol = get_oasis_protocol(protocol_name, api_key)
+            return JSONResponse(content={"Variables": list(protocol.variables)})
+
+        @app.get("/api/v1/protocols/{protocol_name}/schema")
+        async def get_protocol_schema(
+            protocol_name: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Return the editable parameter names and their CAMELS defaults.
+
+            OASIS uses this endpoint to build the protocol form. CAMELS remains
+            the authority that accepts or rejects submitted variable names.
+            """
+            protocol = get_oasis_protocol(protocol_name, api_key)
             return JSONResponse(
                 content={
-                    "Variables": list(
-                        self.main_window.protocols_dict[protocol_name].variables
-                    )
+                    "protocol_name": protocol.name,
+                    "description": protocol.description,
+                    "parameters": sanitize_dict(dict(protocol.variables)),
                 }
             )
 
@@ -379,7 +486,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the sanitized protocol details.
             """
-            protocol_class_instance = self.main_window.protocols_dict[protocol_name]
+            protocol_class_instance = get_oasis_protocol(protocol_name, api_key)
             protocol = load_save_functions.get_save_str(protocol_class_instance)
             cleaned_protocol = sanitize_dict(protocol)
             return JSONResponse(
@@ -397,6 +504,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the sanitized settings.
             """
+            require_global_api_key(api_key)
             settings = self.main_window.preferences
             cleaned_settings = sanitize_dict(settings)
             return JSONResponse(
@@ -426,17 +534,16 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response with a URL to check the protocol run status.
             """
+            get_oasis_protocol(protocol_name, api_key)
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
 
-            write_protocol_result_path_to_db(protocol_uuid)
+            write_protocol_result_path_to_db(
+                protocol_uuid, protocol_name=protocol_name
+            )
 
             self.start_protocol_signal.emit(str(protocol_name), protocol_uuid, None)
-            return JSONResponse(
-                content={
-                    "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}"
-                }
-            )
+            return JSONResponse(content=protocol_run_response(protocol_uuid))
 
         @app.post(
             "/api/v1/actions/run/protocols/{protocol_name}",
@@ -468,9 +575,8 @@ class FastapiThread(QThread):
             """
             # Get dictionary from the variables model
             variables = variables.model_dump()
-            response = await get_protocol_variables(protocol_name)
-            response_content = response.body.decode("utf-8")
-            accepted_variables = json.loads(response_content)["Variables"]
+            protocol = get_oasis_protocol(protocol_name, api_key)
+            accepted_variables = protocol.variables
             # Check if all variables are in accepted variables
             for key in variables["variables"]:
                 if key not in accepted_variables:
@@ -485,16 +591,14 @@ class FastapiThread(QThread):
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
 
-            write_protocol_result_path_to_db(protocol_uuid)
+            write_protocol_result_path_to_db(
+                protocol_uuid, protocol_name=protocol_name
+            )
 
             self.start_protocol_signal.emit(
                 str(protocol_name), protocol_uuid, variables["variables"]
             )
-            return JSONResponse(
-                content={
-                    "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}"
-                }
-            )
+            return JSONResponse(content=protocol_run_response(protocol_uuid))
 
         @app.get("/api/v1/protocols/results/{protocol_uuid}")
         async def get_protocol_status(
@@ -522,14 +626,17 @@ class FastapiThread(QThread):
             # Query the status of the protocol run by UUID
             c.execute(
                 """
-                SELECT status FROM protocol_run_status WHERE uuid = ?
+                SELECT status, protocol_name FROM protocol_run_status WHERE uuid = ?
                 """,
                 (protocol_uuid,),
             )
             result = c.fetchone()
             # Close the database connection
             conn.close()
-            if result:
+            allowed_protocols = get_api_key_protocol_scope(api_key)
+            if result and (
+                allowed_protocols is None or result[1] in allowed_protocols
+            ):
                 return JSONResponse(
                     content={"uuid": protocol_uuid, "status": result[0]}
                 )
@@ -565,11 +672,20 @@ class FastapiThread(QThread):
             # Query the status of the protocol run by UUID
             c.execute(
                 """
-                SELECT status FROM protocol_run_status WHERE uuid = ?
+                SELECT status, protocol_name FROM protocol_run_status WHERE uuid = ?
                 """,
                 (protocol_uuid,),
             )
-            status = c.fetchone()[0]
+            result = c.fetchone()
+            allowed_protocols = get_api_key_protocol_scope(api_key)
+            if result is None or (
+                allowed_protocols is not None and result[1] not in allowed_protocols
+            ):
+                conn.close()
+                return JSONResponse(
+                    content={"error": "UUID not found"}, status_code=404
+                )
+            status = result[0]
             if status == "currently running":
                 return JSONResponse(
                     content={
@@ -599,6 +715,38 @@ class FastapiThread(QThread):
                     content={"error": "UUID not found"}, status_code=404
                 )
 
+        def get_live_plot_ports(protocol_uuid: str, api_key: str):
+            """Return browser-plot ports for the currently active API run."""
+            get_protocol_status(protocol_uuid, api_key)
+            if getattr(self.main_window, "active_api_uuid", None) != protocol_uuid:
+                return []
+            module = getattr(self.main_window, "protocol_module", None)
+            return list(getattr(module, "web_ports", [])) if module else []
+
+        @app.get("/api/v1/runs/{protocol_uuid}/data")
+        async def get_live_plot_data(
+            protocol_uuid: str, api_key: str = Depends(validate_credentials)
+        ):
+            ports = get_live_plot_ports(protocol_uuid, api_key)
+            return JSONResponse(content={
+                "run_id": protocol_uuid,
+                "plot_urls": [f"http://127.0.0.1:{port}/data" for port in ports],
+            })
+
+        @app.get("/api/v1/runs/{protocol_uuid}/plotly", response_class=HTMLResponse)
+        async def get_live_plotly_page(
+            protocol_uuid: str, api_key: str = Depends(validate_credentials)
+        ):
+            ports = get_live_plot_ports(protocol_uuid, api_key)
+            frames = "".join(
+                f'<iframe src="http://127.0.0.1:{port}/" title="CAMELS Plot" '
+                'style="width:100%;height:620px;border:0"></iframe>'
+                for port in ports
+            )
+            if not frames:
+                frames = "<p>No browser Plotly widget is active for this run.</p>"
+            return HTMLResponse(f"<html><body>{frames}</body></html>")
+
         @app.get("/api/v1/queue")
         async def get_queue(api_key: str = Depends(validate_credentials)):
             """
@@ -610,6 +758,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the list of queued protocols with their indexes.
             """
+            require_global_api_key(api_key)
             protocols = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -641,6 +790,7 @@ class FastapiThread(QThread):
             Raises:
                 HTTPException: If the protocol could not be added to the queue.
             """
+            require_global_api_key(api_key)
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
             write_protocol_result_path_to_db(protocol_uuid, "added to queue")
@@ -704,6 +854,7 @@ class FastapiThread(QThread):
             Raises:
                 HTTPException: If the protocol could not be added to the queue.
             """
+            require_global_api_key(api_key)
             # Get dictionary from the variables model
             variables = variables.model_dump()
             # Generate or use the provided syntax checked UUID as casted string
@@ -775,6 +926,7 @@ class FastapiThread(QThread):
             Raises:
                 HTTPException: If the protocol is not found in the queue.
             """
+            require_global_api_key(api_key)
             # Get dictionary from the variables model
             variables = variables.model_dump()
             # Get the current queue
@@ -844,6 +996,7 @@ class FastapiThread(QThread):
             Raises:
                 HTTPException: If the protocol is not found at the given position.
             """
+            require_global_api_key(api_key)
             # Get the current queue
             queue_response = await get_queue(api_key)
             # Extract the queue content from the JSON response
@@ -884,6 +1037,7 @@ class FastapiThread(QThread):
             Raises:
                 HTTPException: If the protocol is not found at the specified position.
             """
+            require_global_api_key(api_key)
             # Get the current queue
             queue_response = await get_queue(api_key)
             # Extract the queue content from the JSON response
@@ -914,6 +1068,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the sample data.
             """
+            require_global_api_key(api_key)
             return JSONResponse(content=self.main_window.sampledata)
 
         @app.get("/api/v1/actions/set/samples/{sample_name}")
@@ -930,6 +1085,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response indicating whether the sample was successfully set.
             """
+            require_global_api_key(api_key)
             self.set_sample_signal.emit(str(sample_name))
             await asyncio.sleep(0.01)
             if (
@@ -951,6 +1107,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the user data.
             """
+            require_global_api_key(api_key)
             return JSONResponse(content=self.main_window.userdata)
 
         @app.get("/api/v1/actions/set/users/{user_name}")
@@ -967,6 +1124,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response indicating whether the user was successfully set.
             """
+            require_global_api_key(api_key)
             self.set_user_signal.emit(str(user_name))
             await asyncio.sleep(0.01)
             if self.main_window.active_user == user_name:
@@ -985,6 +1143,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response containing the current session name.
             """
+            require_global_api_key(api_key)
             return JSONResponse(content=self.main_window.lineEdit_session.text())
 
         @app.get("/api/v1/actions/set/session/{session_name}")
@@ -1001,6 +1160,7 @@ class FastapiThread(QThread):
             Returns:
                 JSONResponse: A JSON response indicating whether the session name was successfully set.
             """
+            require_global_api_key(api_key)
             self.set_session_signal.emit(str(session_name))
             await asyncio.sleep(0.01)
             if self.main_window.lineEdit_session.text() == session_name:

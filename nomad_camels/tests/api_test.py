@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import status, Depends, HTTPException
 from unittest.mock import patch, MagicMock
+from types import SimpleNamespace
 from nomad_camels.api.api import FastapiThread, validate_credentials
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 import socket
@@ -37,7 +38,20 @@ def get_available_port():
 def client_and_thread():
     # Mock the main_window with a predefined protocols_dict
     main_window_mock = MagicMock()
-    main_window_mock.protocols_dict = {"protocol1": "details1", "protocol2": "details2"}
+    main_window_mock.protocols_dict = {
+        "protocol1": SimpleNamespace(
+            name="protocol1",
+            description="A remotely accessible test protocol",
+            variables={"npoints": 7},
+            oasis_remote_control=True,
+        ),
+        "protocol2": SimpleNamespace(
+            name="protocol2",
+            description="A local-only test protocol",
+            variables={},
+            oasis_remote_control=False,
+        ),
+    }
 
     port = get_available_port()
     # Create and start a FastapiThread instance with the mocked main_window
@@ -100,7 +114,30 @@ def test_get_protocols(client_and_thread):
     assert thread is not None, "Thread is not initialized"
     response = client.get("/api/v1/protocols", auth=("user", "valid_api_key"))
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"Protocols": ["protocol1", "protocol2"]}
+    assert response.json() == {"Protocols": ["protocol1"]}
+
+
+@pytest.mark.order(-1)
+def test_get_protocol_schema(client_and_thread):
+    client, _ = client_and_thread
+    response = client.get(
+        "/api/v1/protocols/protocol1/schema", auth=("user", "valid_api_key")
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {
+        "protocol_name": "protocol1",
+        "description": "A remotely accessible test protocol",
+        "parameters": {"npoints": 7},
+    }
+
+
+@pytest.mark.order(-1)
+def test_local_only_protocol_is_not_exposed(client_and_thread):
+    client, _ = client_and_thread
+    response = client.get(
+        "/api/v1/protocols/protocol2/schema", auth=("user", "valid_api_key")
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 # Test to check if a protocol can be run with a valid API key

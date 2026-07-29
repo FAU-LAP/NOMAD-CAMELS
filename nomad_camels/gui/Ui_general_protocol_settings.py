@@ -29,7 +29,7 @@ class Ui_Protocol_Settings(object):
     def setupUi(self, Protocol_Settings):
         if not Protocol_Settings.objectName():
             Protocol_Settings.setObjectName(u"Protocol_Settings")
-        Protocol_Settings.resize(700, 550)
+        Protocol_Settings.resize(491, 550)
         self.gridLayout = QGridLayout(Protocol_Settings)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 9, 0)
@@ -42,7 +42,7 @@ class Ui_Protocol_Settings(object):
         self.textEdit_desc_protocol = QTextEdit(self.general)
         self.textEdit_desc_protocol.setObjectName(u"textEdit_desc_protocol")
 
-        self.gridLayout_3.addWidget(self.textEdit_desc_protocol, 14, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.textEdit_desc_protocol, 13, 0, 1, 2)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -57,6 +57,7 @@ class Ui_Protocol_Settings(object):
 
         self.lineEdit_filename = Variable_Box(self.general)
         self.lineEdit_filename.setObjectName(u"lineEdit_filename")
+        self.lineEdit_filename.setToolTipDuration(-1)
 
         self.horizontalLayout_3.addWidget(self.lineEdit_filename)
 
@@ -71,14 +72,14 @@ class Ui_Protocol_Settings(object):
         self.checkBox_live_comments = QCheckBox(self.general)
         self.checkBox_live_comments.setObjectName(u"checkBox_live_comments")
 
-        self.gridLayout_3.addWidget(self.checkBox_live_comments, 13, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.checkBox_live_comments, 12, 0, 1, 2)
 
         self.line_2 = QFrame(self.general)
         self.line_2.setObjectName(u"line_2")
         self.line_2.setFrameShape(QFrame.Shape.HLine)
         self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
-        self.gridLayout_3.addWidget(self.line_2, 10, 0, 2, 2)
+        self.gridLayout_3.addWidget(self.line_2, 9, 0, 2, 2)
 
         self.label_3 = QLabel(self.general)
         self.label_3.setObjectName(u"label_3")
@@ -103,7 +104,7 @@ class Ui_Protocol_Settings(object):
         self.label_5.setObjectName(u"label_5")
         self.label_5.setFont(font1)
 
-        self.gridLayout_3.addWidget(self.label_5, 12, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.label_5, 11, 0, 1, 2)
 
         self.checkBox_json_exp = QCheckBox(self.general)
         self.checkBox_json_exp.setObjectName(u"checkBox_json_exp")
@@ -117,34 +118,10 @@ class Ui_Protocol_Settings(object):
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(self.textEdit_oasis_api.sizePolicy().hasHeightForWidth())
         self.textEdit_oasis_api.setSizePolicy(sizePolicy)
+        self.textEdit_oasis_api.setToolTipDuration(-1)
         self.textEdit_oasis_api.setReadOnly(True)
 
         self.gridLayout_3.addWidget(self.textEdit_oasis_api, 8, 0, 1, 1)
-
-        self.pushButton_copy_oasis_api = QPushButton(self.general)
-        self.pushButton_copy_oasis_api.setObjectName(u"pushButton_copy_oasis_api")
-
-        self.gridLayout_3.addWidget(self.pushButton_copy_oasis_api, 8, 1, 1, 1)
-
-        self.label_oasis_url = QLabel(self.general)
-        self.label_oasis_url.setObjectName(u"label_oasis_url")
-
-        self.gridLayout_3.addWidget(self.label_oasis_url, 7, 0, 1, 1)
-
-        self.lineEdit_oasis_url = QLineEdit(self.general)
-        self.lineEdit_oasis_url.setObjectName(u"lineEdit_oasis_url")
-
-        self.gridLayout_3.addWidget(self.lineEdit_oasis_url, 7, 1, 1, 1)
-
-        self.label_oasis_setup_path = QLabel(self.general)
-        self.label_oasis_setup_path.setObjectName(u"label_oasis_setup_path")
-
-        self.gridLayout_3.addWidget(self.label_oasis_setup_path, 7, 2, 1, 1)
-
-        self.pushButton_go_to_oasis_remote_control = QPushButton(self.general)
-        self.pushButton_go_to_oasis_remote_control.setObjectName(u"pushButton_go_to_oasis_remote_control")
-
-        self.gridLayout_3.addWidget(self.pushButton_go_to_oasis_remote_control, 9, 0, 1, 3)
 
         self.tabWidget.addTab(self.general, "")
         self.plot_widge = QWidget()
@@ -387,13 +364,11 @@ class Ui_Protocol_Settings(object):
         self.checkBox_create_oasis_api.setToolTip(QCoreApplication.translate("Protocol_Settings", u"When enabled, CAMELS automatically generates and copies an API key. This API key can only access and run this protocol.", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_create_oasis_api.setText(QCoreApplication.translate("Protocol_Settings", u"Expose this protocol to OASIS remote control", None))
-        self.pushButton_copy_oasis_api.setText(QCoreApplication.translate("Protocol_Settings", u"Copy API", None))
-        self.label_oasis_url.setText(QCoreApplication.translate("Protocol_Settings", u"OASIS URL:", None))
-        self.lineEdit_oasis_url.setText(QCoreApplication.translate("Protocol_Settings", u"localhost/", None))
-        self.label_oasis_setup_path.setText(QCoreApplication.translate("Protocol_Settings", u"nomad-oasis/camels/setup", None))
-        self.pushButton_go_to_oasis_remote_control.setText(QCoreApplication.translate("Protocol_Settings", u"Go to OASIS Remote Control", None))
         self.label_5.setText(QCoreApplication.translate("Protocol_Settings", u"Descriptions:", None))
         self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))
+#if QT_CONFIG(tooltip)
+        self.textEdit_oasis_api.setToolTip(QCoreApplication.translate("Protocol_Settings", u"When enabled, CAMELS automatically generates and copies an API key. This API key can only access and run this protocol.", None))
+#endif // QT_CONFIG(tooltip)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.general), QCoreApplication.translate("Protocol_Settings", u"General Settings", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.plot_widge), QCoreApplication.translate("Protocol_Settings", u"Plots", None))
         self.pushButton_add_variable.setText(QCoreApplication.translate("Protocol_Settings", u"+", None))

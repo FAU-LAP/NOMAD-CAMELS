@@ -128,7 +128,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.setWindowTitle(f"{protocol.name} - Measurement Protocol - NOMAD CAMELS")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
         self.configuration_main_widget.setHidden(True)
-        self.general_settings = General_Protocol_Settings(protocol=protocol)
+        self.general_settings = General_Protocol_Settings(
+            protocol=protocol, source_protocol=self.old_protocol
+        )
 
         self.general_settings.lineEdit_filename.set_check_function(
             check_no_invalid_characters)
@@ -922,6 +924,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 if discard_dialog != QMessageBox.Yes:
                     a0.ignore()
                     return
+            self.general_settings.restore_source_oasis_remote_control()
         a0.accept()
         super().closeEvent(a0)
         self.closing.emit()

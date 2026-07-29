@@ -10,7 +10,7 @@ import lmfit
 from multiprocessing import Process, Event
 
 # Flask request is used to receive query parameters or JSON from POST/GET in the Dash server.
-from flask import request as flask_request
+from flask import jsonify, request as flask_request
 
 # Import necessary Plotly components for creating and manipulating plots.
 from plotly import graph_objs as go
@@ -136,6 +136,11 @@ def run_dash_app(
     @dash_app.server.route("/status", methods=["GET"])
     def status():
         return "OK", 200
+
+    @dash_app.server.route("/data", methods=["GET"])
+    def data_snapshot():
+        """Return a read-only snapshot for the OASIS dashboard."""
+        return jsonify(data)
 
     @dash_app.server.route("/fit_result", methods=["POST"])
     def fit_result():
