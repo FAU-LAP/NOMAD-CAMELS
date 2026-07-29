@@ -491,7 +491,21 @@ class Plot_Definer_Widget(QWidget):
             n (int): The index of the newly added row.
         """
         if n >= len(self.plot_data):
-            self.plot_data.append(Plot_Info())
+            # Browser plots are enabled by default for newly created plots.
+            # Give every plot its first free local Dash port to avoid two plots
+            # trying to bind the default port (8050) at the same time.
+            used_ports = set()
+            for plot in self.plot_data:
+                try:
+                    used_ports.add(int(plot.browser_port))
+                except (AttributeError, TypeError, ValueError):
+                    continue
+            browser_port = 8050
+            while browser_port in used_ports:
+                browser_port += 1
+            self.plot_data.append(
+                Plot_Info(checkbox_show_in_browser=True, browser_port=browser_port)
+            )
 
     def plot_removed(self, n):
         """
