@@ -19,7 +19,7 @@ from plotly import graph_objs as go
 from plotly.subplots import make_subplots
 
 # Core components for building Dash layout and interactive elements.
-from dash import callback_context, dcc, html, Dash
+from dash import dcc, html, Dash
 
 # For reactive callbacks in Dash (linking outputs to inputs).
 from dash.dependencies import Input, Output
@@ -120,31 +120,16 @@ def run_dash_app(
     # Create a new Dash instance with the name "Browser Plots".
     dash_app = Dash("Browser Plots")
 
+    @dash_app.server.after_request
+    def allow_dashboard_clear_request(response):
+        """Allow the local OASIS Dashboard to clear this local browser plot."""
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        return response
+
     # Define the layout of the Dash application, including the Graph and an Interval component.
     dash_app.layout = html.Div(
         [
-            html.Div(
-                [
-                    html.Span("Clear plot: "),
-                    dcc.Dropdown(
-                        id="clear-mode",
-                        options=[
-                            {"label": "Automatic", "value": "automatic"},
-                            {"label": "Manual", "value": "manual"},
-                        ],
-                        value="automatic",
-                        clearable=False,
-                        style={"width": "150px", "display": "inline-block"},
-                    ),
-                    html.Button(
-                        "Clear plot",
-                        id="clear-plot",
-                        n_clicks=0,
-                        style={"display": "none", "marginLeft": "12px"},
-                    ),
-                ],
-                style={"display": "flex", "alignItems": "center", "marginBottom": "8px"},
-            ),
             dcc.Graph(id="scatter-plot"),
             dcc.Interval(
                 id="graph-update",
@@ -163,6 +148,13 @@ def run_dash_app(
     def data_snapshot():
         """Return a read-only snapshot for the OASIS dashboard."""
         return jsonify(data)
+
+    @dash_app.server.route("/clear_data", methods=["POST"])
+    def clear_data_endpoint():
+        """Clear the current browser plot at OASIS' request."""
+        nonlocal data
+        data = {x_name: [], **{y_name: [] for y_name in y_names}}
+        return jsonify({"cleared": True})
 
     @dash_app.server.route("/fit_result", methods=["POST"])
     def fit_result():
@@ -228,22 +220,14 @@ def run_dash_app(
     @dash_app.callback(
         Output("scatter-plot", "figure"),
         Input("graph-update", "n_intervals"),
-        Input("clear-plot", "n_clicks"),
-        Input("clear-mode", "value"),
     )
-    def update_scatter_plot(_, __, clear_mode):
+    def update_scatter_plot(_):
         """
         Dash callback to update the scatter plot at each interval.
         It creates or updates the figure with x vs. multiple y data
         and (if present) the corresponding fit curves.
         """
         nonlocal data, title, xlabel, ylabel, ylabel2, logX, logY, logY2, maxlen, y_axes, fits, fit_model_dict
-
-        if callback_context.triggered_id == "clear-plot" and clear_mode == "manual":
-            data = {x_name: [], **{y_name: [] for y_name in y_names}}
-
-        # Automatic mode starts each CAMELS run with this process' fresh data
-        # dictionary. Manual mode only clears when its button is pressed.
 
         # Build an lmfit model dictionary for each fit definition found in fits.
         for fit in fits:
@@ -332,13 +316,6 @@ def run_dash_app(
         return {
             "data": fig.data,
             "layout": layout,
-        }
-
-    @dash_app.callback(Output("clear-plot", "style"), Input("clear-mode", "value"))
-    def show_clear_button(clear_mode):
-        return {
-            "display": "inline-block" if clear_mode == "manual" else "none",
-            "marginLeft": "12px",
         }
 
     # Signal to the main process that the Dash server is up.
@@ -625,31 +602,16 @@ def run_dash_app_2d(
     # Create the Dash app.
     dash_app = Dash("Browser Plots")
 
+    @dash_app.server.after_request
+    def allow_dashboard_clear_request(response):
+        """Allow the local OASIS Dashboard to clear this local browser plot."""
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        return response
+
     # Define the layout with a Graph and an Interval for periodic updates.
     dash_app.layout = html.Div(
         [
-            html.Div(
-                [
-                    html.Span("Clear plot: "),
-                    dcc.Dropdown(
-                        id="clear-mode",
-                        options=[
-                            {"label": "Automatic", "value": "automatic"},
-                            {"label": "Manual", "value": "manual"},
-                        ],
-                        value="automatic",
-                        clearable=False,
-                        style={"width": "150px", "display": "inline-block"},
-                    ),
-                    html.Button(
-                        "Clear plot",
-                        id="clear-plot",
-                        n_clicks=0,
-                        style={"display": "none", "marginLeft": "12px"},
-                    ),
-                ],
-                style={"display": "flex", "alignItems": "center", "marginBottom": "8px"},
-            ),
             dcc.Graph(id="scatter-plot"),
             dcc.Interval(
                 id="graph-update",
@@ -662,6 +624,13 @@ def run_dash_app_2d(
     @dash_app.server.route("/status", methods=["GET"])
     def status():
         return "OK", 200
+
+    @dash_app.server.route("/clear_data", methods=["POST"])
+    def clear_data_endpoint():
+        """Clear the current 2D browser plot at OASIS' request."""
+        nonlocal data
+        data = {x_name: [], y_name: [], z_name: []}
+        return jsonify({"cleared": True})
 
     # @dash_app.server.route("/shutdown", methods=["GET"])
     # def shutdown():
@@ -694,17 +663,12 @@ def run_dash_app_2d(
     @dash_app.callback(
         Output("scatter-plot", "figure"),
         Input("graph-update", "n_intervals"),
-        Input("clear-plot", "n_clicks"),
-        Input("clear-mode", "value"),
     )
-    def update_scatter_plot(_, __, clear_mode):
+    def update_scatter_plot(_):
         """
         Periodic callback that regenerates the figure based on the data dictionary.
         """
         nonlocal data, title, xlabel, ylabel, maxlen
-
-        if callback_context.triggered_id == "clear-plot" and clear_mode == "manual":
-            data = {x_name: [], y_name: [], z_name: []}
 
         if xlabel == "":
             xlabel = x_name
@@ -726,13 +690,6 @@ def run_dash_app_2d(
         # Update layout to include axis labels and title
         fig.update_layout(title=title, xaxis_title=xlabel, yaxis_title=ylabel)
         return fig
-
-    @dash_app.callback(Output("clear-plot", "style"), Input("clear-mode", "value"))
-    def show_clear_button(clear_mode):
-        return {
-            "display": "inline-block" if clear_mode == "manual" else "none",
-            "marginLeft": "12px",
-        }
 
     # Signal that the Dash server has started.
     wait_for_dash_app_event.set()
