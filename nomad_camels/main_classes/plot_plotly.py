@@ -466,9 +466,11 @@ class PlotlyLiveCallback(CallbackBase):
         elif doc["uid"] in self.ignore_fit_docs:
             return
 
-        # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x. This means that plots are only tried to be updated if the data is present.
-        if not (any(key in s for key in doc["data"] for s in self.y_names)):
-            return
+        # Do not require a y name to occur literally in ``doc["data"]``.
+        # General Configuration plots may use formulas or fit results (for
+        # example ``1/Linear_..._slope``).  Those values live in the
+        # Evaluator namespace rather than in an event's raw data mapping and
+        # are resolved below through ``self.eva.eval``.
         # Try to retrieve x value from doc["data"], or fallback to evaluator if missing.
         try:
             new_x = doc["data"][self.x_name]

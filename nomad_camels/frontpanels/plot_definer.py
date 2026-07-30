@@ -323,14 +323,16 @@ class Fit_Info:
 
 
 class Plot_Definer(QDialog):
-    def __init__(self, parent=None, plot_data=None):
+    def __init__(self, parent=None, plot_data=None, browser_port_start=8050):
         super().__init__(parent)
         self.plot_data = plot_data or []
 
         self.setWindowTitle("Define plot - NOMAD CAMELS")
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
 
-        self.definer_widget = Plot_Definer_Widget(self, self.plot_data)
+        self.definer_widget = Plot_Definer_Widget(
+            self, self.plot_data, browser_port_start=browser_port_start
+        )
 
         # Create OK/Cancel dialog buttons.
         self.dialog_buttons = QDialogButtonBox()
@@ -378,7 +380,7 @@ class Plot_Definer_Widget(QWidget):
     on the right for configuring details of the selected plot.
     """
 
-    def __init__(self, parent=None, plot_data=None):
+    def __init__(self, parent=None, plot_data=None, browser_port_start=8050):
         """
         Initialize the Plot_Definer dialog.
 
@@ -388,6 +390,7 @@ class Plot_Definer_Widget(QWidget):
         """
         super().__init__(parent)
         self.plot_data = plot_data
+        self.browser_port_start = browser_port_start
         if self.plot_data is None:
             self.plot_data = []
 
@@ -491,20 +494,20 @@ class Plot_Definer_Widget(QWidget):
             n (int): The index of the newly added row.
         """
         if n >= len(self.plot_data):
-            # Browser plots are enabled by default for newly created plots.
-            # Give every plot its first free local Dash port to avoid two plots
-            # trying to bind the default port (8050) at the same time.
+            # Give every plot its first free local Dash port.  The port range is
+            # assigned by the caller: Sequence plots start at 8050, while
+            # General Configuration plots start at 8150.
             used_ports = set()
             for plot in self.plot_data:
                 try:
                     used_ports.add(int(plot.browser_port))
                 except (AttributeError, TypeError, ValueError):
                     continue
-            browser_port = 8050
+            browser_port = self.browser_port_start
             while browser_port in used_ports:
                 browser_port += 1
             self.plot_data.append(
-                Plot_Info(checkbox_show_in_browser=True, browser_port=browser_port)
+                Plot_Info(checkbox_show_in_browser=False, browser_port=browser_port)
             )
 
     def plot_removed(self, n):
@@ -873,11 +876,12 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
 
     def hide_show_show_in_browser(self):
         """
-        Toggle visibility of the browser port selection based on the checkbox state.
+        Keep the browser port selection visible. The checkbox controls whether
+        the browser plot is actually started, not whether its port is configured.
         """
         is_checked = self.checkBox_show_in_browser.isChecked()
-        self.label_port.setHidden(not is_checked)
-        self.spinBox_port.setHidden(not is_checked)
+        self.label_port.setHidden(False)
+        self.spinBox_port.setHidden(False)
         if is_checked:
             check_if_plotly_modules_are_available(self)
 
@@ -1105,11 +1109,12 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
 
     def hide_show_show_in_browser(self):
         """
-        Toggle visibility of the browser port spinbox based on the checkbox state.
+        Keep the browser port selection visible. The checkbox controls whether
+        the browser plot is actually started, not whether its port is configured.
         """
         is_checked = self.checkBox_show_in_browser.isChecked()
-        self.label_port.setHidden(not is_checked)
-        self.spinBox_port.setHidden(not is_checked)
+        self.label_port.setHidden(False)
+        self.spinBox_port.setHidden(False)
         if is_checked:
             check_if_plotly_modules_are_available(self)
 
@@ -1391,7 +1396,7 @@ class Plot_Button_Overview(QWidget):
     and associated fits, along with a button to open the Plot_Definer dialog.
     """
 
-    def __init__(self, parent, plot_data=None):
+    def __init__(self, parent, plot_data=None, browser_port_start=8050):
         """
         Initialize the overview widget.
 
@@ -1401,6 +1406,7 @@ class Plot_Button_Overview(QWidget):
         """
         super().__init__(parent)
         self.plot_data = plot_data or []
+        self.browser_port_start = browser_port_start
 
         # Build initial table data.
         table_data = make_table_data(self.plot_data)
@@ -1458,7 +1464,9 @@ class Plot_Button_Overview(QWidget):
         """
         Open the Plot_Definer dialog to edit the plot and fit configurations.
         """
-        plot_definer = Plot_Definer(self, self.plot_data)
+        plot_definer = Plot_Definer(
+            self, self.plot_data, browser_port_start=self.browser_port_start
+        )
         if plot_definer.exec():
             # Update the local plot data with changes from the dialog.
             self.plot_data = plot_definer.plot_data

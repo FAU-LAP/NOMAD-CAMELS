@@ -609,7 +609,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.tabWidget.removeTab(index)
         self.plot_widge.deleteLater()
         # insert new widget at the same position
-        self.plot_widge = Plot_Definer_Widget(self, self.protocol.plots)
+        self.plot_widge = Plot_Definer_Widget(
+            self, self.protocol.plots, browser_port_start=8150
+        )
         self.tabWidget.insertTab(index, self.plot_widge, icon, text)
 
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
