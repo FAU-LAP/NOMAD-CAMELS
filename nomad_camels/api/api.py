@@ -288,6 +288,7 @@ class FastapiThread(QThread):
     set_checkbox_signal = Signal(str)
     queue_protocol_with_variables_signal = Signal(str, dict, int, str)
     change_variables_queued_protocol_signal = Signal(str, dict, int)
+    close_plots_signal = Signal()
 
     def __init__(self, main_window, api_port):
         """
@@ -509,6 +510,26 @@ class FastapiThread(QThread):
             cleaned_settings = sanitize_dict(settings)
             return JSONResponse(
                 content=cleaned_settings,
+            )
+
+        @app.get("/api/v1/gui/plots")
+        async def get_open_plot_count(
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Return the number of currently open CAMELS plot windows."""
+            return JSONResponse(
+                content={"open_plot_count": len(self.main_window.open_plots)}
+            )
+
+        @app.post("/api/v1/gui/plots/close")
+        async def close_open_plots(
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Close CAMELS plot windows through the GUI thread."""
+            open_plot_count = len(self.main_window.open_plots)
+            self.close_plots_signal.emit()
+            return JSONResponse(
+                content={"closed_plot_count": open_plot_count, "status": "requested"}
             )
 
         @app.get(

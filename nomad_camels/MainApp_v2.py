@@ -391,6 +391,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Connect signals for error, protocol start, user/sample/session setting, and protocol queueing
             self.fastapi_thread.port_error_signal.connect(self.clear_fastapi_thread)
             self.fastapi_thread.start_protocol_signal.connect(self.run_protocol)
+            self.fastapi_thread.close_plots_signal.connect(self.close_plots)
             self.fastapi_thread.set_user_signal.connect(self.set_user)
             self.fastapi_thread.set_sample_signal.connect(self.set_sample)
             self.fastapi_thread.set_session_signal.connect(self.set_session)
