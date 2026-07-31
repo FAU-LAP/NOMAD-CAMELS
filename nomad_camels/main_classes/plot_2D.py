@@ -15,7 +15,7 @@ from bluesky.callbacks.mpl_plotting import LiveScatter
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 
 from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton
-from PySide6.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject, Qt
 from PySide6.QtGui import QIcon
 
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
@@ -27,6 +27,23 @@ from importlib import resources
 from nomad_camels import graphics
 
 stdCols = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+
+
+class _GuiThreadCallbackDispatcher(QObject):
+    """Deliver Bluesky documents in the GUI thread that owns a plot widget."""
+
+    document_received = Signal(str, dict)
+
+    def __init__(self, target):
+        super().__init__()
+        self._target = target
+        self.document_received.connect(self._deliver, Qt.QueuedConnection)
+
+    def dispatch(self, name, doc):
+        self.document_received.emit(name, doc)
+
+    def _deliver(self, name, doc):
+        self._target(name, doc, escape=True)
 
 
 class PlotWidget_2D(QWidget):
@@ -144,6 +161,7 @@ class LivePlot_2D(LiveScatter, QObject):
             self, x, y, z, xlim=xlim, ylim=ylim, clim=zlim, ax=ax, **kwargs
         )
         QObject.__init__(self)
+        self._gui_dispatcher = _GuiThreadCallbackDispatcher(self)
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
         self._minx, self._maxx, self._miny, self._maxy = (None,) * 4
@@ -198,6 +216,13 @@ class LivePlot_2D(LiveScatter, QObject):
         self.cb = None
         self.pcolormesh = None
         self.desc = ""
+
+    def __call__(self, name, doc, *, escape=False):
+        """Prevent RemoteDispatcher from changing the Qt canvas directly."""
+        if not escape:
+            self._gui_dispatcher.dispatch(name, doc)
+            return
+        return super().__call__(name, doc)
 
     def start(self, doc):
         """
