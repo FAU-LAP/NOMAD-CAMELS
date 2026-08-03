@@ -762,7 +762,8 @@ class LivePlot(QObject, CallbackBase):
     ):
         CallbackBase.__init__(self)
         QObject.__init__(self)
-        self.__teleporter = Teleporter(self)
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
         self.plotItem = plot_item
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
@@ -829,7 +830,7 @@ class LivePlot(QObject, CallbackBase):
             If True, the event is always processed directly, otherwise it is sent to the teleporter
         """
         if not escape and self.__teleporter is not None:
-            self.__teleporter.dispatch(name, doc)
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
         else:
             return CallbackBase.__call__(self, name, doc)
 
@@ -1096,7 +1097,8 @@ class LiveFitPlot(CallbackBase):
         **kwargs,
     ):
         super().__init__()
-        self.__teleporter = Teleporter(self)
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
         if len(livefit.independent_vars) != 1:
             raise NotImplementedError(
                 "LiveFitPlot supports models with one independent variable only."
@@ -1219,34 +1221,17 @@ class LiveFitPlot(CallbackBase):
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
-            self.__teleporter.dispatch(name, doc)
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
         else:
             return CallbackBase.__call__(self, name, doc)
 
 
 class Teleporter(QObject):
-    """Run Bluesky callback documents in the Qt object's owning thread.
+    name_doc_escape = Signal(str, dict, object)
 
-    ``RemoteDispatcher`` invokes its subscribers from a Python worker thread.
-    Native pyqtgraph objects must only be changed from the Qt GUI thread.  A
-    connection to a plain Python function is direct, even when a signal is
-    emitted from another thread, so the former implementation did not provide
-    a thread hand-off.  This QObject slot with an explicit queued connection
-    does.
-    """
 
-    name_doc = Signal(str, dict)
-
-    def __init__(self, target):
-        super().__init__()
-        self._target = target
-        self.name_doc.connect(self._deliver, Qt.QueuedConnection)
-
-    def dispatch(self, name, doc):
-        self.name_doc.emit(name, doc)
-
-    def _deliver(self, name, doc):
-        self._target(name, doc, escape=True)
+def handle_teleport(name, doc, obj):
+    obj(name, doc, escape=True)
 
 class HeatmapWindow(QWidget):
     """
@@ -1546,7 +1531,8 @@ class LivePlot_2D(QObject, CallbackBase):
     ):
         CallbackBase.__init__(self)
         QObject.__init__(self)
-        self.__teleporter = Teleporter(self)
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
         self.x = x
         self.y = y
         self.z = z
@@ -1573,7 +1559,7 @@ class LivePlot_2D(QObject, CallbackBase):
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
-            self.__teleporter.dispatch(name, doc)
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
         else:
             return CallbackBase.__call__(self, name, doc)
 
