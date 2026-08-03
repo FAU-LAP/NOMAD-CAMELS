@@ -371,6 +371,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             api_port (int): The port number on which to start the API server.
         """
+        try:
+            api_port = int(str(api_port).strip())
+            if not 1 <= api_port <= 65535:
+                raise ValueError
+        except (TypeError, ValueError):
+            warn_popup.WarnPopup(
+                self,
+                "The API port must be a number between 1 and 65535.",
+                "FastAPI server error",
+                info_icon=True,
+            )
+            return
+
         if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             pass
         else:
@@ -385,7 +398,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 )
                 return
 
-            self.current_api_port = api_port
+            # Preferences persist ports as text. Keep the same representation
+            # here so applying unrelated settings does not restart the API.
+            self.current_api_port = str(api_port)
             # Initialize the FastAPI server thread
             self.fastapi_thread = FastapiThread(self, api_port)
             # Connect signals for error, protocol start, user/sample/session setting, and protocol queueing
@@ -2918,7 +2933,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Also displays a warning popup indicating the server failed to start.
         """
         if self.fastapi_thread:
+            failed_thread = self.fastapi_thread
             self.fastapi_thread = None
+            self.current_api_port = None
+            failed_thread.deleteLater()
             # Show pop up box with warning that the server failed to start
             warn_popup.WarnPopup(
                 self,

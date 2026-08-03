@@ -306,6 +306,7 @@ class FastapiThread(QThread):
         self.app = None
         self.server = None
         self.loop = None  # Custom asyncio loop
+        self._stop_requested = False
 
     def run(self):
         """
@@ -314,16 +315,21 @@ class FastapiThread(QThread):
         This method initializes the FastAPI application, defines all the API routes, creates a new
         asyncio event loop, and starts the Uvicorn server until completion.
         """
-        self.app = FastAPI()  # Initialize FastAPI app
-        self.define_routes(self.app)  # Define the API routes
-
-        self.loop = (
-            asyncio.new_event_loop()
-        )  # Create a new asyncio loop for this thread
-        asyncio.set_event_loop(self.loop)
-
-        # Start Uvicorn as an asyncio task
-        self.loop.run_until_complete(self.start_server())
+        try:
+            self.app = FastAPI()  # Initialize FastAPI app
+            self.define_routes(self.app)  # Define the API routes
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
+            self.loop.run_until_complete(self.start_server())
+        except Exception as exc:
+            # A failed API must never take down the Qt application. In
+            # particular, malformed or occupied ports used to escape the
+            # coroutine before the error signal could be emitted.
+            print(f"Error starting FastAPI: {exc}")
+            self.port_error_signal.emit(f"Failed to start server: {exc}")
+        finally:
+            if self.loop is not None and not self.loop.is_closed():
+                self.loop.close()
 
     async def start_server(self):
         """
@@ -332,18 +338,23 @@ class FastapiThread(QThread):
         This asynchronous method configures Uvicorn with the FastAPI application and attempts to
         serve the API. In case of an error, it emits a port error signal.
         """
-        config = uvicorn.Config(
-            self.app,
-            host="0.0.0.0",
-            port=int(self.api_port),
-            log_level="info",
-            reload=False,
-            workers=1,  # Ensure only one worker to avoid multi-thread issues
-        )
-        self.server = uvicorn.Server(config)
-
         try:
+            port = int(self.api_port)
+            if not 1 <= port <= 65535:
+                raise ValueError("API port must be between 1 and 65535")
+            config = uvicorn.Config(
+                self.app,
+                host="0.0.0.0",
+                port=port,
+                log_level="warning",
+                access_log=False,
+                reload=False,
+                workers=1,  # Ensure only one worker to avoid multi-thread issues
+            )
+            self.server = uvicorn.Server(config)
             await self.server.serve()
+            if not self.server.started and not self._stop_requested:
+                raise RuntimeError(f"API server could not bind to port {port}")
         except Exception as e:
             print(f"Error starting FastAPI: {e}")
             self.port_error_signal.emit(f"Failed to start server: {e}")
@@ -354,11 +365,19 @@ class FastapiThread(QThread):
 
         This method signals the Uvicorn server to exit and stops the QThread.
         """
+        self._stop_requested = True
         if self.server is not None:
             print("Stopping FastAPI server...")
-            self.server.should_exit = True  # Signals Uvicorn to stop
-        self.quit()  # Quit the QThread
-        self.wait()  # Ensure the thread has fully stopped
+            if self.loop is not None and self.loop.is_running():
+                self.loop.call_soon_threadsafe(
+                    setattr, self.server, "should_exit", True
+                )
+            else:
+                self.server.should_exit = True
+        # ``quit`` does not stop Uvicorn's asyncio loop. Use a bounded wait so
+        # an API shutdown problem cannot freeze or terminate the CAMELS GUI.
+        if not self.wait(3000):
+            print("FastAPI server is still stopping in the background.")
 
     def define_routes(self, app: FastAPI):
         """
@@ -531,6 +550,28 @@ class FastapiThread(QThread):
             return JSONResponse(
                 content={"closed_plot_count": open_plot_count, "status": "requested"}
             )
+
+        @app.get("/api/v1/gui/pid-plots")
+        async def get_pid_plots(
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Return live PID-controller plot data for the active scoped run."""
+            running_protocol = getattr(self.main_window, "running_protocol", None)
+            if running_protocol is None:
+                return JSONResponse(content={"pid_plots": []})
+
+            # A protocol-scoped key may view only the PID devices belonging to
+            # the protocol it is currently allowed to control.
+            get_oasis_protocol(running_protocol.name, api_key)
+            devices = getattr(self.main_window, "current_protocol_devices", {}) or {}
+            pid_plots = []
+            for device_name, device in devices.items():
+                snapshot = getattr(device, "get_plot_data_snapshot", None)
+                if callable(snapshot):
+                    pid_plots.append(
+                        {"device_name": device_name, **sanitize_dict(snapshot())}
+                    )
+            return JSONResponse(content={"pid_plots": pid_plots})
 
         @app.get(
             "/api/v1/actions/run/protocols/{protocol_name}",
