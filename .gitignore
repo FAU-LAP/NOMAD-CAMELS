@@ -15,6 +15,7 @@ startup_packages.txt
 /.42c
 nomad_camels/api/api_testing.py
 .venv/
+.venv-rebuild-logs/
 .pytest_cache/
 .tox/
 .coverage

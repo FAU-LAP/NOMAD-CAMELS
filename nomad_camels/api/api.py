@@ -532,6 +532,28 @@ class FastapiThread(QThread):
                 content={"closed_plot_count": open_plot_count, "status": "requested"}
             )
 
+        @app.get("/api/v1/gui/pid-plots")
+        async def get_pid_plots(
+            protocol_name: str,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Return thread-safe snapshots of PID plots for the active protocol."""
+            protocol = get_oasis_protocol(protocol_name, api_key)
+            running_protocol = getattr(self.main_window, "running_protocol", None)
+            if running_protocol is None or running_protocol.name != protocol.name:
+                return JSONResponse(content={"pid_plots": []})
+
+            pid_plots = []
+            devices = getattr(self.main_window, "current_protocol_devices", {})
+            for device_name, device in devices.items():
+                snapshot = getattr(device, "get_plot_data_snapshot", None)
+                if not callable(snapshot):
+                    continue
+                plot = snapshot()
+                plot["device_name"] = device_name
+                pid_plots.append(plot)
+            return JSONResponse(content=sanitize_dict({"pid_plots": pid_plots}))
+
         @app.get(
             "/api/v1/actions/run/protocols/{protocol_name}",
             response_model=ProtocolRunResponse,

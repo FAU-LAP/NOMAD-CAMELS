@@ -20,6 +20,7 @@ import sys
 import os
 import importlib
 import re
+import warnings
 
 from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import helper_functions
@@ -88,10 +89,16 @@ def load_local_packages(tell_local=False):
                     # For an import like: importlib.import_module(".driver_foo", "nomad_camels_driver_foo")
                     # match.group(2) => "driver_foo"
                     # match.group(0) => "nomad_camels_driver_foo"
-                    package = importlib.import_module(
-                        f".{match.group(2)}", match.group(0)
-                    )
-                    device = package.subclass()
+                    # Optional drivers may emit warnings while importing when
+                    # their vendor SDK/DLL is unavailable. Suppress those only
+                    # during discovery; an error is still raised when a user
+                    # explicitly configures such a driver.
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        package = importlib.import_module(
+                            f".{match.group(2)}", match.group(0)
+                        )
+                        device = package.subclass()
                     # Decide how we label them in local_packages
                     if tell_local:
                         local_packages[f"local {device.name}"] = package
@@ -100,8 +107,11 @@ def load_local_packages(tell_local=False):
 
                     local_package_paths[device.name] = str(path_obj.parent)
                 except Exception as e:
-                    print(f'could not load package "{path_obj}": {e}')
-                    logging.warning(f'could not load package "{path_obj}": {e}')
+                    # A configured local driver repository often contains drivers
+                    # for hardware that is not installed on this computer. Missing
+                    # optional Python packages or vendor DLLs must not flood the
+                    # CAMELS terminal during normal startup.
+                    logging.debug(f'could not load optional package "{path_obj}": {e}')
 
     # 2) Do the same for the manual_controls folder
     manual_path = pathlib.Path("manual_controls").resolve()
@@ -114,10 +124,12 @@ def load_local_packages(tell_local=False):
             if match:
                 try:
                     sys.path.append(str(path_obj.parent))
-                    package = importlib.import_module(
-                        f".{match.group(2)}", match.group(0)
-                    )
-                    device = package.subclass()
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        package = importlib.import_module(
+                            f".{match.group(2)}", match.group(0)
+                        )
+                        device = package.subclass()
                     if tell_local:
                         local_packages[f"local {device.name}"] = package
                     else:
@@ -125,8 +137,7 @@ def load_local_packages(tell_local=False):
                     local_package_paths[device.name] = str(path_obj.parent)
                     from_manual_controls.append(device.name)
                 except Exception as e:
-                    print(f'could not load package "{path_obj}": {e}')
-                    logging.warning(f'could not load package "{path_obj}": {e}')
+                    logging.debug(f'could not load optional package "{path_obj}": {e}')
 
     return local_packages
 

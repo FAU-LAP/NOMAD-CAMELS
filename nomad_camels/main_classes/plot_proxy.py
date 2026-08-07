@@ -1,5 +1,6 @@
 import threading
 from bluesky.callbacks.zmq import Proxy
+import zmq
 
 
 class StoppableProxy(Proxy):
@@ -14,8 +15,8 @@ class StoppableProxy(Proxy):
         self._stopped = False
 
         # Set LINGER to 0 to avoid blocking on socket close.
-        self._frontend.setsockopt(self.zmq.LINGER, 0)
-        self._backend.setsockopt(self.zmq.LINGER, 0)
+        self._frontend.setsockopt(zmq.LINGER, 0)
+        self._backend.setsockopt(zmq.LINGER, 0)
 
     def start(self):
         if self.closed:
@@ -29,7 +30,7 @@ class StoppableProxy(Proxy):
     def _run(self):
         try:
             # This call blocks until the context is terminated.
-            self.zmq.device(self.zmq.FORWARDER, self._frontend, self._backend)
+            zmq.device(zmq.FORWARDER, self._frontend, self._backend)
         except Exception:
             # The device call will throw an exception when the context is terminated.
             pass
@@ -41,9 +42,9 @@ class StoppableProxy(Proxy):
             if not self._stopped:
                 try:
                     self._context.term()
-                except self.zmq.ZMQError as e:
+                except zmq.ZMQError as e:
                     # Ignore the "Resource temporarily unavailable" error.
-                    if e.errno != self.zmq.EAGAIN:
+                    if e.errno != zmq.EAGAIN:
                         raise
 
     def stop(self):
@@ -56,8 +57,8 @@ class StoppableProxy(Proxy):
         self._stopped = True
         try:
             self._context.term()
-        except self.zmq.ZMQError as e:
-            if e.errno != self.zmq.EAGAIN:
+        except zmq.ZMQError as e:
+            if e.errno != zmq.EAGAIN:
                 raise
         if self._thread is not None:
             self._thread.join()

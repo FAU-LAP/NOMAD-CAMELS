@@ -671,7 +671,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
                 self.pushButton_copy_oasis_api.clicked.connect(self.copy_oasis_api_key)
             self.label_oasis_url.setVisible(False)
             self.lineEdit_oasis_url.setVisible(False)
-            self.label_oasis_setup_path.setVisible(False)
             self.pushButton_go_to_oasis_remote_control.setVisible(False)
             self.pushButton_go_to_oasis_remote_control.clicked.connect(
                 self.go_to_oasis_remote_control
@@ -703,19 +702,19 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             )
 
     def go_to_oasis_remote_control(self):
-        """Open the OASIS CAMELS setup page using the user-provided host."""
-        oasis_url = self.lineEdit_oasis_url.text().strip() or "localhost/"
+        """Open the complete OASIS URL entered by the user."""
+        oasis_url = self.lineEdit_oasis_url.text().strip()
+        if not oasis_url:
+            return
         if not oasis_url.startswith(("http://", "https://")):
             oasis_url = f"http://{oasis_url}"
-        oasis_url = oasis_url.rstrip("/")
-        variables_handling.open_link(f"{oasis_url}/nomad-oasis/camels/setup")
+        variables_handling.open_link(oasis_url)
 
     def show_oasis_api_details(self, checked, generate_key):
         """Show OASIS connection details and create a key on explicit opt-in."""
         if checked:
             self.label_oasis_url.setVisible(True)
             self.lineEdit_oasis_url.setVisible(True)
-            self.label_oasis_setup_path.setVisible(True)
             self.pushButton_go_to_oasis_remote_control.setVisible(True)
             protocol_name = self.protocol.name
             if generate_key:
@@ -772,7 +771,6 @@ print(run)  # contains run_id and status_url
             self._oasis_api_key = None
             self.label_oasis_url.setVisible(False)
             self.lineEdit_oasis_url.setVisible(False)
-            self.label_oasis_setup_path.setVisible(False)
             self.pushButton_go_to_oasis_remote_control.setVisible(False)
             self.textEdit_oasis_api.setVisible(False)
             self.pushButton_copy_oasis_api.setVisible(False)
