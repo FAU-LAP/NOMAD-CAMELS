@@ -384,7 +384,7 @@ class Ui_Protocol_Settings(object):
         self.checkBox_create_oasis_api.setText(QCoreApplication.translate("Protocol_Settings", u"Expose this protocol to OASIS remote control", None))
         self.pushButton_copy_oasis_api.setText(QCoreApplication.translate("Protocol_Settings", u"Copy API", None))
         self.label_oasis_url.setText(QCoreApplication.translate("Protocol_Settings", u"OASIS URL:", None))
-        self.lineEdit_oasis_url.setPlaceholderText(QCoreApplication.translate("Protocol_Settings", u"http://localhost/nomad-oasis/camels/setup", None))
+        self.lineEdit_oasis_url.setText(QCoreApplication.translate("Protocol_Settings", u"http://localhost/nomad-oasis/gui/v2/dashboard_tools/camels-measurements", None))
         self.pushButton_go_to_oasis_remote_control.setText(QCoreApplication.translate("Protocol_Settings", u"Go to OASIS Remote Control", None))
         self.label_5.setText(QCoreApplication.translate("Protocol_Settings", u"Descriptions:", None))
         self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))

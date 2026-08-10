@@ -204,8 +204,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </item>
        <item row="7" column="1" colspan="2">
         <widget class="QLineEdit" name="lineEdit_oasis_url">
-         <property name="placeholderText">
-          <string>http://localhost/nomad-oasis/camels/setup</string>
+         <property name="text">
+          <string>http://localhost/nomad-oasis/gui/v2/dashboard_tools/camels-measurements</string>
          </property>
         </widget>
        </item>
