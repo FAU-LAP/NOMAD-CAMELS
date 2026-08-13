@@ -217,6 +217,7 @@ def plot_creator(
                 )
                 plot_string += f"\tplot_plotly_{i} = plot_plotly.PlotlyLiveCallback(**plot_info_dash_{i})\n"
                 plot_string += f"\tplots_plotly.append(plot_plotly_{i})\n"
+                plot_string += f"\tplot_{i}.browser_plot_callback = plot_plotly_{i}\n"
             plot_string += f"\tfor fit in plot_{i}.liveFits:\n"
             plot_string += "\t\tall_fits[fit.name] = fit\n"
         elif plot.plt_type == "Value-List":
@@ -233,6 +234,7 @@ def plot_creator(
                 plot_string += f"\tweb_ports.append({plot.browser_port})\n"
                 plot_string += f'\tplot_plotly_{i} = plot_plotly.PlotlyLiveCallback_2d(x_name="{plot.x_axis}", y_name="{plot.y_axes["formula"][0]}", z_name="{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", web_port={plot.browser_port}, evaluator=eva, title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}", multi_stream={multi_stream})\n'
                 plot_string += f"\tplots_plotly.append(plot_plotly_{i})\n"
+                plot_string += f"\tplot_{i}.browser_plot_callback = plot_plotly_{i}\n"
         if plot_is_box:
             plot_string += f"\tboxes['{box_names}_{i}'] = helper_functions.Waiting_Bar(title='{plot.title}', skipable={skip_box}, display_bar=False, plot=plot_{i})\n"
     plot_string += "\treturn plots, subs, app, plots_plotly\n\n"

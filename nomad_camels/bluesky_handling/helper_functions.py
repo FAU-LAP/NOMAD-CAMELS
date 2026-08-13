@@ -386,6 +386,9 @@ def clear_plots(plots, stream="primary"):
     for plot in plots:
         if plot.stream_name == stream or plot.stream_name.startswith(f"{stream}_fits_"):
             plot.clear_plot()
+            browser_plot = getattr(plot, "browser_plot_callback", None)
+            if browser_plot is not None:
+                browser_plot.clear_plot()
 
 
 def gradient_descent(

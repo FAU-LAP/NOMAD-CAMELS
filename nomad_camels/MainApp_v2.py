@@ -5,6 +5,7 @@ import os
 import platform, subprocess
 import re
 import time
+import threading
 from datetime import datetime
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -138,6 +139,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self._update_remaining_time_progress_bar)
         self._protocol_start_time = time.time()
+        # This plain-Python snapshot is the API-safe counterpart of the
+        # progress bar in the main window. FastAPI must not read Qt widgets
+        # from its own thread.
+        self._measurement_status_lock = threading.Lock()
+        self._measurement_status = {
+            "status": "Idle",
+            "protocol_name": "",
+            "progress": 0.0,
+            "elapsed_seconds": 0.0,
+            "remaining_seconds": None,
+        }
 
         # Initialize fastAPI server variables
         self.fastapi_thread = None
@@ -392,6 +404,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.fastapi_thread.port_error_signal.connect(self.clear_fastapi_thread)
             self.fastapi_thread.start_protocol_signal.connect(self.run_protocol)
             self.fastapi_thread.close_plots_signal.connect(self.close_plots)
+            self.fastapi_thread.save_protocol_variables_signal.connect(
+                self.save_protocol_variables
+            )
             self.fastapi_thread.set_user_signal.connect(self.set_user)
             self.fastapi_thread.set_sample_signal.connect(self.set_sample)
             self.fastapi_thread.set_session_signal.connect(self.set_session)
@@ -408,6 +423,27 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             # Start the API server thread
             self.fastapi_thread.start()
+
+    def save_protocol_variables(self, protocol_name, variables):
+        """Persist API-provided defaults on the GUI thread.
+
+        The API validates both the protocol scope and variable names before
+        emitting this slot.  Saving here keeps Qt-owned state out of the
+        FastAPI thread and makes the values survive a CAMELS restart.
+        """
+        protocol = self.protocols_dict.get(protocol_name)
+        if protocol is None:
+            logging.warning("Cannot save variables: protocol %s was not found", protocol_name)
+            return
+        protocol.variables.update(variables)
+        # ``save_state`` persists the current preset, but a protocol can also
+        # be opened independently from its .cprot file.  Keep both sources in
+        # sync so OASIS parameter edits survive a restart and are visible when
+        # the protocol is opened again in the CAMELS editor.
+        file_path = f"{self.preferences['py_files_path']}/{protocol.name}.cprot"
+        protocol_dict = load_save_functions.get_save_str(protocol)
+        load_save_functions.save_dictionary(file_path, protocol_dict)
+        self.save_state(do_backup=False)
 
     def set_user(self, user_name):
         """
@@ -740,6 +776,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
         plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
         plot.reopened.connect(lambda x=plot: self.open_windows.append(x))
+        cache = getattr(getattr(plot, "livePlot", None), "remote_plot_cache", None)
+        if cache is not None and self.fastapi_thread is not None:
+            cache_id = str(id(plot))
+            self.fastapi_thread.register_plot_cache(cache_id, cache)
+            plot.closing.connect(
+                lambda plot_cache_id=cache_id: self.fastapi_thread.unregister_plot_cache(plot_cache_id)
+            )
         self.add_to_open_windows(plot)
 
     def close_plots(self):
@@ -2112,6 +2155,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             variables (Optional[dict]): Variables for the protocol, defaults to None.
         """
         self.setCursor(Qt.WaitCursor)
+        self._set_measurement_status(
+            status="Preparing",
+            protocol_name=protocol_name,
+            progress=0.0,
+            elapsed_seconds=0.0,
+            remaining_seconds=None,
+        )
         plot_placement.reset_variables()
         # IMPORT importlib, bluesky, ophyd and time only if needed
         import importlib
@@ -2170,6 +2220,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             self.instantiate_devices_thread.start()
         except Exception as e:
+            self._set_measurement_status(status="Failed")
             self.protocol_finished()
             if isinstance(e, IndentationError):
                 text = "The protocol did not compile correctly, please check whether there are for example any if-statements or loops that do not have children-steps."
@@ -2274,6 +2325,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_pause.setEnabled(False)
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
+        # ``run_protocol_main`` has returned: measurement execution is done.
+        # Keep the remote status consistent with the completed GUI progress.
+        self._set_measurement_status(
+            status="Finished", progress=100.0, remaining_seconds=0.0
+        )
         nomad = self.nomad_user is not None
         if self.last_save_file:
             file = helper_functions.get_newest_file(self.last_save_file)
@@ -2614,6 +2670,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         for file in files[:-n_files]:
                             os.remove(f"{catalog_dir}/{file}")
         self.still_running = False
+        self._set_measurement_status(
+            status="Finished",
+            progress=100.0,
+            remaining_seconds=0.0,
+        )
         self.protocol_finished_signal.emit()
         if self.run_queue_widget.check_next_protocol():
             return
@@ -2655,6 +2716,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             remaining_time_str = time.strftime("%M:%S", time.gmtime(remaining_time))
             elapsed_time_str = time.strftime("%M:%S", time.gmtime(elapsed_time))
         self.label_remaining_time.setText(f"{elapsed_time_str} / {remaining_time_str}")
+        self._set_measurement_status(
+            status="Running",
+            progress=max(0.0, min(float(step), 100.0)),
+            elapsed_seconds=elapsed_time,
+            remaining_seconds=None if step > 100 else max(0.0, remaining_time),
+        )
+
+    def _set_measurement_status(self, **changes):
+        """Update the thread-safe API snapshot of the main GUI progress bar."""
+        with self._measurement_status_lock:
+            self._measurement_status.update(changes)
+
+    def get_measurement_status(self):
+        """Return a copy without accessing Qt widgets from the API thread."""
+        with self._measurement_status_lock:
+            return dict(self._measurement_status)
 
     def close_old_queue_devices(self):
         """

@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
 import threading
+import copy
 from collections import deque
 import logging
 from scipy.spatial import KDTree
@@ -149,6 +150,7 @@ class ListDeque_skip:
     def __iter__(self):
         return iter(self.data)
 
+
     def __repr__(self):
         return repr(self.data)
 
@@ -192,6 +194,54 @@ class ListDeque_skip:
     def change_skip_n_points(self, skip_n_points):
         self.skip_n_points = skip_n_points
         self.counter_value = 0
+
+
+class RemotePlotCache:
+    """Thread-safe, Qt-independent data copy for remote plot consumers."""
+
+    def __init__(self, *, title, x_label, y_label, y_axes):
+        self._lock = threading.Lock()
+        self._snapshot = {
+            "title": title,
+            "x_label": x_label,
+            "y_label": y_label,
+            "traces": [],
+        }
+        self._y_axes = dict(y_axes or {})
+
+    def update(self, x_data, y_data):
+        def json_values(values):
+            normalized = []
+            for value in values:
+                if hasattr(value, "tolist"):
+                    value = value.tolist()
+                elif hasattr(value, "item"):
+                    try:
+                        value = value.item()
+                    except (TypeError, ValueError):
+                        pass
+                normalized.append(value)
+            return normalized
+
+        x_values = json_values(x_data)
+        traces = []
+        for name, values in y_data.items():
+            y_values = json_values(values)
+            count = min(len(x_values), len(y_values))
+            traces.append({
+                "name": str(name),
+                "x": x_values[-count:] if count else [],
+                "y": y_values[-count:] if count else [],
+                "line": {"visible": False},
+                "marker": {"visible": True, "symbol": "circle", "size": 8},
+                "axis": "y2" if self._y_axes.get(name, 1) == 2 else "y",
+            })
+        with self._lock:
+            self._snapshot["traces"] = traces
+
+    def snapshot(self):
+        with self._lock:
+            return copy.deepcopy(self._snapshot)
 
 
 class PlotWidget(QWidget):
@@ -795,6 +845,13 @@ class LivePlot(QObject, CallbackBase):
         self.x_data = ListDeque_skip(maxlen=maxlen)
         self.y_data = {}
         self.y_axes = y_axes or {}
+        remote_y_names = list(y_names or self.y_axes.keys())
+        self.remote_plot_cache = RemotePlotCache(
+            title=title or f"{x_name} vs. {remote_y_names[0] if remote_y_names else 'value'}",
+            x_label=xlabel or x_name or "sequence #",
+            y_label=ylabel or str(remote_y_names[0] if remote_y_names else "value"),
+            y_axes=self.y_axes,
+        )
         self.maxlen = maxlen
         self.stream_name = stream_name
         self.eva = evaluator
@@ -1018,6 +1075,7 @@ class LivePlot(QObject, CallbackBase):
         for y in new_y:
             self.y_data[y].append(new_y[y])
         self.x_data.append(new_x)
+        self.remote_plot_cache.update(self.x_data, self.y_data)
 
     def update_plot(self):
         if self.plotItem.getAxis("bottom").logMode and self.use_abs["x"]:
@@ -1069,6 +1127,7 @@ class LivePlot(QObject, CallbackBase):
         self.x_data = ListDeque_skip(maxlen=self.maxlen)
         for y in self.y_data:
             self.y_data[y] = ListDeque_skip(maxlen=self.maxlen)
+        self.remote_plot_cache.update(self.x_data, self.y_data)
         for fit in self.fitPlots:
             fit.clear_plot()
         self.update_plot()

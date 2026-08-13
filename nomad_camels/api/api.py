@@ -12,6 +12,7 @@ import uuid
 from pydantic import BaseModel, Field
 import math
 import asyncio
+import threading
 
 
 def sanitize_dict(d):
@@ -289,6 +290,7 @@ class FastapiThread(QThread):
     queue_protocol_with_variables_signal = Signal(str, dict, int, str)
     change_variables_queued_protocol_signal = Signal(str, dict, int)
     close_plots_signal = Signal()
+    save_protocol_variables_signal = Signal(str, dict)
 
     def __init__(self, main_window, api_port):
         """
@@ -306,6 +308,29 @@ class FastapiThread(QThread):
         self.app = None
         self.server = None
         self.loop = None  # Custom asyncio loop
+        self._plot_caches = {}
+        self._plot_caches_lock = threading.Lock()
+
+    def register_plot_cache(self, cache_id, cache):
+        """Register a Qt-independent live-plot cache from the GUI thread."""
+        with self._plot_caches_lock:
+            self._plot_caches[cache_id] = cache
+
+    def unregister_plot_cache(self, cache_id):
+        with self._plot_caches_lock:
+            self._plot_caches.pop(cache_id, None)
+
+    def get_plot_cache_snapshots(self):
+        """Read only plain-Python copies; never access a Qt widget here."""
+        with self._plot_caches_lock:
+            caches = list(self._plot_caches.items())
+        plots = []
+        for cache_id, cache in caches:
+            try:
+                plots.append({"id": cache_id, **cache.snapshot()})
+            except (AttributeError, RuntimeError, TypeError, ValueError):
+                continue
+        return sanitize_dict({"open_plot_count": len(plots), "plots": plots})
 
     def run(self):
         """
@@ -473,6 +498,26 @@ class FastapiThread(QThread):
                 }
             )
 
+        @app.put("/api/v1/protocols/{protocol_name}/parameters")
+        async def save_protocol_parameters(
+            protocol_name: str,
+            variables: Variables,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Persist allowed variables as the saved defaults of one protocol."""
+            protocol = get_oasis_protocol(protocol_name, api_key)
+            values = variables.model_dump()["variables"]
+            unknown = set(values).difference(protocol.variables)
+            if unknown:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Unknown protocol variables: {', '.join(sorted(unknown))}",
+                )
+            self.save_protocol_variables_signal.emit(str(protocol_name), values)
+            return JSONResponse(
+                content={"saved": True, "protocol_name": protocol.name, "parameters": sanitize_dict(dict(values))}
+            )
+
         @app.get("/api/v1/protocols/{protocol_name}/JSON")
         async def get_protocol_json(
             protocol_name: str, api_key: str = Depends(validate_credentials)
@@ -520,6 +565,20 @@ class FastapiThread(QThread):
             return JSONResponse(
                 content={"open_plot_count": len(self.main_window.open_plots)}
             )
+
+        @app.get("/api/v1/gui/measurement-status")
+        async def get_measurement_status(
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Return the API-safe snapshot of CAMELS' main progress bar."""
+            return JSONResponse(content=self.main_window.get_measurement_status())
+
+        @app.get("/api/v1/gui/plot-caches")
+        async def get_live_plot_caches(
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Return thread-safe data copies for all supported 1D Qt plots."""
+            return JSONResponse(content=self.get_plot_cache_snapshots())
 
         @app.post("/api/v1/gui/plots/close")
         async def close_open_plots(

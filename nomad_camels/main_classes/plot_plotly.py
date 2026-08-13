@@ -526,6 +526,17 @@ class PlotlyLiveCallback(CallbackBase):
         self.x_data = []
         self.y_data = []
 
+    def clear_plot(self):
+        """Clear the Dash plot when its corresponding Qt plot is cleared."""
+        try:
+            requests.post(
+                f"http://127.0.0.1:{self.web_port}/clear_data", timeout=0.5
+            )
+        except requests.RequestException:
+            # The first clear can occur while the Dash subprocess is starting.
+            # It already starts empty, so failing silently is the correct result.
+            pass
+
     def descriptor(self, doc):
         """
         Called when a new descriptor is emitted.
@@ -919,6 +930,15 @@ class PlotlyLiveCallback_2d(CallbackBase):
         """
         self.x_data = []
         self.y_data = []
+
+    def clear_plot(self):
+        """Clear the Dash plot when its corresponding Qt plot is cleared."""
+        try:
+            requests.post(
+                f"http://127.0.0.1:{self.web_port}/clear_data", timeout=0.5
+            )
+        except requests.RequestException:
+            pass
 
     def descriptor(self, doc):
         """
