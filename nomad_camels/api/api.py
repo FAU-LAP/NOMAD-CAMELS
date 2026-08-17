@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
+from fastapi import FastAPI, HTTPException, Depends, Request, status
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
@@ -13,6 +13,10 @@ from pydantic import BaseModel, Field
 import math
 import asyncio
 import threading
+import socket
+from datetime import datetime, timezone
+from urllib.error import HTTPError, URLError
+from urllib.request import Request as UrlRequest, urlopen
 
 
 def sanitize_dict(d):
@@ -310,6 +314,7 @@ class FastapiThread(QThread):
         self.loop = None  # Custom asyncio loop
         self._plot_caches = {}
         self._plot_caches_lock = threading.Lock()
+        self.api_started_at = datetime.now(timezone.utc).isoformat()
 
     def register_plot_cache(self, cache_id, cache):
         """Register a Qt-independent live-plot cache from the GUI thread."""
@@ -440,6 +445,30 @@ class FastapiThread(QThread):
             """Unauthenticated liveness endpoint for the OASIS backend."""
             return {"status": "ok", "api_version": "v1"}
 
+        @app.get("/api/v1/info")
+        async def get_service_info(api_key: str = Depends(validate_credentials)):
+            """Return non-secret identity information for a connected CAMELS API."""
+            hostname = socket.gethostname()
+            try:
+                addresses = sorted(
+                    {
+                        item[4][0]
+                        for item in socket.getaddrinfo(hostname, None, socket.AF_INET)
+                    }
+                )
+            except OSError:
+                addresses = []
+            return JSONResponse(
+                content={
+                    "service_name": "NOMAD CAMELS",
+                    "hostname": hostname,
+                    "local_ipv4_addresses": addresses,
+                    "api_port": int(self.api_port),
+                    "api_version": "v1",
+                    "started_at": self.api_started_at,
+                }
+            )
+
         @app.get("/api/v1/protocols")
         async def get_protocols(api_key: str = Depends(validate_credentials)):
             """
@@ -498,7 +527,7 @@ class FastapiThread(QThread):
                 }
             )
 
-        @app.put("/api/v1/protocols/{protocol_name}/parameters")
+        @app.post("/api/v1/protocols/{protocol_name}/parameters")
         async def save_protocol_parameters(
             protocol_name: str,
             variables: Variables,
@@ -612,6 +641,67 @@ class FastapiThread(QThread):
                 plot["device_name"] = device_name
                 pid_plots.append(plot)
             return JSONResponse(content=sanitize_dict({"pid_plots": pid_plots}))
+
+        @app.api_route(
+            "/api/v1/gui/browser-plots/{protocol_name}/{port}/{plot_path:path}",
+            methods=["GET", "POST"],
+        )
+        async def proxy_browser_plot(
+            protocol_name: str,
+            port: int,
+            plot_path: str,
+            request: Request,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Authenticated proxy for one active, localhost-only Dash plot.
+
+            Dash keeps listening on 127.0.0.1. This route is the only route
+            through which a remote OASIS instance can reach it, and it limits
+            requests to ports created by the currently running CAMELS protocol.
+            """
+            get_oasis_protocol(protocol_name, api_key)
+            module = getattr(self.main_window, "protocol_module", None)
+            active_ports = {
+                int(value)
+                for value in getattr(module, "web_ports", [])
+                if str(value).isdigit()
+            }
+            if port not in active_ports:
+                raise HTTPException(status_code=404, detail="Browser plot is not active.")
+
+            local_path = "/" + plot_path.lstrip("/")
+            target = f"http://127.0.0.1:{port}{local_path}"
+            if request.url.query:
+                target += "?" + request.url.query
+            headers = {}
+            if content_type := request.headers.get("content-type"):
+                headers["Content-Type"] = content_type
+            body = await request.body()
+            local_request = UrlRequest(
+                target,
+                data=body if body else None,
+                headers=headers,
+                method=request.method,
+            )
+            try:
+                with urlopen(local_request, timeout=5) as local_response:
+                    content = local_response.read()
+                    media_type = local_response.headers.get_content_type()
+                    return Response(
+                        content=content,
+                        status_code=local_response.status,
+                        media_type=media_type,
+                    )
+            except HTTPError as error:
+                return Response(
+                    content=error.read(), status_code=error.code,
+                    media_type=error.headers.get_content_type(),
+                )
+            except URLError as error:
+                raise HTTPException(
+                    status_code=502,
+                    detail="Local CAMELS browser plot is unavailable on this port.",
+                ) from error
 
         @app.get(
             "/api/v1/actions/run/protocols/{protocol_name}",

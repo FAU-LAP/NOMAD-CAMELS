@@ -306,6 +306,26 @@ class PlotWidget(QWidget):
     closing = Signal()
     reopened = Signal()
 
+    @property
+    def browser_plot_callback(self):
+        """Browser callback paired with this Qt plot, if browser output is enabled."""
+        return getattr(self, "_browser_plot_callback", None)
+
+    @browser_plot_callback.setter
+    def browser_plot_callback(self, callback):
+        """Make Browser Plot reuse this widget's already-evaluated data.
+
+        Existing generated protocols set this public attribute after creating
+        the widget. Keeping the wiring here therefore also upgrades those
+        protocols without requiring them to be generated again.
+        """
+        self._browser_plot_callback = callback
+        live_plot = getattr(self, "livePlot", None)
+        if live_plot is not None:
+            live_plot.browser_plot_callback = callback
+        if callback is not None:
+            callback.use_qt_cache = True
+
     def __init__(
         self,
         x_name,
@@ -1076,6 +1096,12 @@ class LivePlot(QObject, CallbackBase):
             self.y_data[y].append(new_y[y])
         self.x_data.append(new_x)
         self.remote_plot_cache.update(self.x_data, self.y_data)
+        browser_plot = getattr(self, "browser_plot_callback", None)
+        if browser_plot is not None:
+            # The Qt plot has already resolved formulas and fit quantities.
+            # Forward exactly those values to Dash, rather than evaluating the
+            # same event independently in the Browser Plot callback.
+            browser_plot.send_qt_data(new_x, new_y)
 
     def update_plot(self):
         if self.plotItem.getAxis("bottom").logMode and self.use_abs["x"]:

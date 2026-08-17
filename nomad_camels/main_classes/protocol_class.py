@@ -660,8 +660,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         if hasattr(self, 'checkBox_create_oasis_api'):
             self._oasis_api_key = None
             self.checkBox_create_oasis_api.setToolTip(
-                "When enabled, CAMELS automatically generates and copies an API key. "
-                "This API key can only access and run this protocol."
+                "Expose this protocol through the CAMELS API. OASIS uses one "
+                "API key from Settings > API to access all exposed protocols."
             )
             self.checkBox_create_oasis_api.toggled.connect(self.on_oasis_api_toggled)
             if hasattr(self, 'textEdit_oasis_api'):
@@ -675,9 +675,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.pushButton_go_to_oasis_remote_control.clicked.connect(
                 self.go_to_oasis_remote_control
             )
-            self.show_oasis_api_details(
-                self.checkBox_create_oasis_api.isChecked(), generate_key=False
-            )
+            self.show_oasis_api_details(self.checkBox_create_oasis_api.isChecked())
 
     def on_oasis_api_toggled(self, checked):
         # The API server reads this object directly. Apply the opt-in now,
@@ -685,7 +683,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.oasis_remote_control = checked
         if self.source_protocol is not None:
             self.source_protocol.oasis_remote_control = checked
-        self.show_oasis_api_details(checked, generate_key=True)
+        self.show_oasis_api_details(checked)
 
     def copy_oasis_api_key(self):
         """Copy the newly generated protocol-scoped API key."""
@@ -710,13 +708,17 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             oasis_url = f"http://{oasis_url}"
         variables_handling.open_link(oasis_url)
 
-    def show_oasis_api_details(self, checked, generate_key):
-        """Show OASIS connection details and create a key on explicit opt-in."""
+    def show_oasis_api_details(self, checked):
+        """Show OASIS navigation without creating a protocol-specific key."""
         if checked:
             self.label_oasis_url.setVisible(True)
             self.lineEdit_oasis_url.setVisible(True)
             self.pushButton_go_to_oasis_remote_control.setVisible(True)
             protocol_name = self.protocol.name
+            # Exposure is now controlled solely by this checkbox. A single
+            # global key is generated in Settings > API and is shared with
+            # OASIS; never create a new protocol-specific secret here.
+            generate_key = False
             if generate_key:
                 # Import only after CAMELS has finished its startup imports.
                 # settings_window depends on load_save_functions, which imports

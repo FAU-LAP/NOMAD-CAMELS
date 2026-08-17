@@ -466,6 +466,13 @@ class PlotlyLiveCallback(CallbackBase):
         elif doc["uid"] in self.ignore_fit_docs:
             return
 
+        # When a matching Qt plot is available it is the authoritative source
+        # for derived quantities and fit results.  Its cache-forwarding hook
+        # calls ``send_qt_data`` after evaluation, avoiding a second and
+        # potentially premature evaluator pass here.
+        if getattr(self, "use_qt_cache", False):
+            return
+
         # Do not require a y name to occur literally in ``doc["data"]``.
         # General Configuration plots may use formulas or fit results (for
         # example ``1/Linear_..._slope``).  Those values live in the
@@ -494,19 +501,42 @@ class PlotlyLiveCallback(CallbackBase):
                     self.eva.event(doc)
                 new_y[y_name] = self.eva.eval(y_name, do_not_reraise=True)
 
+        self.send_qt_data(new_x, new_y)
+
+    @staticmethod
+    def _scalar(value):
+        """Convert numpy/Python scalar or one-point array to a JSON number."""
+        array = np.asarray(value)
+        if array.size != 1:
+            raise ValueError("Browser plots require one scalar value per event.")
+        return array.reshape(-1)[0].item()
+
+    def send_qt_data(self, new_x, new_y):
+        """Forward values already evaluated by the paired Qt live plot."""
+        try:
+            x_value = self._scalar(new_x)
+            y_values = {
+                name: self._scalar(new_y[name]) for name in self.y_names
+            }
+        except (KeyError, TypeError, ValueError) as error:
+            # A fit can legitimately be unavailable for the first few points.
+            # Skipping that one point keeps the Browser Plot process alive.
+            print(f"Could not prepare Browser Plot data: {error}")
+            return
+
         # Send the new data to the Dash app via HTTP request.
         try:
             response = requests.get(
                 f"http://127.0.0.1:{self.web_port}/add_data",
-                params={"x": new_x, "y": json.dumps(new_y)},
+                params={"x": x_value, "y": json.dumps(y_values)},
                 timeout=1,
             )
             if response.status_code == 200:
                 pass  # Data updated successfully.
             else:
                 print(f"Failed to add data point: {response.text}")
-        except requests.ConnectionError:
-            print("Cannot connect to Dash server. Is it running?")
+        except requests.RequestException as error:
+            print(f"Cannot send data to Dash server: {error}")
 
     def stop(self, doc):
         """
