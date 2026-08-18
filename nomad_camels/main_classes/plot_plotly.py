@@ -146,8 +146,34 @@ def run_dash_app(
 
     @dash_app.server.route("/data", methods=["GET"])
     def data_snapshot():
-        """Return a read-only snapshot for the OASIS dashboard."""
-        return jsonify(data)
+        """Return a bounded read-only snapshot for remote plot consumers."""
+        try:
+            max_points = int(flask_request.args.get("max_points", 0))
+        except (TypeError, ValueError):
+            max_points = 0
+        # No query parameter preserves the existing local Dash behaviour.
+        # A remote caller may request a bounded, evenly sampled representation.
+        if max_points <= 0:
+            return jsonify(data)
+        max_points = min(max(max_points, 100), 10000)
+
+        def sample(values):
+            if not isinstance(values, list) or len(values) <= max_points:
+                return values
+            return [
+                values[round(index * (len(values) - 1) / (max_points - 1))]
+                for index in range(max_points)
+            ]
+
+        snapshot = {}
+        for name, values in data.items():
+            if isinstance(values, dict) and isinstance(values.get("fit_result"), list):
+                values = dict(values)
+                values["fit_result"] = sample(values["fit_result"])
+            else:
+                values = sample(values)
+            snapshot[name] = values
+        return jsonify(snapshot)
 
     @dash_app.server.route("/clear_data", methods=["POST"])
     def clear_data_endpoint():
