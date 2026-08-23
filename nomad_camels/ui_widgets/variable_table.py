@@ -45,6 +45,7 @@ class VariableTable(QTableView):
         headers = self.get_table_headers()
         self.model.setColumnCount(len(headers))
         self.model.setHorizontalHeaderLabels(headers)
+        self.resizeColumnsToContents()
 
     def get_column_index(self, header_name):
         for column in range(self.model.columnCount()):
@@ -77,9 +78,14 @@ class VariableTable(QTableView):
     def set_protocol(self, protocol):
         """ """
         self.protocol = protocol
-        self.model.blockSignals(True)
+        self._clear_index_widgets()
         self.model.clear()
+        # Column-count changes must happen with signals enabled, otherwise the
+        # QHeaderView never receives columnsInserted and its internal section
+        # count silently falls out of sync with model.columnCount() - no width
+        # ever "sticks" on the extra column after that (Qt just ignores it).
         self.set_table_headers()
+        self.model.blockSignals(True)
         for var in sorted(self.protocol.variables):
             self.append_variable(var, str(self.protocol.variables[var]), unique=False)
         self.model.blockSignals(False)
@@ -107,6 +113,7 @@ class VariableTable(QTableView):
         if semantic_column is not None:
             combo = self.make_semantics_combo(name)
             self.setIndexWidget(self.model.index(row, semantic_column), combo)
+        self.resizeColumnsToContents()
 
     def check_variable(self):
         """ """
@@ -235,9 +242,25 @@ class VariableTable(QTableView):
 
     def clear(self):
         """ """
+        self._clear_index_widgets()
         self.model.clear()
         self.set_table_headers()
         self.update_variables()
+
+    def _clear_index_widgets(self):
+        """Detach and delete any widgets embedded via setIndexWidget before the model is cleared.
+
+        QStandardItemModel.clear() deletes model items but has no knowledge of QTableView-side
+        index widgets (e.g. the Semantics-column combo boxes), so they must be released manually
+        or they stay alive and visually linger after the model shrinks.
+        """
+        for row in range(self.model.rowCount()):
+            for column in range(self.model.columnCount()):
+                index = self.model.index(row, column)
+                widget = self.indexWidget(index)
+                if widget is not None:
+                    self.setIndexWidget(index, None)
+                    widget.deleteLater()
 
 
 class VariableBox(QWidget):
