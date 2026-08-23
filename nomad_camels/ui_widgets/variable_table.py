@@ -78,8 +78,12 @@ class VariableTable(QTableView):
     def set_protocol(self, protocol):
         """ """
         self.protocol = protocol
-        self._clear_index_widgets()
-        self.model.clear()
+        # removeRow() (not model.clear()) so Qt's own row-removal signals
+        # release any embedded index widgets (e.g. the Semantics column's
+        # combo boxes) automatically - same pattern as add_remove_table.py's
+        # load_table_data().
+        while self.model.rowCount():
+            self.model.removeRow(0)
         # Column-count changes must happen with signals enabled, otherwise the
         # QHeaderView never receives columnsInserted and its internal section
         # count silently falls out of sync with model.columnCount() - no width
@@ -242,25 +246,10 @@ class VariableTable(QTableView):
 
     def clear(self):
         """ """
-        self._clear_index_widgets()
-        self.model.clear()
+        while self.model.rowCount():
+            self.model.removeRow(0)
         self.set_table_headers()
         self.update_variables()
-
-    def _clear_index_widgets(self):
-        """Detach and delete any widgets embedded via setIndexWidget before the model is cleared.
-
-        QStandardItemModel.clear() deletes model items but has no knowledge of QTableView-side
-        index widgets (e.g. the Semantics-column combo boxes), so they must be released manually
-        or they stay alive and visually linger after the model shrinks.
-        """
-        for row in range(self.model.rowCount()):
-            for column in range(self.model.columnCount()):
-                index = self.model.index(row, column)
-                widget = self.indexWidget(index)
-                if widget is not None:
-                    self.setIndexWidget(index, None)
-                    widget.deleteLater()
 
 
 class VariableBox(QWidget):
