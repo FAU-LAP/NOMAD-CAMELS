@@ -20,8 +20,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.11.0
 
+Features:
+- The semantic mapping of a protocol is now written to the data itself, not only to the metadata. Every dataset of an annotated read channel carries its IRI as the HDF5 attribute `semantic_iri`, together with `semantic_label`. Since the mapping is defined per read step, the same channel can mean different things in different steps of one protocol; two read steps that read the same channels but annotate them differently are written into separate streams, so that each dataset carries exactly one meaning.
+- Added a semantic index at `<entry>/measurement_details/semantic_index`, a JSON string listing every annotation together with the full path of the dataset it sits on. It is collected from what was actually written, so it never names a dataset that does not exist. Annotations that have no dataset are listed separately under `unresolved`: set channels, which are never read, and channels that were read with more than one meaning, whose merged `value_log` mixes them.
+- The semantic mapping is now written whenever it is enabled for a protocol. Previously it also required a loadable ontology file to be configured locally, so a protocol that was annotated elsewhere lost its annotations silently. Selecting ontology classes in the GUI still needs the ontology.
+- The `semantic_mapping` document gained the step and the data key of each annotated channel, and its schema version is now `1.1`. Without the step, two read steps annotating one channel differently produced two indistinguishable entries.
+
+Note: writing the annotations to the datasets needs `bluesky >= 1.11.0`. With older versions the data is written as before, the mapping still reaches the metadata, and a warning is logged.
+
 Fixes:
 - Removed deprecated calls to `bluesky.callbacks.zmq` that broke installs when using `bluesky > 1.15.1`. Replaced with a new and cleaner implementation of the ZMQ proxy. Cleanup is also improved. ZMQ implementation for testing was adapted accordingly.
+- The build-scoped stream registry is now restored even when building a protocol raises, instead of leaking its cleared state into the next build.
 
 ### 1.10.9
 Fixes:
