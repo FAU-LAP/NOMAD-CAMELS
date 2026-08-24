@@ -105,13 +105,13 @@ class CAMELSSerializer(Serializer):
             for key in ("name", "step", "data_key"):
                 if key in target:
                     flat[key] = target[key]
-            flat["label"] = semantic.get("label", "")
-            flat["iri"] = semantic.get("iri", "")
+            flat[LABEL_ATTRIBUTE] = semantic.get("label", "")
+            flat[IRI_ATTRIBUTE] = semantic.get("iri", "")
             if target.get("type") == "channel":
                 # data_key is only present when it differs from the channel's
                 # name (e.g. an alias); otherwise the name doubles as the key.
                 data_key = target.get("data_key") or target.get("name", "")
-                path = paths_by_data_key_iri.get((data_key, flat["iri"]))
+                path = paths_by_data_key_iri.get((data_key, flat[IRI_ATTRIBUTE]))
                 if path:
                     flat["path"] = path
             annotations.append(flat)
@@ -135,7 +135,6 @@ class CAMELSSerializer(Serializer):
         mapping = {
             "schema_version": SCHEMA_VERSION,
             "source": source,
-            "attribute_names": {"iri": IRI_ATTRIBUTE, "label": LABEL_ATTRIBUTE},
             "annotations": annotations,
         }
         if unresolved:
@@ -164,7 +163,7 @@ class CAMELSSerializer(Serializer):
             entry = {
                 "type": "value_log",
                 "data_key": data_key,
-                "iris": sorted(iris),
+                "semantic_iris": sorted(iris),
             }
             if path:
                 entry["instrument_path"] = f"/{self._entry_name}/{path}/value_log"

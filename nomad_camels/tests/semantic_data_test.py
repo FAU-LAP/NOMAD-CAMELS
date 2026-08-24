@@ -175,7 +175,9 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
         # the declared annotation now carries the real path it resolved to,
         # and that path really carries what it claims
         assert resolved["path"] in file
-        assert file[resolved["path"]].attrs["semantic_iri"] == resolved["iri"]
+        assert (
+            file[resolved["path"]].attrs["semantic_iri"] == resolved["semantic_iri"]
+        )
 
         # a channel read with two meanings has a merged view mixing both,
         # reported separately since no single dataset can carry both IRIs;
@@ -185,7 +187,7 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
         assert unresolved_types == {"value_log"}
         value_log = mapping["unresolved"][0]
         assert value_log["data_key"] == "demo_detX"
-        assert value_log["iris"] == sorted([IRI_CURRENT, IRI_VOLTAGE])
+        assert value_log["semantic_iris"] == sorted([IRI_CURRENT, IRI_VOLTAGE])
 
 
 def test_unannotated_run_stays_untouched(tmp_path, detectors):
