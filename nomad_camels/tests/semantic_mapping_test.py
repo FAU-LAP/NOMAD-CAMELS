@@ -1,0 +1,319 @@
+"""Tests for the semantic mapping, from what a protocol stores up to the source
+that is generated from it.
+
+These do not need an instrument driver or an ontology file: the channels are put
+into `variables_handling` directly, and the labels and IRIs are set on the steps
+the way the config widgets would set them.
+"""
+
+import pytest
+
+from nomad_camels.loop_steps.read_channels import Read_Channels
+from nomad_camels.main_classes.measurement_channel import Measurement_Channel
+from nomad_camels.utility import semantic_mapping, variables_handling
+
+IRI_CURRENT = "http://purl.org/example#ElectricCurrent"
+IRI_VOLTAGE = "http://purl.org/example#Voltage"
+
+
+@pytest.fixture
+def demo_channels():
+    """Puts two channels of one instrument into `variables_handling` and takes
+    everything back afterwards, since it is global state shared with the other
+    test files."""
+    old_channels = dict(variables_handling.channels)
+    old_channel_aliases = variables_handling.channel_aliases
+    old_instrument_aliases = variables_handling.instrument_aliases
+    old_sets = list(variables_handling.read_channel_sets)
+    old_names = list(variables_handling.read_channel_names)
+    old_active = variables_handling.semantic_mapping_active
+
+    variables_handling.channels.clear()
+    for channel in ["detX", "detY"]:
+        variables_handling.channels[f"demo_{channel}"] = Measurement_Channel(
+            name=f"demo.{channel}", device="demo"
+        )
+    variables_handling.channel_aliases = {"channel": [], "Alias": []}
+    variables_handling.instrument_aliases = {"Instrument": [], "Alias": []}
+    yield
+    variables_handling.channels.clear()
+    variables_handling.channels.update(old_channels)
+    variables_handling.channel_aliases = old_channel_aliases
+    variables_handling.instrument_aliases = old_instrument_aliases
+    variables_handling.read_channel_sets[:] = old_sets
+    variables_handling.read_channel_names[:] = old_names
+    variables_handling.semantic_mapping_active = old_active
+
+
+def make_read_step(name, channels, iris, labels=None):
+    """Builds a read step the way a loaded protocol would. The config widget
+    stores an empty label whenever no IRI was selected, which is mirrored here."""
+    if labels is None:
+        labels = [("quantity" if iri else "") for iri in iris]
+    step = Read_Channels(
+        name=name,
+        step_info={
+            "channel_list": list(channels),
+            "channel_semantics": list(labels),
+            "channel_semantic_iris": list(iris),
+            "skip_failed": [False] * len(channels),
+            "read_variables": False,
+        },
+    )
+    # `Loop_Step.__init__` builds `full_name` before the subclass sets its
+    # `step_type`; loading a protocol or drawing the tree fixes that afterwards.
+    step.update_full_name()
+    return step
+
+
+def build_sources(steps, semantic_mapping_active):
+    """Generates the protocol source of `steps`, with the registry cleared the
+    way `protocol_builder.build_protocol` clears it."""
+    variables_handling.read_channel_sets.clear()
+    variables_handling.read_channel_names.clear()
+    variables_handling.semantic_mapping_active = semantic_mapping_active
+    return [step.get_protocol_string(1) for step in steps]
+
+
+def stream_of(source):
+    """The stream expression of a generated read line."""
+    return source.split("name=")[1] if "name=" in source else source.split("stream=")[1]
+
+
+# ---------------------------------------------------------------- name resolution
+
+
+def test_channel_to_data_key(demo_channels):
+    assert variables_handling.channel_to_data_key("demo_detX") == "demo_detX"
+
+
+def test_channel_to_data_key_unknown_channel(demo_channels):
+    assert variables_handling.channel_to_data_key("no_such_channel") is None
+
+
+def test_channel_to_data_key_channel_alias(demo_channels):
+    """An alias replaces the key of the channel dictionary, the data key has to
+    stay the one of the channel behind it."""
+    variables_handling.channel_aliases = {"channel": ["demo_detX"], "Alias": ["current"]}
+    assert variables_handling.channel_to_data_key("current") == "demo_detX"
+
+
+def test_channel_to_data_key_instrument_alias(demo_channels):
+    variables_handling.instrument_aliases = {"Instrument": ["demo"], "Alias": ["source"]}
+    assert variables_handling.channel_to_data_key("source_detX") == "demo_detX"
+
+
+def test_channel_to_data_key_undefined_alias(demo_channels):
+    """An alias that is not defined anywhere gets a channel whose name carries
+    no device, it has to be passed through unchanged."""
+    variables_handling.channel_aliases = {"channel": [], "Alias": ["undefined"]}
+    assert variables_handling.channel_to_data_key("undefined") == "undefined"
+
+
+# ------------------------------------------------------------------- annotations
+
+
+def test_read_step_annotations(demo_channels):
+    step = make_read_step("A", ["demo_detX", "demo_detY"], [IRI_CURRENT, IRI_VOLTAGE])
+    assert semantic_mapping.read_step_annotations(step) == {
+        "demo_detX": {"label": "quantity", "iri": IRI_CURRENT},
+        "demo_detY": {"label": "quantity", "iri": IRI_VOLTAGE},
+    }
+
+
+def test_read_step_annotations_unannotated(demo_channels):
+    step = make_read_step("A", ["demo_detX"], [""])
+    assert semantic_mapping.read_step_annotations(step) == {}
+
+
+def test_read_step_annotations_shorter_semantics(demo_channels):
+    """An older protocol may carry fewer semantics than channels."""
+    step = make_read_step("A", ["demo_detX", "demo_detY"], [IRI_CURRENT])
+    assert list(semantic_mapping.read_step_annotations(step)) == ["demo_detX"]
+
+
+def test_read_step_annotations_label_without_iri(demo_channels):
+    """The IRI identifies the meaning, a label alone does not annotate data."""
+    step = make_read_step("A", ["demo_detX"], [""], labels=["quantity"])
+    assert semantic_mapping.read_step_annotations(step) == {}
+
+
+def test_read_step_annotations_alias(demo_channels):
+    variables_handling.channel_aliases = {"channel": ["demo_detX"], "Alias": ["current"]}
+    step = make_read_step("A", ["current"], [IRI_CURRENT])
+    assert list(semantic_mapping.read_step_annotations(step)) == ["demo_detX"]
+
+
+def test_read_step_annotations_unknown_channel_is_skipped(demo_channels):
+    """A failed lookup has to produce no annotation rather than a wrong one."""
+    step = make_read_step("A", ["demo_detX", "gone"], [IRI_CURRENT, IRI_VOLTAGE])
+    assert list(semantic_mapping.read_step_annotations(step)) == ["demo_detX"]
+
+
+def test_read_step_annotations_data_key_collision(demo_channels):
+    """Two channels can share a data key, since ophyd joins device and attribute
+    with an underscore that may occur inside either name. Neither may be
+    annotated then."""
+    variables_handling.channels["a"] = Measurement_Channel(
+        name="demo_x.y", device="demo_x"
+    )
+    variables_handling.channels["b"] = Measurement_Channel(
+        name="demo.x_y", device="demo"
+    )
+    step = make_read_step("A", ["a", "b"], [IRI_CURRENT, IRI_VOLTAGE])
+    assert semantic_mapping.read_step_annotations(step) == {}
+
+
+def test_read_step_annotations_collision_with_equal_iri(demo_channels):
+    """The same meaning twice is not a conflict."""
+    variables_handling.channels["a"] = Measurement_Channel(
+        name="demo_x.y", device="demo_x"
+    )
+    variables_handling.channels["b"] = Measurement_Channel(
+        name="demo.x_y", device="demo"
+    )
+    step = make_read_step("A", ["a", "b"], [IRI_CURRENT, IRI_CURRENT])
+    assert list(semantic_mapping.read_step_annotations(step)) == ["demo_x_y"]
+
+
+# ---------------------------------------------------------------- the stream key
+
+
+def test_stream_annotation_key_is_order_independent(demo_channels):
+    first = make_read_step("A", ["demo_detX", "demo_detY"], [IRI_CURRENT, IRI_VOLTAGE])
+    second = make_read_step("B", ["demo_detY", "demo_detX"], [IRI_VOLTAGE, IRI_CURRENT])
+    assert semantic_mapping.stream_annotation_key(
+        first
+    ) == semantic_mapping.stream_annotation_key(second)
+
+
+def test_stream_annotation_key_ignores_the_label(demo_channels):
+    """Two labels for one IRI mean the same thing and must not split a stream."""
+    first = make_read_step("A", ["demo_detX"], [IRI_CURRENT], labels=["current"])
+    second = make_read_step("B", ["demo_detX"], [IRI_CURRENT], labels=["amperage"])
+    assert semantic_mapping.stream_annotation_key(
+        first
+    ) == semantic_mapping.stream_annotation_key(second)
+
+
+def test_stream_annotation_key_differs_for_other_iri(demo_channels):
+    first = make_read_step("A", ["demo_detX"], [IRI_CURRENT])
+    second = make_read_step("B", ["demo_detX"], [IRI_VOLTAGE])
+    assert semantic_mapping.stream_annotation_key(
+        first
+    ) != semantic_mapping.stream_annotation_key(second)
+
+
+def test_stream_annotation_key_empty_without_annotation(demo_channels):
+    step = make_read_step("A", ["demo_detX"], [""])
+    assert semantic_mapping.stream_annotation_key(step) == ()
+
+
+# ------------------------------------------------------------- generated source
+
+
+def test_same_channels_different_iri_split_the_stream(demo_channels):
+    sources = build_sources(
+        [
+            make_read_step("A", ["demo_detX"], [IRI_CURRENT]),
+            make_read_step("B", ["demo_detX"], [IRI_VOLTAGE]),
+        ],
+        semantic_mapping_active=True,
+    )
+    assert stream_of(sources[0]) != stream_of(sources[1])
+    assert len(variables_handling.read_channel_names) == 2
+    assert all("semantics=" in source for source in sources)
+
+
+def test_same_channels_same_iri_share_the_stream(demo_channels):
+    sources = build_sources(
+        [
+            make_read_step("A", ["demo_detX"], [IRI_CURRENT]),
+            make_read_step("B", ["demo_detX"], [IRI_CURRENT]),
+        ],
+        semantic_mapping_active=True,
+    )
+    assert stream_of(sources[0]) == stream_of(sources[1])
+    assert len(variables_handling.read_channel_names) == 1
+
+
+def test_source_unchanged_without_semantic_mapping(demo_channels):
+    """A protocol that does not use semantic mapping has to produce exactly the
+    source it produced before, whether the IRIs are stored or not."""
+    steps = [
+        make_read_step("A", ["demo_detX"], [IRI_CURRENT]),
+        make_read_step("B", ["demo_detY"], [IRI_VOLTAGE]),
+    ]
+    disabled = build_sources(steps, semantic_mapping_active=False)
+    assert not any("semantics=" in source for source in disabled)
+
+    unannotated = [
+        make_read_step("A", ["demo_detX"], [""]),
+        make_read_step("B", ["demo_detY"], [""]),
+    ]
+    assert build_sources(unannotated, semantic_mapping_active=True) == disabled
+
+
+def test_annotated_source_passes_the_annotation_on(demo_channels):
+    source = build_sources(
+        [make_read_step("A", ["demo_detX"], [IRI_CURRENT])],
+        semantic_mapping_active=True,
+    )[0]
+    assert f"semantics={{'demo_detX': {{'label': 'quantity', 'iri': '{IRI_CURRENT}'}}}}"
+
+
+def test_split_trigger_also_passes_the_annotation_on(demo_channels):
+    step = make_read_step("A", ["demo_detX"], [IRI_CURRENT])
+    step.split_trigger = True
+    source = build_sources([step], semantic_mapping_active=True)[0]
+    assert "read_wo_trigger" in source
+    assert "semantics=" in source
+
+
+# -------------------------------------------------------------- mapping document
+
+
+def test_mapping_document_distinguishes_the_steps(demo_channels):
+    """Without the step, two read steps annotating one channel differently
+    produced two indistinguishable entries."""
+
+    class Protocol:
+        experiment_ontology_class = ""
+        experiment_ontology_class_iri = ""
+        variable_semantics = {}
+        variable_semantic_iris = {}
+        loop_step_dict = {}
+        loop_steps = [
+            make_read_step("A", ["demo_detX"], [IRI_CURRENT]),
+            make_read_step("B", ["demo_detX"], [IRI_VOLTAGE]),
+        ]
+
+    mapping = semantic_mapping.build_semantic_mapping(Protocol())
+    targets = [annotation["target"] for annotation in mapping["annotations"]]
+    assert [target["step"] for target in targets] == [
+        "Read Channels (A)",
+        "Read Channels (B)",
+    ]
+    assert all(target["data_key"] == "demo_detX" for target in targets)
+
+
+def test_mapping_document_keeps_unresolvable_channels(demo_channels):
+    """The document is documentation, so it must not lose a channel just because
+    the instrument is not currently loaded. It only loses the data key."""
+
+    class Protocol:
+        experiment_ontology_class = ""
+        experiment_ontology_class_iri = ""
+        variable_semantics = {}
+        variable_semantic_iris = {}
+        loop_step_dict = {}
+        loop_steps = [make_read_step("A", ["gone"], [IRI_CURRENT])]
+
+    mapping = semantic_mapping.build_semantic_mapping(Protocol())
+    target = mapping["annotations"][0]["target"]
+    assert target["name"] == "gone"
+    assert "data_key" not in target
+
+
+def test_mapping_document_disabled(demo_channels):
+    assert semantic_mapping.build_semantic_mapping(object(), enabled=False) is None
