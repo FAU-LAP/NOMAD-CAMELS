@@ -206,3 +206,56 @@ def test_unannotated_run_stays_untouched(tmp_path, detectors):
         for channel in ["demo_detX", "demo_detY"]:
             assert "semantic_iri" not in entry["data"][channel].attrs
             assert "semantic_label" not in entry["data"][channel].attrs
+
+
+@needs_descriptor_hook
+def test_experiment_description_reaches_every_dataset(tmp_path, detectors):
+    """The selected experiment class's description is stamped onto every read
+    channel's dataset, not just ones that also carry their own semantic_iri/
+    semantic_label annotation."""
+    det_x, det_y = detectors
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "described"})
+        helper_functions.set_experiment_description("Measures the foo of a sample.")
+        yield from helper_functions.trigger_and_read(
+            [det_x, det_y],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from bps.close_run()
+
+    with h5py.File(run_and_read(tmp_path, plan, "described"), "r") as file:
+        data = file["CAMELS_described"]["data"]
+        # both the annotated and the unannotated channel carry it
+        assert data["demo_detX"].attrs["experiment_description"] == (
+            "Measures the foo of a sample."
+        )
+        assert data["demo_detY"].attrs["experiment_description"] == (
+            "Measures the foo of a sample."
+        )
+        # its own annotation is unaffected
+        assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
+        assert "semantic_iri" not in data["demo_detY"].attrs
+
+
+def test_experiment_description_does_not_leak_into_the_next_run(tmp_path, detectors):
+    """A run that never sets a description must not see the previous run's."""
+    det_x, det_y = detectors
+
+    def described_plan():
+        yield from bps.open_run(md={"session_name": "described2"})
+        helper_functions.set_experiment_description("Measures the foo of a sample.")
+        yield from helper_functions.trigger_and_read([det_x, det_y], name="primary")
+        yield from bps.close_run()
+
+    def plain_plan():
+        yield from bps.open_run(md={"session_name": "plain2"})
+        yield from helper_functions.trigger_and_read([det_x, det_y], name="primary")
+        yield from bps.close_run()
+
+    run_and_read(tmp_path, described_plan, "described2")
+    with h5py.File(run_and_read(tmp_path, plain_plan, "plain2"), "r") as file:
+        data = file["CAMELS_plain2"]["data"]
+        assert "experiment_description" not in data["demo_detX"].attrs
+        assert "experiment_description" not in data["demo_detY"].attrs

@@ -106,6 +106,11 @@ class Measurement_Protocol:
             if "experiment_ontology_class_iri" in kwargs
             else ""
         )
+        self.experiment_ontology_class_description = (
+            kwargs["experiment_ontology_class_description"]
+            if "experiment_ontology_class_description" in kwargs
+            else ""
+        )
         self.variable_semantics = (
             kwargs["variable_semantics"]
             if "variable_semantics" in kwargs
@@ -373,6 +378,14 @@ class Measurement_Protocol:
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
+        if (
+            variables_handling.semantic_mapping_active
+            and self.experiment_ontology_class_description
+        ):
+            plan_string += (
+                "\thelper_functions.set_experiment_description("
+                f"{self.experiment_ontology_class_description!r})\n"
+            )
         plan_string += """
     if web_ports:
         yield from wait_for_dash_ready_plan(web_ports)
@@ -611,6 +624,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             "experiment_ontology_class_iri",
             "",
         )
+        self._selected_experiment_class_description = getattr(
+            self.protocol,
+            "experiment_ontology_class_description",
+            "",
+        )
         if hasattr(self, "checkBox_semantic_mapping"):
             ontology_available = semantic_mapping_available()
             if not ontology_available:
@@ -776,6 +794,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         except Exception:
             ontology_tree = []
         experiment_menu = QMenu(self.experiment_menu_button)
+        experiment_menu.setToolTipsVisible(True)
         root_nodes = ontology_tree[0].get("children", []) if ontology_tree else []
         self._build_experiment_submenus(experiment_menu, root_nodes)
         self.experiment_menu_button.set_menu(experiment_menu)
@@ -788,24 +807,29 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         for node in nodes:
             name = node.get("name", "")
             iri = node.get("iri", "")
+            description = node.get("description", "")
             children = node.get("children", [])
             if not name:
                 continue
             if children:
                 submenu = menu.addMenu(name)
+                submenu.setToolTipsVisible(True)
                 self._build_experiment_submenus(submenu, children)
             else:
                 action = menu.addAction(name)
+                action.setToolTip(description)
                 action.triggered.connect(
-                    lambda checked=False, selected_name=name, selected_iri=iri: 
-                        self._set_experiment_class( selected_name, selected_iri)
+                    lambda checked=False, selected_name=name, selected_iri=iri, selected_description=description:
+                        self._set_experiment_class(selected_name, selected_iri, selected_description)
                 )
 
-    def _set_experiment_class(self, class_name, class_iri=""):
+    def _set_experiment_class(self, class_name, class_iri="", class_description=""):
         self._selected_experiment_class = class_name
         self._selected_experiment_class_iri = class_iri
+        self._selected_experiment_class_description = class_description
         self.protocol.experiment_ontology_class = class_name
         self.protocol.experiment_ontology_class_iri = class_iri
+        self.protocol.experiment_ontology_class_description = class_description
         self._update_experiment_button_text()
         if hasattr(self.variable_table, "refresh_semantic_options"):
             self.variable_table.refresh_semantic_options()
@@ -814,6 +838,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         button_text = self._selected_experiment_class or "LAPExperiment"
         if hasattr(self, "experiment_menu_button"):
             self.experiment_menu_button.set_display_text(button_text)
+            self.experiment_menu_button.setToolTip(
+                self._selected_experiment_class_description
+                or "Select an experiment class from the ontology hierarchy."
+            )
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection
@@ -943,6 +971,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             )
         self.protocol.experiment_ontology_class = self._selected_experiment_class
         self.protocol.experiment_ontology_class_iri = self._selected_experiment_class_iri
+        self.protocol.experiment_ontology_class_description = (
+            self._selected_experiment_class_description
+        )
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
         self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()

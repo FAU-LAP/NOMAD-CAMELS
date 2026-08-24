@@ -101,6 +101,19 @@ def ontology_object_to_label_iri(obj):
     return nice_name(obj), getattr(obj, "iri", "")
 
 
+def class_description(cls):
+    """Return a class's rdfs:comment(s) joined into one string, or "" if none."""
+    comments = [str(c).strip() for c in (getattr(cls, "comment", None) or []) if str(c).strip()]
+    return " ".join(comments)
+
+
+def get_class_description(iri, ontology_path=None):
+    """Return the rdfs:comment of the ontology class with the given IRI, or ""."""
+    ontology = load_local_ontology(ontology_path, run_reasoner=False)
+    cls = ontology.world[iri]
+    return class_description(cls) if cls is not None else ""
+
+
 def subclass_tree_as_list(ontology_path=None):
     ontology = load_local_ontology(ontology_path, run_reasoner=True)
     parent_class = ontology["LAPExperiment"]
@@ -115,6 +128,7 @@ def _class_tree_as_list(parent_class, visited=None):
             {
                 "name": parent_class.name,
                 "iri": getattr(parent_class, "iri", ""),
+                "description": class_description(parent_class),
                 "children": [],
             }
         ]
@@ -123,6 +137,7 @@ def _class_tree_as_list(parent_class, visited=None):
         {
             "name": parent_class.name,
             "iri": getattr(parent_class, "iri", ""),
+            "description": class_description(parent_class),
             "children": [
                 child
                 for subcls in parent_class.subclasses()

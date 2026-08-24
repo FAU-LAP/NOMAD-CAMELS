@@ -242,6 +242,19 @@ def trigger_multi(devices, grp=None):
             yield from bps.trigger(obj, group=grp)
 
 
+def set_experiment_description(description):
+    """Registers the protocol's selected experiment-class description for the
+    run currently being built, so it is stamped onto every read channel's
+    dataset. Called once per run, right after `open_run`.
+
+    Parameters
+    ----------
+    description : str
+        The rdfs:comment of the selected ontology experiment class.
+    """
+    semantic_runtime.set_experiment_description(description)
+
+
 def read_wo_trigger(
     devices, grp=None, stream="primary", skip_on_exception=None, semantics=None
 ):

@@ -23,6 +23,7 @@ import logging
 
 _stream_annotations = {}
 _checked_support = False
+_experiment_description = ""
 
 
 def _warn_if_unsupported():
@@ -66,9 +67,24 @@ def get(stream_name):
     return _stream_annotations.get(stream_name, None)
 
 
+def set_experiment_description(description):
+    """Records the protocol's selected experiment-class description for the
+    run currently being built, so it can be stamped onto every read channel's
+    dataset. Called once, right after `open_run`."""
+    global _experiment_description
+    _experiment_description = str(description) if description else ""
+
+
+def get_experiment_description():
+    """Returns the experiment-class description registered for the run
+    currently being built, or "" if none was set."""
+    return _experiment_description
+
+
 def reset():
     """Forgets all registered annotations. Called when a run starts, so that a
     protocol cannot see the annotations of the one before it."""
-    global _checked_support
+    global _checked_support, _experiment_description
     _stream_annotations.clear()
     _checked_support = False
+    _experiment_description = ""

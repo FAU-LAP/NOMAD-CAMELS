@@ -65,28 +65,29 @@ class SemanticRunBundler(RunBundler):
     def _add_semantics(desc_key, objs_dks):
         """Returns `objs_dks` with the annotations of the stream `desc_key`
         added, or unchanged if there are none."""
-        annotations = semantic_runtime.get(desc_key)
-        if not annotations:
+        annotations = semantic_runtime.get(desc_key) or {}
+        description = semantic_runtime.get_experiment_description()
+        if not annotations and not description:
             return objs_dks
         # The data keys of an object are its cached `describe()` output, shared
         # by every stream reading it. Copy before writing, or the annotation of
-        # one stream would show up in all the others.
+        # one stream would show up in all the others. The experiment
+        # description applies to every data key, not just annotated ones, so
+        # every dict is copied whenever there is anything at all to write.
         copied = {
-            obj: {
-                key: dict(data_key) if key in annotations else data_key
-                for key, data_key in data_keys.items()
-            }
+            obj: {key: dict(data_key) for key, data_key in data_keys.items()}
             for obj, data_keys in objs_dks.items()
         }
         for data_keys in copied.values():
             for key, data_key in data_keys.items():
-                if key not in annotations:
-                    continue
-                # Only non-empty strings, h5py cannot store None as an attribute.
-                if annotations[key].get("iri"):
-                    data_key["semantic_iri"] = str(annotations[key]["iri"])
-                if annotations[key].get("label"):
-                    data_key["semantic_label"] = str(annotations[key]["label"])
+                if key in annotations:
+                    # Only non-empty strings, h5py cannot store None as an attribute.
+                    if annotations[key].get("iri"):
+                        data_key["semantic_iri"] = str(annotations[key]["iri"])
+                    if annotations[key].get("label"):
+                        data_key["semantic_label"] = str(annotations[key]["label"])
+                if description:
+                    data_key["experiment_description"] = description
         return copied
 
 
