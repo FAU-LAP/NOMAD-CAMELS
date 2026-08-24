@@ -746,8 +746,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def _setup_experiment_selector_menu(self, experiment_selector):
         if not semantic_mapping_available():
-            self.experiment_menu_button.setEnabled(False)
-            self.experiment_menu_button.setToolTip(
+            # experiment_menu_button only gets created below, once an
+            # ontology is available - fall back to disabling the plain
+            # placeholder combo box from the .ui file instead.
+            experiment_selector.setEnabled(False)
+            experiment_selector.setToolTip(
                 "Set a valid Experimental Techniques Ontology path in the "
                 "CAMELS settings first."
             )
