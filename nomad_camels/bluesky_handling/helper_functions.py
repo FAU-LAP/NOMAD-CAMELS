@@ -32,8 +32,7 @@ from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 from nomad_camels import graphics
 from nomad_camels.bluesky_handling import semantic_runtime
-
-from suitcase.nomad_camels_hdf5 import Serializer, export
+from nomad_camels.bluesky_handling.camels_serializer import CAMELSSerializer
 
 import inspect
 import os
@@ -148,14 +147,18 @@ def export_function(
             runs = [runs]
         for run in runs:
             docs = run.documents(fill="yes")
-            export(
-                docs,
+            # Same as suitcase's `export`, but with the CAMELS serializer, so
+            # that exporting after the run writes the same file as writing
+            # during it.
+            with CAMELSSerializer(
                 path,
                 fname,
-                new_file_each,
+                new_file_each=new_file_each,
                 plot_data=plot_data,
                 do_nexus_output=do_nexus_output,
-            )
+            ) as serializer:
+                for item in docs:
+                    serializer(*item)
     if export_csv or export_json:
         from nomad_camels.utility.databroker_export import export_h5_to_csv_json
 
@@ -211,7 +214,7 @@ def saving_function(
         fname = os.path.basename(path)
         path = os.path.dirname(path)
     return [
-        Serializer(
+        CAMELSSerializer(
             path,
             fname,
             new_file_each=new_file_each,
