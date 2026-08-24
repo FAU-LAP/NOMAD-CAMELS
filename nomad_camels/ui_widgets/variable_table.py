@@ -89,10 +89,16 @@ class VariableTable(QTableView):
         # count silently falls out of sync with model.columnCount() - no width
         # ever "sticks" on the extra column after that (Qt just ignores it).
         self.set_table_headers()
-        self.model.blockSignals(True)
+        # Only suppress check_variable's per-item validation during bulk
+        # population - blockSignals(True) would also swallow rowsInserted,
+        # which the vertical header (row "sections", exactly like the
+        # horizontal header's columns) needs to stay in sync with
+        # model.rowCount(); rows added while that's blocked don't get laid
+        # out/painted until some later, unblocked structural change happens.
+        self.model.itemChanged.disconnect(self.check_variable)
         for var in sorted(self.protocol.variables):
             self.append_variable(var, str(self.protocol.variables[var]), unique=False)
-        self.model.blockSignals(False)
+        self.model.itemChanged.connect(self.check_variable)
         self.update_variables()
 
     def append_variable(self, name="name", value="value", unique=True):
