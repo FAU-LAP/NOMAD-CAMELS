@@ -465,14 +465,18 @@ class Channels_Check_Table(QWidget):
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
                     apply_table_cell_combobox_style(combo)
-                    normalized_options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
+                    normalized_options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI, "")]
                     for option in self.combo_boxes[lab]:
                         if isinstance(option, tuple):
-                            label, iri = option
+                            if len(option) == 3:
+                                label, iri, description = option
+                            else:
+                                label, iri = option
+                                description = ""
                         else:
-                            label, iri = option, ""
+                            label, iri, description = option, "", ""
                         if label:
-                            normalized_options.append((label, iri))
+                            normalized_options.append((label, iri, description))
                     data_key = self.combo_data_keys.get(lab, "")
                     data_value = ""
                     if (
@@ -483,11 +487,17 @@ class Channels_Check_Table(QWidget):
                         n_chan = self.info_dict["channel"].index(channel)
                         if n_chan < len(self.info_dict[data_key]):
                             data_value = self.info_dict[data_key][n_chan]
-                    for label, iri in normalized_options:
+                    for label, iri, description in normalized_options:
                         combo.addItem(label, iri)
+                        if description:
+                            combo.setItemData(
+                                combo.count() - 1, description, Qt.ToolTipRole
+                            )
                     selected_index = 0
                     if data_value:
-                        for index, (_label, iri) in enumerate(normalized_options):
+                        for index, (_label, iri, _description) in enumerate(
+                            normalized_options
+                        ):
                             if iri == data_value:
                                 selected_index = index
                                 break

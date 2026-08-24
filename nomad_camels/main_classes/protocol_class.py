@@ -794,7 +794,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         except Exception:
             ontology_tree = []
         experiment_menu = QMenu(self.experiment_menu_button)
-        experiment_menu.setToolTipsVisible(True)
         root_nodes = ontology_tree[0].get("children", []) if ontology_tree else []
         self._build_experiment_submenus(experiment_menu, root_nodes)
         self.experiment_menu_button.set_menu(experiment_menu)
@@ -804,6 +803,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         )
 
     def _build_experiment_submenus(self, menu, nodes):
+        # No tooltips here by design - the experiment selector itself stays
+        # plain; a per-item description tooltip is shown for physical
+        # quantities instead (Channels_Check_Table/VariableTable's semantics
+        # combo boxes).
         for node in nodes:
             name = node.get("name", "")
             iri = node.get("iri", "")
@@ -813,11 +816,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
                 continue
             if children:
                 submenu = menu.addMenu(name)
-                submenu.setToolTipsVisible(True)
                 self._build_experiment_submenus(submenu, children)
             else:
                 action = menu.addAction(name)
-                action.setToolTip(description)
                 action.triggered.connect(
                     lambda checked=False, selected_name=name, selected_iri=iri, selected_description=description:
                         self._set_experiment_class(selected_name, selected_iri, selected_description)
@@ -838,10 +839,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         button_text = self._selected_experiment_class or "LAPExperiment"
         if hasattr(self, "experiment_menu_button"):
             self.experiment_menu_button.set_display_text(button_text)
-            self.experiment_menu_button.setToolTip(
-                self._selected_experiment_class_description
-                or "Select an experiment class from the ontology hierarchy."
-            )
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection

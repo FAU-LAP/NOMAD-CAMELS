@@ -1,5 +1,8 @@
-"""Tests for the experiment-class selector's tooltip wiring in
-General_Protocol_Settings (protocol_class.py).
+"""Tests for the experiment-class selector in General_Protocol_Settings
+(protocol_class.py): the selected class's description is stored (needed for
+the experiment_description HDF5 attribute), but deliberately not shown as a
+tooltip on the selector itself - that's reserved for physical-quantity
+options instead (see physical_quantity_tooltip_test.py).
 
 These call the relevant methods against a minimal stand-in instead of a real
 General_Protocol_Settings (which needs Ui_Protocol_Settings.setupUi() and a
@@ -14,8 +17,6 @@ from nomad_camels.main_classes.protocol_class import (
     ExperimentMenuComboBox,
     General_Protocol_Settings,
 )
-
-DEFAULT_TOOLTIP = "Select an experiment class from the ontology hierarchy."
 
 
 class _StubProtocol:
@@ -43,7 +44,7 @@ class _StubSettings:
     _update_experiment_button_text = General_Protocol_Settings._update_experiment_button_text
 
 
-def test_build_experiment_submenus_sets_action_tooltip(qtbot):
+def test_build_experiment_submenus_does_not_enable_tooltips(qtbot):
     settings = _StubSettings()
     menu = QMenu()
     nodes = [
@@ -55,31 +56,24 @@ def test_build_experiment_submenus_sets_action_tooltip(qtbot):
         }
     ]
     settings._build_experiment_submenus(menu, nodes)
-    actions = menu.actions()
-    assert len(actions) == 1
-    assert actions[0].toolTip() == "Does the foo."
+    assert menu.actions()[0].text() == "FooExperiment"
+    # Qt only ever shows an action's tooltip in a menu if this is True; it's
+    # left at its default (False) here, so no tooltip is displayed at all.
+    assert menu.toolTipsVisible() is False
 
 
-def test_build_experiment_submenus_handles_missing_description(qtbot):
-    """Qt falls back an action's tooltip to its text when none is set
-    explicitly (an empty string counts as "none") - not blank, but harmless."""
-    settings = _StubSettings()
-    menu = QMenu()
-    nodes = [{"name": "FooExperiment", "iri": "http://test.example#Foo", "children": []}]
-    settings._build_experiment_submenus(menu, nodes)
-    assert menu.actions()[0].toolTip() == "FooExperiment"
-
-
-def test_set_experiment_class_updates_button_tooltip_and_protocol(qtbot):
+def test_set_experiment_class_stores_description_without_setting_a_tooltip(qtbot):
     settings = _StubSettings()
     settings._set_experiment_class("FooExperiment", "http://test.example#Foo", "Does the foo.")
-    assert settings.experiment_menu_button.toolTip() == "Does the foo."
     assert settings.protocol.experiment_ontology_class == "FooExperiment"
     assert settings.protocol.experiment_ontology_class_iri == "http://test.example#Foo"
     assert settings.protocol.experiment_ontology_class_description == "Does the foo."
+    # the button's tooltip is untouched, whatever it was before selection
+    assert settings.experiment_menu_button.toolTip() == ""
 
 
-def test_update_experiment_button_text_falls_back_to_default_tooltip(qtbot):
+def test_update_experiment_button_text_does_not_touch_the_tooltip(qtbot):
     settings = _StubSettings()
+    settings.experiment_menu_button.setToolTip("something set elsewhere")
     settings._update_experiment_button_text()
-    assert settings.experiment_menu_button.toolTip() == DEFAULT_TOOLTIP
+    assert settings.experiment_menu_button.toolTip() == "something set elsewhere"

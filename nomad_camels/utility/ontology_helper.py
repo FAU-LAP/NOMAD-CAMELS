@@ -192,7 +192,10 @@ def _get_physical_quantities_cached(ontology_path, class_name):
     quantities = _get_class_physical_quantities(experiment_class)
     return tuple(
         sorted(
-            {ontology_object_to_label_iri(quantity) for quantity in quantities},
+            {
+                (*ontology_object_to_label_iri(quantity), class_description(quantity))
+                for quantity in quantities
+            },
             key=lambda option: option[0],
         )
     )

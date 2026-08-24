@@ -57,6 +57,10 @@ class Read_Channels(Loop_Step):
             self.channel_semantic_iris = step_info["channel_semantic_iris"]
         else:
             self.channel_semantic_iris = [""] * len(self.channel_list)
+        if "channel_semantic_descriptions" in step_info:
+            self.channel_semantic_descriptions = step_info["channel_semantic_descriptions"]
+        else:
+            self.channel_semantic_descriptions = [""] * len(self.channel_list)
         # make sure that the channel semantics, iri, lists have same length
         while len(self.channel_semantic_iris) < len(self.channel_list):
             self.channel_semantic_iris.append("")
@@ -69,6 +73,15 @@ class Read_Channels(Loop_Step):
 
         if len(self.channel_semantics) > len(self.channel_list):
             self.channel_semantics = self.channel_semantics[: len(self.channel_list)]
+
+        # Backward compatibility to update existing protocols that do not have the channel_semantic_descriptions field
+        while len(self.channel_semantic_descriptions) < len(self.channel_list):
+            self.channel_semantic_descriptions.append("")
+
+        if len(self.channel_semantic_descriptions) > len(self.channel_list):
+            self.channel_semantic_descriptions = self.channel_semantic_descriptions[
+                : len(self.channel_list)
+            ]
 
         if "read_variables" in step_info:
             self.read_variables = step_info["read_variables"]
@@ -273,6 +286,11 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         }
         combo_boxes = {}
         combo_data_keys = {}
+        # Looked up again in update_step_config() to derive the description
+        # matching whichever IRI ends up selected.
+        self._semantic_option_descriptions = {
+            iri: description for _label, iri, description in semantic_options
+        }
         if show_semantics:
             labels.append("semantics")
             info_dict["semantics"] = self.loop_step.channel_semantics
@@ -325,6 +343,10 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         if "semantics" in info:
             self.loop_step.channel_semantics = info["semantics"]
             self.loop_step.channel_semantic_iris = info.get("semantic_iris", [])
+            self.loop_step.channel_semantic_descriptions = [
+                self._semantic_option_descriptions.get(iri, "")
+                for iri in self.loop_step.channel_semantic_iris
+            ]
         self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
 

@@ -45,21 +45,21 @@ def demo_channels():
     variables_handling.semantic_mapping_active = old_active
 
 
-def make_read_step(name, channels, iris, labels=None):
+def make_read_step(name, channels, iris, labels=None, descriptions=None):
     """Builds a read step the way a loaded protocol would. The config widget
     stores an empty label whenever no IRI was selected, which is mirrored here."""
     if labels is None:
         labels = [("quantity" if iri else "") for iri in iris]
-    step = Read_Channels(
-        name=name,
-        step_info={
-            "channel_list": list(channels),
-            "channel_semantics": list(labels),
-            "channel_semantic_iris": list(iris),
-            "skip_failed": [False] * len(channels),
-            "read_variables": False,
-        },
-    )
+    step_info = {
+        "channel_list": list(channels),
+        "channel_semantics": list(labels),
+        "channel_semantic_iris": list(iris),
+        "skip_failed": [False] * len(channels),
+        "read_variables": False,
+    }
+    if descriptions is not None:
+        step_info["channel_semantic_descriptions"] = list(descriptions)
+    step = Read_Channels(name=name, step_info=step_info)
     # `Loop_Step.__init__` builds `full_name` before the subclass sets its
     # `step_type`; loading a protocol or drawing the tree fixes that afterwards.
     step.update_full_name()
@@ -119,6 +119,27 @@ def test_read_step_annotations(demo_channels):
         "demo_detX": {"label": "quantity", "iri": IRI_CURRENT},
         "demo_detY": {"label": "quantity", "iri": IRI_VOLTAGE},
     }
+
+
+def test_read_step_annotations_includes_the_physical_quantity_description(demo_channels):
+    step = make_read_step(
+        "A",
+        ["demo_detX"],
+        [IRI_CURRENT],
+        descriptions=["An electric current."],
+    )
+    assert semantic_mapping.read_step_annotations(step) == {
+        "demo_detX": {
+            "label": "quantity",
+            "iri": IRI_CURRENT,
+            "description": "An electric current.",
+        },
+    }
+
+
+def test_read_step_annotations_no_description_key_when_unset(demo_channels):
+    step = make_read_step("A", ["demo_detX"], [IRI_CURRENT])
+    assert "description" not in semantic_mapping.read_step_annotations(step)["demo_detX"]
 
 
 def test_read_step_annotations_unannotated(demo_channels):

@@ -86,6 +86,10 @@ class SemanticRunBundler(RunBundler):
                         data_key["semantic_iri"] = str(annotations[key]["iri"])
                     if annotations[key].get("label"):
                         data_key["semantic_label"] = str(annotations[key]["label"])
+                    if annotations[key].get("description"):
+                        data_key["semantic_description"] = str(
+                            annotations[key]["description"]
+                        )
                 if description:
                     data_key["experiment_description"] = description
         return copied

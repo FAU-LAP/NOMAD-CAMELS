@@ -109,6 +109,58 @@ def test_annotation_reaches_the_dataset(tmp_path, detectors):
 
 
 @needs_descriptor_hook
+def test_physical_quantity_description_reaches_the_dataset(tmp_path, detectors):
+    """The selected physical quantity's own ontology description (distinct
+    from the whole-experiment description) is stamped onto its channel's
+    dataset, next to semantic_iri/semantic_label."""
+    det_x, det_y = detectors
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "quantity_described"})
+        yield from helper_functions.trigger_and_read(
+            [det_x, det_y],
+            name="primary",
+            semantics={
+                "demo_detX": {
+                    "label": "current",
+                    "iri": IRI_CURRENT,
+                    "description": "An electric current.",
+                }
+            },
+        )
+        yield from bps.close_run()
+
+    with h5py.File(
+        run_and_read(tmp_path, plan, "quantity_described"), "r"
+    ) as file:
+        data = file["CAMELS_quantity_described"]["data"]
+        assert data["demo_detX"].attrs["semantic_description"] == "An electric current."
+        # demo_detY has no semantics at all, so it gets nothing either
+        assert "semantic_description" not in data["demo_detY"].attrs
+
+
+@needs_descriptor_hook
+def test_annotation_without_description_omits_the_attribute(tmp_path, detectors):
+    det_x, _ = detectors
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "no_quantity_description"})
+        yield from helper_functions.trigger_and_read(
+            [det_x],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from bps.close_run()
+
+    with h5py.File(
+        run_and_read(tmp_path, plan, "no_quantity_description"), "r"
+    ) as file:
+        data = file["CAMELS_no_quantity_description"]["data"]
+        assert "semantic_iri" in data["demo_detX"].attrs
+        assert "semantic_description" not in data["demo_detX"].attrs
+
+
+@needs_descriptor_hook
 def test_repeated_reads_keep_one_annotated_dataset(tmp_path, detectors):
     """A read inside a loop appends to one stream, the attribute is only written
     when the dataset is created."""

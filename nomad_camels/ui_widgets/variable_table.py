@@ -200,16 +200,22 @@ class VariableTable(QTableView):
         combo = QComboBox(self)
         apply_table_cell_combobox_style(combo)
         # Always add an empty option first so users can clear a semantic selection.
-        options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
+        options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI, "")]
         for option in self.get_semantic_options():
             if isinstance(option, tuple):
-                label, iri = option
+                if len(option) == 3:
+                    label, iri, description = option
+                else:
+                    label, iri = option
+                    description = ""
             else:
-                label, iri = option, ""
+                label, iri, description = option, "", ""
             if label:
-                options.append((label, iri))
-        for label, iri in options:
+                options.append((label, iri, description))
+        for label, iri, description in options:
             combo.addItem(label, iri)
+            if description:
+                combo.setItemData(combo.count() - 1, description, Qt.ToolTipRole)
         semantic_iri = ""
         if self.protocol is not None:
             semantic_iri = getattr(
@@ -219,7 +225,7 @@ class VariableTable(QTableView):
             ).get(variable_name, "")
         selected_index = 0
         if semantic_iri:
-            for index, (_label, iri) in enumerate(options):
+            for index, (_label, iri, _description) in enumerate(options):
                 if iri == semantic_iri:
                     selected_index = index
                     break

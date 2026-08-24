@@ -58,14 +58,19 @@ def _iter_steps(protocol):
 
 
 def _read_channel_entries(step):
-    """Yields (channel, label, iri) for every annotated channel of a read step."""
+    """Yields (channel, label, iri, description) for every annotated channel
+    of a read step. ``description`` is the selected physical quantity's own
+    ontology description (rdfs:comment), captured when it was selected."""
     channels = _get(step, "channel_list", []) or []
     labels = _get(step, "channel_semantics", []) or []
     iris = _get(step, "channel_semantic_iris", []) or []
-    for channel, label, iri in zip_longest(channels, labels, iris, fillvalue=""):
+    descriptions = _get(step, "channel_semantic_descriptions", []) or []
+    for channel, label, iri, description in zip_longest(
+        channels, labels, iris, descriptions, fillvalue=""
+    ):
         if not _is_set(label) and not _is_set(iri):
             continue
-        yield channel, label, iri
+        yield channel, label, iri, description
 
 
 def _channel_target(channel, step):
@@ -89,14 +94,15 @@ def _read_channel_annotations(step):
             "target": _channel_target(channel, step),
             "semantic": _semantic(label, iri),
         }
-        for channel, label, iri in _read_channel_entries(step)
+        for channel, label, iri, _description in _read_channel_entries(step)
     ]
 
 
 def read_step_annotations(step):
     """
     Returns the annotations of a read step keyed by the data key the channel
-    will have in the data, i.e. ``{data_key: {"label": ..., "iri": ...}}``.
+    will have in the data, i.e.
+    ``{data_key: {"label": ..., "iri": ..., "description": ...}}``.
 
     This is the form needed to annotate the data itself, so channels that
     cannot be resolved to a data key are dropped rather than guessed, and so
@@ -113,7 +119,7 @@ def read_step_annotations(step):
     # Which channel provided an entry, only used to report a collision.
     sources = {}
     collisions = set()
-    for channel, label, iri in _read_channel_entries(step):
+    for channel, label, iri, description in _read_channel_entries(step):
         if not _is_set(iri):
             # A label without an IRI cannot come from the GUI, the table stores
             # an empty label whenever no IRI was selected. Splitting a stream
@@ -141,6 +147,8 @@ def read_step_annotations(step):
             collisions.add(data_key)
             continue
         annotations[data_key] = _semantic(label, iri)
+        if _is_set(description):
+            annotations[data_key]["description"] = description
         sources[data_key] = channel
     for data_key in collisions:
         annotations.pop(data_key, None)
