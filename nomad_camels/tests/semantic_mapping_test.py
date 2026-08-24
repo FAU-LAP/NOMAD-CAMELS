@@ -294,7 +294,33 @@ def test_mapping_document_distinguishes_the_steps(demo_channels):
         "Read Channels (A)",
         "Read Channels (B)",
     ]
-    assert all(target["data_key"] == "demo_detX" for target in targets)
+    # data_key is only present when it differs from the name (e.g. an alias);
+    # here it doesn't, so name alone already identifies the channel.
+    assert all(target["name"] == "demo_detX" for target in targets)
+    assert all("data_key" not in target for target in targets)
+
+
+def test_mapping_document_data_key_present_only_when_it_differs(demo_channels):
+    """data_key is only included when it differs from the channel's name in
+    the protocol - e.g. because of an alias - since otherwise the name alone
+    already identifies the data key."""
+    variables_handling.channel_aliases = {
+        "channel": ["demo_detX"],
+        "Alias": ["current"],
+    }
+
+    class Protocol:
+        experiment_ontology_class = ""
+        experiment_ontology_class_iri = ""
+        variable_semantics = {}
+        variable_semantic_iris = {}
+        loop_step_dict = {}
+        loop_steps = [make_read_step("A", ["current"], [IRI_CURRENT])]
+
+    mapping = semantic_mapping.build_semantic_mapping(Protocol())
+    target = mapping["annotations"][0]["target"]
+    assert target["name"] == "current"
+    assert target["data_key"] == "demo_detX"
 
 
 def test_mapping_document_keeps_unresolvable_channels(demo_channels):

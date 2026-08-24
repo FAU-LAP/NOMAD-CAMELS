@@ -83,9 +83,9 @@ class CAMELSSerializer(Serializer):
         super()._make_stop_entry(doc)
 
     def _mapped_annotations(self):
-        """Returns the protocol-declared annotations and their source, with
-        each channel annotation enriched with the real dataset path it
-        resolves to, if any."""
+        """Returns the protocol-declared annotations and their source, one
+        flat dict per annotation, each channel annotation enriched with the
+        real dataset path it resolves to, if any."""
         mapping = (self._start_doc or {}).get("semantic_mapping", None)
         if not mapping:
             return [], "manual_protocol_mapping"
@@ -99,16 +99,22 @@ class CAMELSSerializer(Serializer):
         }
         annotations = []
         for annotation in mapping.get("annotations", []) or []:
-            annotation = dict(annotation)
             target = annotation.get("target", {}) or {}
             semantic = annotation.get("semantic", {}) or {}
+            flat = {"type": target.get("type", "")}
+            for key in ("name", "step", "data_key"):
+                if key in target:
+                    flat[key] = target[key]
+            flat["label"] = semantic.get("label", "")
+            flat["iri"] = semantic.get("iri", "")
             if target.get("type") == "channel":
-                path = paths_by_data_key_iri.get(
-                    (target.get("data_key", ""), semantic.get("iri", ""))
-                )
+                # data_key is only present when it differs from the channel's
+                # name (e.g. an alias); otherwise the name doubles as the key.
+                data_key = target.get("data_key") or target.get("name", "")
+                path = paths_by_data_key_iri.get((data_key, flat["iri"]))
                 if path:
-                    annotation["path"] = path
-            annotations.append(annotation)
+                    flat["path"] = path
+            annotations.append(flat)
         return annotations, mapping.get("source", "manual_protocol_mapping")
 
     def _write_semantic_mapping(self):
@@ -128,12 +134,12 @@ class CAMELSSerializer(Serializer):
             return
         mapping = {
             "schema_version": SCHEMA_VERSION,
-            "entry": self._entry_name,
             "source": source,
             "attribute_names": {"iri": IRI_ATTRIBUTE, "label": LABEL_ATTRIBUTE},
             "annotations": annotations,
-            "unresolved": unresolved,
         }
+        if unresolved:
+            mapping["unresolved"] = unresolved
         details["semantic_mapping"] = json.dumps(
             mapping, ensure_ascii=False, indent=2
         )

@@ -37,8 +37,6 @@ READ_CHANNEL_MAPPING = {
             "target": {
                 "type": "channel",
                 "name": "demo_detX",
-                "role": "read",
-                "data_key": "demo_detX",
                 "step": "Read Channels (Read_Channels)",
             },
             "semantic": {"label": "current", "iri": IRI_CURRENT},
@@ -127,9 +125,15 @@ def test_repeated_reads_keep_one_annotated_dataset(tmp_path, detectors):
         yield from bps.close_run()
 
     with h5py.File(run_and_read(tmp_path, plan, "looped"), "r") as file:
-        data = file["CAMELS_looped"]["data"]
+        entry = file["CAMELS_looped"]
+        data = entry["data"]
         assert len(data["time"]) == 3
         assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
+
+        # nothing to report as unresolved here (one channel, one meaning, no
+        # protocol-declared mapping) - the key must not show up empty
+        mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
+        assert "unresolved" not in mapping
 
 
 @needs_descriptor_hook
@@ -164,18 +168,14 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
         mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
 
         assert mapping["schema_version"] == "2.0"
-        assert mapping["entry"] == "CAMELS_consolidated"
 
-        annotations = {a["target"]["name"]: a for a in mapping["annotations"]}
+        annotations = {a["name"]: a for a in mapping["annotations"]}
         resolved = annotations["demo_detX"]
-        assert resolved["target"]["role"] == "read"
+        assert resolved["type"] == "channel"
         # the declared annotation now carries the real path it resolved to,
         # and that path really carries what it claims
         assert resolved["path"] in file
-        assert (
-            file[resolved["path"]].attrs["semantic_iri"]
-            == resolved["semantic"]["iri"]
-        )
+        assert file[resolved["path"]].attrs["semantic_iri"] == resolved["iri"]
 
         # a channel read with two meanings has a merged view mixing both,
         # reported separately since no single dataset can carry both IRIs;

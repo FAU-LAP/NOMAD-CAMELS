@@ -68,16 +68,16 @@ def _read_channel_entries(step):
         yield channel, label, iri
 
 
-def _channel_target(channel, role, step):
-    """Builds the ``target`` of a channel annotation, including the data key the
-    channel will have in the data whenever it can be resolved."""
+def _channel_target(channel, step):
+    """Builds the ``target`` of a channel annotation, including the data key
+    the channel will have in the data whenever it can be resolved and differs
+    from the channel's name in the protocol (e.g. because of an alias)."""
     target = {
         "type": "channel",
         "name": channel,
-        "role": role,
     }
     data_key = variables_handling.channel_to_data_key(channel)
-    if data_key is not None:
+    if data_key is not None and data_key != channel:
         target["data_key"] = data_key
     target["step"] = _get(step, "full_name", "")
     return target
@@ -86,7 +86,7 @@ def _channel_target(channel, role, step):
 def _read_channel_annotations(step):
     return [
         {
-            "target": _channel_target(channel, "read", step),
+            "target": _channel_target(channel, step),
             "semantic": _semantic(label, iri),
         }
         for channel, label, iri in _read_channel_entries(step)
