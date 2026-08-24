@@ -76,6 +76,11 @@ instrument_aliases = {"Instrument": [], "Alias": []}
 read_channel_sets = []
 read_channel_names = []
 
+# Whether the protocol currently being built writes its semantic mapping. Set by
+# `protocol_builder.build_protocol` for the duration of one build, since a
+# sub-protocol carries its own `semantic_mapping_enabled`.
+semantic_mapping_active = False
+
 evaluation_functions_names = {
     "randint()": "randint(x) - random integer below x",
     "rand()": "rand() - random float between 0 and 1",

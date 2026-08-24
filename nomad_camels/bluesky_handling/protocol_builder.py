@@ -52,7 +52,6 @@ from nomad_camels.bluesky_handling.builder_helper_functions import (
 )
 from nomad_camels.utility import device_handling
 from nomad_camels.utility.semantic_mapping import semantic_mapping_to_json
-from nomad_camels.utility.ontology_helper import semantic_mapping_available
 
 
 # The default string in the beginning of the protocol including imports etc.
@@ -259,14 +258,45 @@ def build_protocol(
          (Default value = None)
          Metadata that describes the sample.
     """
+    # The build-scoped state is saved and restored around the actual build, since
+    # sub-protocols call `build_protocol` again from `import_protocol_string`, and
+    # since an exception during the build must not leak the cleared registries.
+    read_channel_names_old = list(variables_handling.read_channel_names)
+    read_channel_sets_old = list(variables_handling.read_channel_sets)
+    semantic_mapping_active_old = variables_handling.semantic_mapping_active
+    variables_handling.read_channel_names.clear()
+    variables_handling.read_channel_sets.clear()
+    variables_handling.semantic_mapping_active = getattr(
+        protocol, "semantic_mapping_enabled", False
+    )
+    try:
+        _build_protocol(protocol, file_path, save_path, catalog, userdata, sampledata)
+    finally:
+        variables_handling.read_channel_names = read_channel_names_old
+        variables_handling.read_channel_sets = read_channel_sets_old
+        variables_handling.semantic_mapping_active = semantic_mapping_active_old
+
+
+def _build_protocol(
+    protocol,
+    file_path,
+    save_path,
+    catalog,
+    userdata,
+    sampledata,
+):
+    """Implementation of `build_protocol`, called with the build-scoped registries
+    of `variables_handling` already cleared. See `build_protocol` for the
+    parameters."""
     # the protocol is converted to a dictionary and saved as a json
     protocol_dict = load_save_functions.get_save_str(protocol)
+    # Note: this deliberately does not check `semantic_mapping_available()`. That
+    # function answers whether the *GUI* can offer ontology classes for selection;
+    # annotations that were already made must be written out even on a machine
+    # that has no ontology file configured.
     semantic_mapping_json = semantic_mapping_to_json(
         protocol,
-        enabled=(
-            getattr(protocol, "semantic_mapping_enabled", False)
-            and semantic_mapping_available()
-        ),
+        enabled=variables_handling.semantic_mapping_active,
     )
     if not isinstance(file_path, pathlib.Path):
         file_path = pathlib.Path(file_path)
@@ -282,12 +312,6 @@ def build_protocol(
         save_path = pathlib.Path(save_path)
     if isinstance(save_path, pathlib.WindowsPath):
         save_path = save_path.as_posix()
-
-    # clearing leftovers from former builds
-    read_channel_names_old = list(variables_handling.read_channel_names)
-    read_channel_sets_old = list(variables_handling.read_channel_sets)
-    variables_handling.read_channel_names.clear()
-    variables_handling.read_channel_sets.clear()
 
     # beginning of larger strings
     device_import_string = "\n"
@@ -555,9 +579,6 @@ def build_protocol(
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(protocol_string)
-
-    variables_handling.read_channel_names = read_channel_names_old
-    variables_handling.read_channel_sets = read_channel_sets_old
 
 
 def user_sample_string(userdata, sampledata):
