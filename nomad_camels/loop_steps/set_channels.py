@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QCheckBox
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
-from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options
 from nomad_camels.utility import variables_handling
 
 
@@ -33,37 +32,6 @@ class Set_Channels(Loop_Step):
             if "channels_values" in step_info
             else {"Channels": [], "Values": []}
         )
-        if "Semantics" not in self.channels_values:
-            self.channels_values["Semantics"] = [""] * len(
-                self.channels_values.get("Channels", [])
-            )
-        if "SemanticIRIs" not in self.channels_values:
-            self.channels_values["SemanticIRIs"] = [""] * len(
-                self.channels_values.get("Channels", [])
-            )
-        # Backward compatibility for existing protocols:
-        # Channels, Semantics, SemanticIRIs and Values should have matching lengths.
-        while len(self.channels_values["Semantics"]) < len(
-            self.channels_values["Channels"]
-        ):
-            self.channels_values["Semantics"].append("")
-        if len(self.channels_values["Semantics"]) > len(
-            self.channels_values["Channels"]
-        ):
-            self.channels_values["Semantics"] = self.channels_values["Semantics"][
-                : len(self.channels_values["Channels"])
-            ]
-        while len(self.channels_values["SemanticIRIs"]) < len(
-            self.channels_values["Channels"]
-        ):
-            self.channels_values["SemanticIRIs"].append("")
-
-        if len(self.channels_values["SemanticIRIs"]) > len(
-            self.channels_values["Channels"]
-        ):
-            self.channels_values["SemanticIRIs"] = self.channels_values["SemanticIRIs"][
-                : len(self.channels_values["Channels"])
-            ]
         self.wait_for_set = (
             step_info["wait_for_set"] if "wait_for_set" in step_info else True
         )
@@ -135,35 +103,17 @@ class Set_Channels_Config(Loop_Step_Config):
         for channel in channels:
             if channels[channel].output:
                 box.append(channel)
-        protocol = getattr(self.loop_step, "protocol", None)
-        if protocol is None:
-            protocol = getattr(variables_handling, "current_protocol", None)
-        semantic_options = get_protocol_physical_quantity_options(protocol)
-        show_semantics = bool(semantic_options)
-        labels = ["set", "channel"]
+        labels = ["set", "channel", "value"]
         info_dict = {
             "channel": self.loop_step.channels_values["Channels"],
             "value": self.loop_step.channels_values["Values"],
         }
-        combo_boxes = {}
-        combo_data_keys = {}
-        if show_semantics:
-            labels.append("semantics")
-            info_dict["semantics"] = self.loop_step.channels_values["Semantics"]
-            info_dict["semantic_iris"] = self.loop_step.channels_values[
-                "SemanticIRIs"
-            ]
-            combo_boxes["semantics"] = semantic_options
-            combo_data_keys["semantics"] = "semantic_iris"
-        labels.append("value")
         self.sub_widget = Channels_Check_Table(
             self,
             labels,
             True,
             info_dict,
             [labels.index("value")],
-            combo_boxes=combo_boxes,
-            combo_data_keys=combo_data_keys,
         )
         self.checkBox_wait_for_set = QCheckBox("Wait for set")
         self.checkBox_wait_for_set.setChecked(True)
@@ -180,9 +130,3 @@ class Set_Channels_Config(Loop_Step_Config):
 
         self.loop_step.channels_values["Channels"] = info["channel"]
         self.loop_step.channels_values["Values"] = info["value"]
-
-        if "semantics" in info:
-            self.loop_step.channels_values["Semantics"] = info["semantics"]
-            self.loop_step.channels_values["SemanticIRIs"] = info.get(
-                "semantic_iris", []
-            )

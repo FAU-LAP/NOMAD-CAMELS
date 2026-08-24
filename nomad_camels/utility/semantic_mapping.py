@@ -68,22 +68,6 @@ def _read_channel_entries(step):
         yield channel, label, iri
 
 
-def _set_channel_entries(step):
-    """Yields (channel, label, iri, value) for every annotated channel of a set
-    step."""
-    channels_values = _get(step, "channels_values", {}) or {}
-    channels = channels_values.get("Channels", []) or []
-    labels = channels_values.get("Semantics", []) or []
-    iris = channels_values.get("SemanticIRIs", []) or []
-    values = channels_values.get("Values", []) or []
-    for channel, label, iri, value in zip_longest(
-        channels, labels, iris, values, fillvalue=""
-    ):
-        if not _is_set(label) and not _is_set(iri):
-            continue
-        yield channel, label, iri, value
-
-
 def _channel_target(channel, role, step):
     """Builds the ``target`` of a channel annotation, including the data key the
     channel will have in the data whenever it can be resolved."""
@@ -107,20 +91,6 @@ def _read_channel_annotations(step):
         }
         for channel, label, iri in _read_channel_entries(step)
     ]
-
-
-def _set_channel_annotations(step):
-    annotations = []
-    for channel, label, iri, value in _set_channel_entries(step):
-        annotation = {
-            "target": _channel_target(channel, "set", step),
-            "semantic": _semantic(label, iri),
-        }
-        # Keep the CAMELS set expression as contextual target metadata.
-        if _is_set(value):
-            annotation["target"]["value_expression"] = str(value)
-        annotations.append(annotation)
-    return annotations
 
 
 def read_step_annotations(step):
@@ -235,8 +205,6 @@ def build_semantic_mapping(protocol, enabled=True):
         step_type = _get(step, "step_type", "")
         if step_type == "Read Channels":
             annotations.extend(_read_channel_annotations(step))
-        elif step_type == "Set Channels":
-            annotations.extend(_set_channel_annotations(step))
     annotations.extend(_variable_annotations(protocol))
     return {
         "schema_version": "1.1",

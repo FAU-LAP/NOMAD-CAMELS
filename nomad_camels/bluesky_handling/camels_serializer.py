@@ -1,15 +1,19 @@
-"""Adds the semantic index to the HDF5 file written by
-`suitcase-nomad-camels-hdf5`.
+"""Consolidates the semantic mapping written into the HDF5 file.
 
 Every dataset of an annotated channel carries its IRI as an attribute, written
 by suitcase from the data keys of the descriptor (see
-`run_engine_overwrite.SemanticRunBundler`). The index collects those attributes
-into one place per run entry, together with the full path of the dataset they
-sit on, so that a reader does not have to walk the file to find them.
+`run_engine_overwrite.SemanticRunBundler`). This serializer takes over writing
+the `semantic_mapping` entry from the base `suitcase-nomad-camels-hdf5`
+package - which would otherwise write it from the protocol design alone, at
+run start - and instead writes one consolidated version at run stop: the same
+protocol-declared annotations, enriched with the real path of the dataset
+each channel annotation resolves to, plus a mixed-meaning `value_log` case
+that resolving from the protocol alone could not know about.
 
-It is built from what was actually written rather than from the protocol, so
-the index and the attributes cannot drift apart. The serializer is the only
-component that knows the real paths, which is why this lives here.
+It is built from what was actually written rather than only from the
+protocol, so the paths and the attributes cannot drift apart. The serializer
+is the only component that knows the real paths, which is why this lives
+here.
 """
 
 import json
@@ -17,19 +21,29 @@ import logging
 
 from suitcase.nomad_camels_hdf5 import Serializer
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "2.0"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
 
 
 class CAMELSSerializer(Serializer):
-    """A `Serializer` that additionally writes a semantic index into
-    ``<entry>/measurement_details/semantic_index``."""
+    """A `Serializer` that writes one consolidated semantic mapping into
+    ``<entry>/measurement_details/semantic_mapping``, instead of the base
+    class's design-only version."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # {dataset path: entry of the index}
+        # {dataset path: entry of the mapping}
         self._semantic_datasets = {}
+
+    def _make_start_entry(self, doc):
+        # Written by _write_semantic_mapping at stop instead, once the real
+        # paths are known - the base class must not write its own,
+        # design-only version. self._start_doc (deep-copied by the caller
+        # before this runs) still keeps the original mapping for that.
+        doc = dict(doc)
+        doc.pop("semantic_mapping", None)
+        super()._make_start_entry(doc)
 
     def _add_data_to_stream_group(
         self, metadata, stream_group, ep_data_array, ep_data_key
@@ -63,82 +77,68 @@ class CAMELSSerializer(Serializer):
     def _make_stop_entry(self, doc):
         # Has to happen before, the parent closes the file at the end of it.
         try:
-            self._write_semantic_index()
+            self._write_semantic_mapping()
         except Exception as e:
-            logging.warning(f"Could not write the semantic index: {e}")
+            logging.warning(f"Could not write the semantic mapping: {e}")
         super()._make_stop_entry(doc)
 
-    def _write_semantic_index(self):
-        """Writes the index into the entry currently open.
+    def _mapped_annotations(self):
+        """Returns the protocol-declared annotations and their source, with
+        each channel annotation enriched with the real dataset path it
+        resolves to, if any."""
+        mapping = (self._start_doc or {}).get("semantic_mapping", None)
+        if not mapping:
+            return [], "manual_protocol_mapping"
+        if isinstance(mapping, str):
+            mapping = json.loads(mapping)
+        # The IRI is part of the key so that one data key annotated with two
+        # different meanings across steps still resolves unambiguously.
+        paths_by_data_key_iri = {
+            (entry["data_key"], entry["iri"]): entry["path"]
+            for entry in self._semantic_datasets.values()
+        }
+        annotations = []
+        for annotation in mapping.get("annotations", []) or []:
+            annotation = dict(annotation)
+            target = annotation.get("target", {}) or {}
+            semantic = annotation.get("semantic", {}) or {}
+            if target.get("type") == "channel":
+                path = paths_by_data_key_iri.get(
+                    (target.get("data_key", ""), semantic.get("iri", ""))
+                )
+                if path:
+                    annotation["path"] = path
+            annotations.append(annotation)
+        return annotations, mapping.get("source", "manual_protocol_mapping")
+
+    def _write_semantic_mapping(self):
+        """Writes the consolidated mapping into the entry currently open.
 
         `stop` calls `_make_stop_entry` once per file of the run, so this may
         run several times with `self._entry` bound to a different file. The
-        paths are the same in each of them, so writing the same index into each
-        is correct, but it must not be written twice into one.
+        content is the same in each of them, so writing the same mapping into
+        each is correct, but it must not be written twice into one.
         """
-        unresolved = self._unresolved_annotations()
-        if not self._semantic_datasets and not unresolved:
+        annotations, source = self._mapped_annotations()
+        unresolved = self._mixed_value_logs()
+        if not annotations and not self._semantic_datasets and not unresolved:
             return
         details = self._entry["measurement_details"]
-        if "semantic_index" in details:
+        if "semantic_mapping" in details:
             return
-        index = {
+        mapping = {
             "schema_version": SCHEMA_VERSION,
             "entry": self._entry_name,
+            "source": source,
             "attribute_names": {"iri": IRI_ATTRIBUTE, "label": LABEL_ATTRIBUTE},
-            "datasets": [
-                self._semantic_datasets[path]
-                for path in sorted(self._semantic_datasets)
-            ],
+            "annotations": annotations,
             "unresolved": unresolved,
         }
-        details["semantic_index"] = json.dumps(index, ensure_ascii=False, indent=2)
-        details["semantic_index"].attrs["format"] = "application/json"
-        details["semantic_index"].attrs["schema_version"] = SCHEMA_VERSION
-
-    def _unresolved_annotations(self):
-        """Returns the annotations that exist but do not sit on a dataset.
-
-        Set channels are the main case: they are never read, so they have no
-        dataset. Their only per-channel object in the file is the actuator
-        below ``instruments``, which is per channel and not per step, so
-        annotating it would restore exactly the ambiguity this whole mechanism
-        avoids. They are listed here instead, pointing at that actuator.
-        """
-        unresolved = []
-        unresolved.extend(self._unresolved_set_channels())
-        unresolved.extend(self._mixed_value_logs())
-        return unresolved
-
-    def _unresolved_set_channels(self):
-        mapping = (self._start_doc or {}).get("semantic_mapping", None)
-        if not mapping:
-            return []
-        if isinstance(mapping, str):
-            mapping = json.loads(mapping)
-        unresolved = []
-        for annotation in mapping.get("annotations", []) or []:
-            target = annotation.get("target", {}) or {}
-            if target.get("role", "") != "set":
-                continue
-            semantic = annotation.get("semantic", {}) or {}
-            entry = {
-                "type": "set",
-                "channel": target.get("name", ""),
-                "step": target.get("step", ""),
-                "iri": semantic.get("iri", ""),
-                "label": semantic.get("label", ""),
-            }
-            if "value_expression" in target:
-                entry["value_expression"] = target["value_expression"]
-            data_key = target.get("data_key", "")
-            if data_key:
-                entry["data_key"] = data_key
-                path = self._channel_paths.get(data_key, "")
-                if path:
-                    entry["instrument_path"] = f"/{self._entry_name}/{path}"
-            unresolved.append(entry)
-        return unresolved
+        details["semantic_mapping"] = json.dumps(
+            mapping, ensure_ascii=False, indent=2
+        )
+        details["semantic_mapping"].attrs["format"] = "application/json"
+        details["semantic_mapping"].attrs["schema_version"] = SCHEMA_VERSION
 
     def _mixed_value_logs(self):
         """Reports channels whose merged per-channel view mixes meanings.

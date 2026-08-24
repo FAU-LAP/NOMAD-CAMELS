@@ -20,7 +20,6 @@ from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrit
 
 IRI_CURRENT = "http://purl.org/example#ElectricCurrent"
 IRI_VOLTAGE = "http://purl.org/example#Voltage"
-IRI_SETPOINT = "http://purl.org/example#Setpoint"
 
 # `_prepare_stream` and `RunEngine.RunBundler` only exist from bluesky 1.11.0,
 # while the declared minimum is 1.9.0. Below that the data is written as before,
@@ -30,20 +29,19 @@ needs_descriptor_hook = pytest.mark.skipif(
     reason="bluesky < 1.11.0 cannot annotate descriptors",
 )
 
-SET_CHANNEL_MAPPING = {
+READ_CHANNEL_MAPPING = {
     "schema_version": "1.1",
     "source": "manual_protocol_mapping",
     "annotations": [
         {
             "target": {
                 "type": "channel",
-                "name": "demo_setV",
-                "role": "set",
-                "data_key": "demo_setV",
-                "step": "Set Channels (Set_Channels)",
-                "value_expression": "3.5",
+                "name": "demo_detX",
+                "role": "read",
+                "data_key": "demo_detX",
+                "step": "Read Channels (Read_Channels)",
             },
-            "semantic": {"label": "setpoint", "iri": IRI_SETPOINT},
+            "semantic": {"label": "current", "iri": IRI_CURRENT},
         }
     ],
 }
@@ -135,14 +133,18 @@ def test_repeated_reads_keep_one_annotated_dataset(tmp_path, detectors):
 
 
 @needs_descriptor_hook
-def test_semantic_index_lists_the_real_paths(tmp_path, detectors):
+def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, detectors):
+    """The consolidated `semantic_mapping` entry carries the protocol's
+    declared annotations, enriched with the real path a channel annotation
+    resolves to, plus the mixed-meaning case that only run-time knowledge of
+    the actual dataset paths can produce."""
     det_x, _ = detectors
 
     def plan():
         yield from bps.open_run(
             md={
-                "session_name": "indexed",
-                "semantic_mapping": json.dumps(SET_CHANNEL_MAPPING),
+                "session_name": "consolidated",
+                "semantic_mapping": json.dumps(READ_CHANNEL_MAPPING),
             }
         )
         yield from helper_functions.trigger_and_read(
@@ -157,24 +159,33 @@ def test_semantic_index_lists_the_real_paths(tmp_path, detectors):
         )
         yield from bps.close_run()
 
-    with h5py.File(run_and_read(tmp_path, plan, "indexed"), "r") as file:
-        entry = file["CAMELS_indexed"]
-        index = json.loads(entry["measurement_details"]["semantic_index"][()])
+    with h5py.File(run_and_read(tmp_path, plan, "consolidated"), "r") as file:
+        entry = file["CAMELS_consolidated"]
+        mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
 
-        assert index["entry"] == "CAMELS_indexed"
-        datasets = {entry_["path"]: entry_ for entry_ in index["datasets"]}
-        assert len(datasets) == 2
-        # every path in the index has to resolve and carry what it claims
-        for path, listed in datasets.items():
-            assert path in file
-            assert file[path].attrs["semantic_iri"] == listed["iri"]
+        assert mapping["schema_version"] == "2.0"
+        assert mapping["entry"] == "CAMELS_consolidated"
 
-        unresolved = {entry_["type"]: entry_ for entry_ in index["unresolved"]}
-        # a set channel has no dataset, so it is reported rather than annotated
-        assert unresolved["set"]["channel"] == "demo_setV"
-        assert unresolved["set"]["value_expression"] == "3.5"
-        # a channel read with two meanings has a merged view mixing both
-        assert unresolved["value_log"]["iris"] == sorted([IRI_CURRENT, IRI_VOLTAGE])
+        annotations = {a["target"]["name"]: a for a in mapping["annotations"]}
+        resolved = annotations["demo_detX"]
+        assert resolved["target"]["role"] == "read"
+        # the declared annotation now carries the real path it resolved to,
+        # and that path really carries what it claims
+        assert resolved["path"] in file
+        assert (
+            file[resolved["path"]].attrs["semantic_iri"]
+            == resolved["semantic"]["iri"]
+        )
+
+        # a channel read with two meanings has a merged view mixing both,
+        # reported separately since no single dataset can carry both IRIs;
+        # set channels never produce an "unresolved" entry anymore, since
+        # Set Channels no longer offers semantic mapping at all
+        unresolved_types = {entry_["type"] for entry_ in mapping["unresolved"]}
+        assert unresolved_types == {"value_log"}
+        value_log = mapping["unresolved"][0]
+        assert value_log["data_key"] == "demo_detX"
+        assert value_log["iris"] == sorted([IRI_CURRENT, IRI_VOLTAGE])
 
 
 def test_unannotated_run_stays_untouched(tmp_path, detectors):
@@ -189,7 +200,7 @@ def test_unannotated_run_stays_untouched(tmp_path, detectors):
 
     with h5py.File(run_and_read(tmp_path, plan, "plain"), "r") as file:
         entry = file["CAMELS_plain"]
-        assert "semantic_index" not in entry["measurement_details"]
+        assert "semantic_mapping" not in entry["measurement_details"]
         for channel in ["demo_detX", "demo_detY"]:
             assert "semantic_iri" not in entry["data"][channel].attrs
             assert "semantic_label" not in entry["data"][channel].attrs
