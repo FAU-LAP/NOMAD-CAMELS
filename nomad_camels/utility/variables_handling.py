@@ -263,6 +263,59 @@ def get_channels(use_aliases=True):
     return channels
 
 
+def get_channel_name(gui_name, use_aliases=True):
+    """Returns the internal name of a channel, i.e. "<device>.<attribute>".
+
+    The name shown in the GUI and stored inside a protocol may be an alias,
+    which only replaces the key of the channel dictionary, not the name of the
+    `Measurement_Channel` itself.
+
+    Parameters
+    ----------
+    gui_name : str
+        The channel as it is named in the GUI / stored in a protocol step.
+    use_aliases : bool, optional
+        (Default value = True)
+        Whether `gui_name` may be an alias.
+
+    Returns
+    -------
+    str, None
+        The internal name, or None if the channel is unknown.
+    """
+    channels_dict = get_channels(use_aliases)
+    if gui_name not in channels_dict:
+        return None
+    return channels_dict[gui_name].name
+
+
+def channel_to_data_key(gui_name, use_aliases=True):
+    """Returns the bluesky data key of a channel, which is also the name of its
+    dataset in the resulting HDF5 file.
+
+    Ophyd names a signal "<device>_<attribute>", while CAMELS handles it
+    internally as "<device>.<attribute>". This is the single place converting
+    between the name a protocol uses and the name the data carries.
+
+    Parameters
+    ----------
+    gui_name : str
+        The channel as it is named in the GUI / stored in a protocol step.
+    use_aliases : bool, optional
+        (Default value = True)
+        Whether `gui_name` may be an alias.
+
+    Returns
+    -------
+    str, None
+        The data key, or None if the channel is unknown.
+    """
+    name = get_channel_name(gui_name, use_aliases)
+    if name is None:
+        return None
+    return name.replace(".", "_")
+
+
 def get_non_channel_functions():
     functions = []
     for device in devices.values():

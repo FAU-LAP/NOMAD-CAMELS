@@ -198,7 +198,9 @@ def get_channel_string(channel):
     channel : str
         The channel that should be converted.
     """
-    name = variables_handling.get_channels()[channel].name
+    name = variables_handling.get_channel_name(channel)
+    if name is None:
+        raise KeyError(channel)
     if "." in name:
         dev, chan = name.split(".")
         return f'devs["{dev}"].{chan}, '
