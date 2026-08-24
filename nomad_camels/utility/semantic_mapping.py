@@ -129,8 +129,10 @@ def read_step_annotations(step):
     will have in the data, i.e. ``{data_key: {"label": ..., "iri": ...}}``.
 
     This is the form needed to annotate the data itself, so channels that
-    cannot be resolved to a data key are dropped rather than guessed. The
-    ``semantic_mapping`` document keeps them, see `_read_channel_annotations`.
+    cannot be resolved to a data key are dropped rather than guessed, and so
+    are channels without an IRI, since the IRI is what identifies a meaning.
+    The ``semantic_mapping`` document keeps both, see
+    `_read_channel_annotations`.
 
     Parameters
     ----------
@@ -142,6 +144,11 @@ def read_step_annotations(step):
     sources = {}
     collisions = set()
     for channel, label, iri in _read_channel_entries(step):
+        if not _is_set(iri):
+            # A label without an IRI cannot come from the GUI, the table stores
+            # an empty label whenever no IRI was selected. Splitting a stream
+            # over a label alone would gain nothing.
+            continue
         data_key = variables_handling.channel_to_data_key(channel)
         if data_key is None:
             logging.warning(

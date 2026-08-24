@@ -30,10 +30,14 @@ Attributes
         Whether dark-mode is currently active.
     copied_step : Loop_Step
         The last step, that was copied.
-    read_channel_sets : list[set]
-        Sets of the different channel-compositions for read-channels. Used to distinguish different reads with different channels for bluesky
+    read_channel_sets : list[tuple[frozenset, tuple]]
+        The different channel-compositions for read-channels, each paired with the
+        semantic annotation of those channels. Used to distinguish different reads
+        for bluesky, which allows only one composition and one annotation per stream.
     read_channel_names : list[str]
         Names of the different read-channel steps in use. Used to distinguish the different reads.
+    semantic_mapping_active : bool
+        Whether the protocol currently being built writes its semantic mapping.
     evaluation_functions_names : dict
         Used to provide the right-click menu to use mathematical functions.
     operator_names : dict

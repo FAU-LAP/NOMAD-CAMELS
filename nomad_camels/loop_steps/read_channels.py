@@ -6,6 +6,10 @@ from nomad_camels.gui.read_channels import Ui_read_channels_config
 
 from nomad_camels.utility import variables_handling, fit_variable_renaming
 from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options
+from nomad_camels.utility.semantic_mapping import (
+    read_step_annotations,
+    stream_annotation_key,
+)
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
@@ -138,7 +142,10 @@ class Read_Channels(Loop_Step):
         on these channels.
         The stream in which the data is written will be numbered if there are
         other read_channels that are reading different channels, since bluesky
-        only allows reading the same channels inside one stream."""
+        only allows reading the same channels inside one stream. Two steps
+        reading the same channels but annotating them differently are numbered
+        apart as well, since the annotation is written per stream and one
+        stream can only carry one meaning per channel."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
         skip_failed = list(self.skip_failed)
@@ -146,7 +153,16 @@ class Read_Channels(Loop_Step):
             skip_failed = [False] * len(chan_list)
         if self.read_variables:
             skip_failed.append(False)
-        channels_w_variables = set(list(chan_list) + [self.read_variables])
+        if variables_handling.semantic_mapping_active:
+            semantics = read_step_annotations(self)
+        else:
+            semantics = {}
+        # `read_variables` is a bool and part of the set on purpose, it
+        # discriminates a read with and without the protocol variables.
+        channels_w_variables = (
+            frozenset(list(chan_list) + [self.read_variables]),
+            stream_annotation_key(self) if semantics else (),
+        )
         if channels_w_variables in variables_handling.read_channel_sets:
             n = variables_handling.read_channel_sets.index(channels_w_variables)
         else:
@@ -172,13 +188,16 @@ class Read_Channels(Loop_Step):
                     + stream.replace('"', "")
                     + '"'
                 )
+        # Only passed along when there is something to say, so that protocols
+        # without semantic mapping produce exactly the script they did before.
+        semantics_arg = f", semantics={semantics!r}" if semantics else ""
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream}, skip_on_exception={skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream}, skip_on_exception={skip_failed}{semantics_arg})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream}, skip_on_exception={skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream}, skip_on_exception={skip_failed}{semantics_arg})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):

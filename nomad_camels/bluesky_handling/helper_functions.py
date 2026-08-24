@@ -31,6 +31,7 @@ from PySide6.QtGui import QFont, QIcon, QKeyEvent
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 from nomad_camels import graphics
+from nomad_camels.bluesky_handling import semantic_runtime
 
 from suitcase.nomad_camels_hdf5 import Serializer, export
 
@@ -238,7 +239,9 @@ def trigger_multi(devices, grp=None):
             yield from bps.trigger(obj, group=grp)
 
 
-def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None):
+def read_wo_trigger(
+    devices, grp=None, stream="primary", skip_on_exception=None, semantics=None
+):
     """
     Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
 
@@ -251,6 +254,11 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
     stream : string, optional
         event stream name, a convenient human-friendly identifier; default
         name is 'primary'
+    semantics : dict, optional
+        (Default value = None)
+        {data_key: {"label": str, "iri": str}}, the semantic annotation of the
+        channels being read. Registered for `stream`, so that the descriptor of
+        that stream can carry it into the data file.
 
     Returns
     -------
@@ -265,6 +273,9 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
             obj.__read_w_except__ = False
     if grp is not None:
         yield from bps.wait(grp)
+    # Has to happen before `create`, which is what makes the RunEngine compose
+    # the descriptor this annotation belongs to.
+    semantic_runtime.register(stream, semantics)
     yield from bps.create(stream)
 
     def read_plan():
@@ -288,13 +299,17 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
     return ret
 
 
-def trigger_and_read(devices, name="primary", skip_on_exception=None):
+def trigger_and_read(devices, name="primary", skip_on_exception=None, semantics=None):
     rewindable = all_safe_rewind(devices)
 
     def inner_trigger_read():
         grp = short_uid("trigger")
         yield from trigger_multi(devices, grp)
-        return (yield from read_wo_trigger(devices, grp, name, skip_on_exception))
+        return (
+            yield from read_wo_trigger(
+                devices, grp, name, skip_on_exception, semantics=semantics
+            )
+        )
 
     return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
 
