@@ -182,10 +182,10 @@ def test_repeated_reads_keep_one_annotated_dataset(tmp_path, detectors):
         assert len(data["time"]) == 3
         assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
 
-        # nothing to report as unresolved here (one channel, one meaning, no
+        # nothing to report here (one channel, one meaning, no
         # protocol-declared mapping) - the key must not show up empty
         mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
-        assert "unresolved" not in mapping
+        assert "mixed_value_logs" not in mapping
 
 
 @needs_descriptor_hook
@@ -219,7 +219,7 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
         entry = file["CAMELS_consolidated"]
         mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
 
-        assert mapping["schema_version"] == "2.0"
+        assert mapping["schema_version"] == "2.1"
 
         annotations = {a["name"]: a for a in mapping["annotations"]}
         resolved = annotations["demo_detX"]
@@ -231,15 +231,13 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
             file[resolved["path"]].attrs["semantic_iri"] == resolved["semantic_iri"]
         )
 
-        # a channel read with two meanings has a merged view mixing both,
-        # reported separately since no single dataset can carry both IRIs;
-        # set channels never produce an "unresolved" entry anymore, since
-        # Set Channels no longer offers semantic mapping at all
-        unresolved_types = {entry_["type"] for entry_ in mapping["unresolved"]}
-        assert unresolved_types == {"value_log"}
-        value_log = mapping["unresolved"][0]
-        assert value_log["data_key"] == "demo_detX"
+        # a channel deliberately read with two meanings has a merged
+        # value_log view mixing both; reported separately since no single
+        # dataset attribute can carry both IRIs
+        channels = {entry_["data_key"]: entry_ for entry_ in mapping["mixed_value_logs"]}
+        value_log = channels["demo_detX"]
         assert value_log["semantic_iris"] == sorted([IRI_CURRENT, IRI_VOLTAGE])
+        assert "type" not in value_log
 
 
 def test_unannotated_run_stays_untouched(tmp_path, detectors):

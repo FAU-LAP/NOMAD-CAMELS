@@ -21,7 +21,7 @@ import logging
 
 from suitcase.nomad_camels_hdf5 import Serializer
 
-SCHEMA_VERSION = "2.0"
+SCHEMA_VERSION = "2.1"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
 
@@ -126,8 +126,8 @@ class CAMELSSerializer(Serializer):
         each is correct, but it must not be written twice into one.
         """
         annotations, source = self._mapped_annotations()
-        unresolved = self._mixed_value_logs()
-        if not annotations and not self._semantic_datasets and not unresolved:
+        mixed_value_logs = self._mixed_value_logs()
+        if not annotations and not self._semantic_datasets and not mixed_value_logs:
             return
         details = self._entry["measurement_details"]
         if "semantic_mapping" in details:
@@ -137,8 +137,8 @@ class CAMELSSerializer(Serializer):
             "source": source,
             "annotations": annotations,
         }
-        if unresolved:
-            mapping["unresolved"] = unresolved
+        if mixed_value_logs:
+            mapping["mixed_value_logs"] = mixed_value_logs
         details["semantic_mapping"] = json.dumps(
             mapping, ensure_ascii=False, indent=2
         )
@@ -148,9 +148,13 @@ class CAMELSSerializer(Serializer):
     def _mixed_value_logs(self):
         """Reports channels whose merged per-channel view mixes meanings.
 
-        A channel read with two different IRIs ends up in two streams, but its
-        ``value_log`` concatenates all of them and carries no annotation. A
-        reader using that view has to know it is looking at a mixture.
+        A channel deliberately read with two different IRIs in different
+        protocol steps ends up in two streams, each correctly annotated. Its
+        combined ``value_log`` concatenates both, though, and a single HDF5
+        attribute cannot represent two meanings for different parts of one
+        dataset - so it carries none. This is not reported as an error, only
+        so a reader of ``value_log`` knows it is looking at a mixture rather
+        than assuming an unannotated channel.
         """
         iris_per_channel = {}
         for entry in self._semantic_datasets.values():
@@ -161,7 +165,6 @@ class CAMELSSerializer(Serializer):
                 continue
             path = self._channel_paths.get(data_key, "")
             entry = {
-                "type": "value_log",
                 "data_key": data_key,
                 "semantic_iris": sorted(iris),
             }
