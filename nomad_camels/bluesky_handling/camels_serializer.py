@@ -19,6 +19,7 @@ here.
 import json
 import logging
 
+import h5py
 from suitcase.nomad_camels_hdf5 import Serializer
 
 SCHEMA_VERSION = "2.1"
@@ -82,15 +83,24 @@ class CAMELSSerializer(Serializer):
             logging.warning(f"Could not write the semantic mapping: {e}")
         super()._make_stop_entry(doc)
 
-    def _mapped_annotations(self):
-        """Returns the protocol-declared annotations and their source, one
-        flat dict per annotation, each channel annotation enriched with the
-        real dataset path it resolves to, if any."""
+    def _loaded_mapping(self):
+        """Returns the protocol-declared `semantic_mapping` document as a
+        dict, parsing it from JSON if it is still a string, or `{}` if the
+        run carries none."""
         mapping = (self._start_doc or {}).get("semantic_mapping", None)
         if not mapping:
-            return [], "manual_protocol_mapping"
+            return {}
         if isinstance(mapping, str):
             mapping = json.loads(mapping)
+        return mapping
+
+    def _mapped_annotations(self):
+        """Returns the protocol-declared annotations and their source, one
+        flat dict per annotation, each channel/variable annotation enriched
+        with the real dataset path it resolves to, if any."""
+        mapping = self._loaded_mapping()
+        if not mapping:
+            return [], "manual_protocol_mapping"
         # The IRI is part of the key so that one data key annotated with two
         # different meanings across steps still resolves unambiguously.
         paths_by_data_key_iri = {
@@ -107,15 +117,72 @@ class CAMELSSerializer(Serializer):
                     flat[key] = target[key]
             flat[LABEL_ATTRIBUTE] = semantic.get("label", "")
             flat[IRI_ATTRIBUTE] = semantic.get("iri", "")
-            if target.get("type") == "channel":
-                # data_key is only present when it differs from the channel's
-                # name (e.g. an alias); otherwise the name doubles as the key.
+            if target.get("type") in ("channel", "variable"):
+                # data_key is only present when it differs from the target's
+                # name (e.g. a channel alias); otherwise the name doubles as
+                # the key. Variables have no alias concept, so this always
+                # falls back to their name.
                 data_key = target.get("data_key") or target.get("name", "")
                 path = paths_by_data_key_iri.get((data_key, flat[IRI_ATTRIBUTE]))
                 if path:
                     flat["path"] = path
             annotations.append(flat)
         return annotations, mapping.get("source", "manual_protocol_mapping")
+
+    def _variable_semantic_map(self):
+        """Returns `{variable_name: {"label": str, "iri": str}}` for every
+        protocol-declared variable annotation that carries an IRI - the IRI
+        is what identifies a meaning, same rule as for channels (see
+        `semantic_mapping.read_step_annotations`)."""
+        mapping = self._loaded_mapping()
+        result = {}
+        for annotation in mapping.get("annotations", []) or []:
+            target = annotation.get("target", {}) or {}
+            if target.get("type") != "variable":
+                continue
+            name = target.get("name")
+            semantic = annotation.get("semantic", {}) or {}
+            iri = semantic.get("iri", "")
+            if not name or not iri:
+                continue
+            result[name] = {"label": semantic.get("label", ""), "iri": iri}
+        return result
+
+    def _stamp_variable_semantics(self):
+        """Stamps `semantic_iri`/`semantic_label` onto the HDF5 dataset of
+        every annotated protocol variable.
+
+        Unlike channels, every variable read into one `Variable_Signal`
+        shares one descriptor data key and one metadata dict (see
+        `variable_reading.Variable_Signal.describe`), so their per-variable
+        HDF5 datasets (one nested group per signal, one dataset per
+        variable, created by the base suitcase package) cannot be told apart
+        at the descriptor level. This instead finds them by the "variables"
+        attribute the base package already stamps onto every one of those
+        datasets, and matches them by name against the protocol-declared
+        annotations directly - built from what was actually written, same as
+        the channel path enrichment above.
+        """
+        variable_semantics = self._variable_semantic_map()
+        if not variable_semantics:
+            return
+
+        def visit(_name, obj):
+            if not isinstance(obj, h5py.Dataset) or "variables" not in obj.attrs:
+                return
+            semantic = variable_semantics.get(obj.name.rsplit("/", 1)[-1])
+            if semantic is None or IRI_ATTRIBUTE in obj.attrs:
+                return
+            obj.attrs[IRI_ATTRIBUTE] = semantic["iri"]
+            obj.attrs[LABEL_ATTRIBUTE] = semantic["label"]
+            self._semantic_datasets[obj.name] = {
+                "path": obj.name,
+                "data_key": obj.name.rsplit("/", 1)[-1],
+                "iri": semantic["iri"],
+                "label": semantic["label"],
+            }
+
+        self._data_entry.visititems(visit)
 
     def _write_semantic_mapping(self):
         """Writes the consolidated mapping into the entry currently open.
@@ -125,6 +192,7 @@ class CAMELSSerializer(Serializer):
         content is the same in each of them, so writing the same mapping into
         each is correct, but it must not be written twice into one.
         """
+        self._stamp_variable_semantics()
         annotations, source = self._mapped_annotations()
         mixed_value_logs = self._mixed_value_logs()
         if not annotations and not self._semantic_datasets and not mixed_value_logs:

@@ -15,7 +15,7 @@ from bluesky.bundlers import RunBundler
 from event_model import RunRouter
 from ophyd import Signal
 
-from nomad_camels.bluesky_handling import helper_functions
+from nomad_camels.bluesky_handling import helper_functions, variable_reading
 from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite
 
 IRI_CURRENT = "http://purl.org/example#ElectricCurrent"
@@ -287,6 +287,59 @@ def test_experiment_description_reaches_every_dataset(tmp_path, detectors):
         # its own annotation is unaffected
         assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
         assert "semantic_iri" not in data["demo_detY"].attrs
+
+
+def test_variable_annotation_reaches_its_own_dataset(tmp_path):
+    """A protocol variable's own nested HDF5 dataset (one dataset per variable
+    inside the shared Variable_Signal's group) carries semantic_iri/
+    semantic_label, without leaking onto an unannotated variable read through
+    that same signal. This does not go through the descriptor hook at all
+    (unlike channels), since every variable shares one descriptor data key -
+    it is stamped from the consolidated semantic_mapping document at stop
+    time instead, so it works independently of `needs_descriptor_hook`."""
+    var_signal = variable_reading.Variable_Signal(
+        name="myprotocol_variable_signal",
+        variables_dict={"annotated_var": 1, "plain_var": 2},
+    )
+    mapping = {
+        "schema_version": "1.1",
+        "source": "manual_protocol_mapping",
+        "annotations": [
+            {
+                "target": {"type": "variable", "name": "annotated_var"},
+                "semantic": {"label": "current", "iri": IRI_CURRENT},
+            }
+        ],
+    }
+
+    def plan():
+        yield from bps.open_run(
+            md={
+                "session_name": "variable_annotated",
+                "semantic_mapping": json.dumps(mapping),
+            }
+        )
+        yield from helper_functions.trigger_and_read([var_signal], name="primary")
+        yield from bps.close_run()
+
+    with h5py.File(
+        run_and_read(tmp_path, plan, "variable_annotated"), "r"
+    ) as file:
+        entry = file["CAMELS_variable_annotated"]
+        data = entry["data"]["myprotocol_variable_signal"]
+        assert data["annotated_var"].attrs["semantic_iri"] == IRI_CURRENT
+        assert data["annotated_var"].attrs["semantic_label"] == "current"
+        assert "semantic_iri" not in data["plain_var"].attrs
+
+        mapping_out = json.loads(entry["measurement_details"]["semantic_mapping"][()])
+        resolved = next(
+            a for a in mapping_out["annotations"] if a["name"] == "annotated_var"
+        )
+        assert resolved["type"] == "variable"
+        # the declared annotation now carries the real path it resolved to,
+        # and that path really carries what it claims
+        assert resolved["path"] in file
+        assert file[resolved["path"]].attrs["semantic_iri"] == IRI_CURRENT
 
 
 def test_experiment_description_does_not_leak_into_the_next_run(tmp_path, detectors):
