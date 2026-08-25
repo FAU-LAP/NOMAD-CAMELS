@@ -35,7 +35,8 @@ Attributes
         semantic annotation of those channels. Used to distinguish different reads
         for bluesky, which allows only one composition and one annotation per stream.
     read_channel_names : list[str]
-        Names of the different read-channel steps in use. Used to distinguish the different reads.
+        The "reading_N" leaf stream name for each entry of `read_channel_sets`, at
+        the same index. Used to distinguish the different reads.
     semantic_mapping_active : bool
         Whether the protocol currently being built writes its semantic mapping.
     evaluation_functions_names : dict
@@ -79,6 +80,40 @@ instrument_aliases = {"Instrument": [], "Alias": []}
 
 read_channel_sets = []
 read_channel_names = []
+
+
+def register_reading_stream(key):
+    """Returns the leaf stream name ("reading_N") for `key`, a hashable value
+    identifying a read's shape/semantics (e.g. its channel set). Reuses the
+    same name if this exact key was already registered during the current
+    protocol build, so two reads of the same shape end up in one stream."""
+    if key in read_channel_sets:
+        n = read_channel_sets.index(key)
+    else:
+        n = len(read_channel_sets)
+        read_channel_sets.append(key)
+        read_channel_names.append(f"reading_{n + 1}")
+    return read_channel_names[n]
+
+
+def stream_matches(doc_name, stream_name, multi_stream=False):
+    """Whether a bluesky descriptor named `doc_name` belongs to the stream
+    identified by `stream_name`, as used by the live-plot widgets. In
+    `multi_stream` mode, every stream sharing `stream_name` as a prefix
+    matches, except one nested inside a sub-protocol - "reading" (the
+    top-level protocol's own multi_stream default, see
+    `nomad_camels.bluesky_handling.builder_helper_functions.plot_creator`)
+    matches its own "reading_N" streams this way, without also matching a
+    sub-protocol's "Subprotocol_X" entries.
+    """
+    if doc_name == stream_name:
+        return True
+    if not multi_stream:
+        return False
+    return doc_name.startswith(stream_name) and not doc_name[
+        len(stream_name) :
+    ].startswith("||subprotocol_stream||")
+
 
 # Whether the protocol currently being built writes its semantic mapping. Set by
 # `protocol_builder.build_protocol` for the duration of one build, since a

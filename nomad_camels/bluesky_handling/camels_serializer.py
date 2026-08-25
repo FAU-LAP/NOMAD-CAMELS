@@ -14,6 +14,11 @@ It is built from what was actually written rather than only from the
 protocol, so the paths and the attributes cannot drift apart. The serializer
 is the only component that knows the real paths, which is why this lives
 here.
+
+Also resolves the generic "reading" stream name of the protocol's own
+top-level, multi_stream plot widget to a concrete "reading_N" stream (see
+`descriptor` below), since the base package's plot-to-NXdata linking looks
+up `plot.stream_name` by exact match.
 """
 
 import json
@@ -36,6 +41,39 @@ class CAMELSSerializer(Serializer):
         super().__init__(*args, **kwargs)
         # {dataset path: entry of the mapping}
         self._semantic_datasets = {}
+
+    def descriptor(self, doc):
+        super().descriptor(doc)
+        stream_name = doc["name"].replace("||sub_stream||", "/").replace(
+            "||subprotocol_stream||", "/"
+        )
+        if (
+            "reading" not in self._stream_names
+            and stream_name.startswith("reading_")
+            and "_fits_readying_" not in stream_name
+        ):
+            # The protocol's own top-level, multi_stream plot widget is
+            # tagged with the generic "reading" stream name (see
+            # `builder_helper_functions.plot_creator`), never a specific
+            # "reading_N" - the base writer's plot-to-NXdata linking only does
+            # an exact `_stream_names` lookup, so alias it here to the first
+            # of this build's own reading streams, the same one "primary"
+            # used to resolve to before CAMELS stopped flattening it.
+            self._stream_names["reading"] = self._stream_names[stream_name]
+
+    def _recreate_paths(self, include_channel_links=True):
+        # The base implementation walks every `_stream_names` entry and
+        # creates a group for whichever isn't already a real HDF5 group name
+        # - the "reading" alias from `descriptor` above is deliberately not
+        # one, so it has to sit out that walk, or it would get its own bogus
+        # empty group. Restored after, since `_make_stop_entry` still needs
+        # it (called right after this, once per output file).
+        reading_alias = self._stream_names.pop("reading", None)
+        try:
+            super()._recreate_paths(include_channel_links=include_channel_links)
+        finally:
+            if reading_alias is not None:
+                self._stream_names["reading"] = reading_alias
 
     def _make_start_entry(self, doc):
         # Written by _write_semantic_mapping at stop instead, once the real

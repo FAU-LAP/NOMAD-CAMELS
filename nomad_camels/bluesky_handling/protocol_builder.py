@@ -635,14 +635,16 @@ def sub_protocol_string(
     # protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
     stream = prot_name
     if data_output == "main stream":
-        stream = "primary"
+        stream = "reading_1"
     if new_stream:
         stream = new_stream
     if variables_handling.preferences.get("nested_data", True):
-        if stream.startswith("Subprotocol_"):
-            stream_str = f'f"{{stream_name}}||subprotocol_stream||{stream}"'
-        else:
-            stream_str = f'"{stream}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream}"'
+        marker = (
+            "||subprotocol_stream||"
+            if stream.startswith("Subprotocol_")
+            else "||sub_stream||"
+        )
+        stream_str = f'helper_functions.nested_stream_name(stream_name, "{stream}", marker="{marker}")'
     else:
         stream_str = f'"{stream}"'
     protocol_string += f"{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {stream_str}, runEngine)\n"
@@ -692,17 +694,20 @@ def make_plots_string_of_protocol(
     if use_own_plots:
         stream = f'"{prot_name}"'
         if data_output == "main stream":
-            stream = '"primary"'
+            stream = '"reading_1"'
         if name:
             stream = f'"{name}"'
         plot_string += builder_helper_functions.get_plot_add_string(
             prot_name, stream, True, n_tabs
         )
     if variables_handling.preferences.get("nested_data", True):
-        if stream.startswith('"Subprotocol_'):
-            stream_str = f'f"{{stream}}||subprotocol_stream||{stream[1:]}'
-        else:
-            stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream[1:]}'
+        leaf = stream[1:-1]
+        marker = (
+            "||subprotocol_stream||"
+            if leaf.startswith("Subprotocol_")
+            else "||sub_stream||"
+        )
+        stream_str = f'helper_functions.nested_stream_name(stream, "{leaf}", marker="{marker}")'
     else:
         stream_str = stream
     if name:

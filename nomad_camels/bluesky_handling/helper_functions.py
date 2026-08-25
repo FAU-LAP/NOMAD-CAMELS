@@ -256,7 +256,7 @@ def set_experiment_description(description):
 
 
 def read_wo_trigger(
-    devices, grp=None, stream="primary", skip_on_exception=None, semantics=None
+    devices, grp=None, stream="", skip_on_exception=None, semantics=None
 ):
     """
     Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
@@ -268,8 +268,7 @@ def read_wo_trigger(
     grp : string (or any hashable object), optional
         identifier used by 'wait'; None by default
     stream : string, optional
-        event stream name, a convenient human-friendly identifier; default
-        name is 'primary'
+        event stream name, a convenient human-friendly identifier
     semantics : dict, optional
         (Default value = None)
         {data_key: {"label": str, "iri": str}}, the semantic annotation of the
@@ -315,7 +314,7 @@ def read_wo_trigger(
     return ret
 
 
-def trigger_and_read(devices, name="primary", skip_on_exception=None, semantics=None):
+def trigger_and_read(devices, name="", skip_on_exception=None, semantics=None):
     rewindable = all_safe_rewind(devices)
 
     def inner_trigger_read():
@@ -328,6 +327,16 @@ def trigger_and_read(devices, name="primary", skip_on_exception=None, semantics=
         )
 
     return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
+
+
+def nested_stream_name(stream_name, leaf, marker="||sub_stream||"):
+    """Attaches `leaf` to the current `stream_name` context, or returns it
+    unprefixed if there is no enclosing context (top of a protocol or
+    sub-protocol build). `marker` is later turned into a `/` by the HDF5
+    writer, nesting `leaf` as a subgroup of whatever `stream_name` currently
+    is.
+    """
+    return f"{stream_name}{marker}{leaf}" if stream_name else leaf
 
 
 def simplify_configs_dict(configs):
@@ -358,7 +367,7 @@ def simplify_configs_dict(configs):
     return confs
 
 
-def get_fit_results(fits, namespace, yielding=False, stream="primary"):
+def get_fit_results(fits, namespace, yielding=False, stream="reading"):
     """
     Updates and reads all the fits that correspond to the given stream and
     resets the fits in the end.
@@ -373,9 +382,11 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
          (Default value = False)
          If True, the fits will be triggered and updated.
     stream : str, optional
-         (Default value = 'primary')
+         (Default value = 'reading')
          The stream on which the regarded fits should run. Only the fits which
-         have `stream_name` equal to `stream` will be used.
+         have `stream_name` equal to `stream` will be used. "reading" is the
+         default `stream` of the protocol's own top-level plots (see
+         `builder_helper_functions.plot_creator`).
     """
     for name, fit in fits.items():
         if yielding and fit.stream_name == stream:
@@ -402,7 +413,7 @@ def make_recoursive_plot_list_of_sub_steps(sub_dict, plot_list=None):
     return plot_list
 
 
-def clear_plots(plots, stream="primary"):
+def clear_plots(plots, stream="reading"):
     """
     Clears all given plots if they correspond to the given stream.
 
@@ -411,7 +422,7 @@ def clear_plots(plots, stream="primary"):
     plots : list
         List of the plots to be cleared.
     stream : str
-         (Default value = 'primary')
+         (Default value = 'reading')
          The stream to which the plots that should be cleared correspond.
     """
     for plot in plots:

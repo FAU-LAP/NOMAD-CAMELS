@@ -355,7 +355,7 @@ class Measurement_Protocol:
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
         variables_handling.current_protocol = self
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="primary", runEngine=None):\n'
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="", runEngine=None):\n'
         prot_vars = self.variables
         variables_handling.protocol_variables = prot_vars
         variables_handling.channel_aliases = self.channel_aliases
@@ -375,7 +375,7 @@ class Measurement_Protocol:
                 continue
             plan_string += step.get_protocol_string(n_tabs=1)
 
-        plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
+        plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name=""):\n'
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
         if (
@@ -432,7 +432,7 @@ class Measurement_Protocol:
     def get_add_main_string(self):
         """Gets all the steps that should be executed in the protocol's main
         function."""
-        add_main_string = 'def steps_add_main(RE, devs, stream="primary"):\n'
+        add_main_string = 'def steps_add_main(RE, devs, stream=""):\n'
         add_main_string += "\treturner = {}\n"
         for step in self.loop_steps:
             if not step.is_active:

@@ -57,15 +57,13 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     add_main_string += f'{tabs}if "plots_plotly" not in returner:\n'
     add_main_string += f'{tabs}\treturner["plots_plotly"] = []\n'
     if variables_handling.preferences["nested_data"]:
-        if stream.startswith('"Subprotocol_'):
-            stream_str = f'f"{{stream}}||subprotocol_stream||{stream[1:]}'
-        else:
-            stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream[1:]}'
-        # stream_str = (
-        #     f"{stream} if stream == 'primary' else f'{{stream}}||sub_stream||"
-        #     + stream.replace('"', "")
-        #     + "'"
-        # )
+        leaf = stream[1:-1]
+        marker = (
+            "||subprotocol_stream||"
+            if leaf.startswith("Subprotocol_")
+            else "||sub_stream||"
+        )
+        stream_str = f'helper_functions.nested_stream_name(stream, "{leaf}", marker="{marker}")'
     else:
         stream_str = stream
     if subprotocol:
@@ -167,7 +165,11 @@ def plot_creator(
 
 
     """
-    plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
+    # "reading" is a real, unused-in-practice default only for the one call
+    # site that never overrides it: the protocol's own top-level, multi_stream
+    # plot, which is meant to react to every one of its own "reading_N"
+    # streams - matched by that shared prefix - while excluding sub-protocols.
+    plot_string = f'\ndef {func_name}(RE, stream="reading"):\n'
     if not plot_data:
         plot_string += "\treturn [], [], None, None\n\n"
         return plot_string, False

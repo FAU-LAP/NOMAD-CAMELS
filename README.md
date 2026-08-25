@@ -30,6 +30,7 @@ Note: writing the annotations to the datasets needs `bluesky >= 1.11.0`. With ol
 
 Changes:
 - `Set Channels` no longer offers semantic mapping. A set channel is never read, so it never had a dataset to annotate; it only ever showed up unresolved, without adding value.
+- Reworked the HDF5/NeXus stream layout under `<entry>/data`: every distinct read now gets its own `reading_1`, `reading_2`, ... subgroup, including what used to be the first one, flattened directly into `data` as the `primary` stream. A `Run Subprotocol` step's data now lives in its own `Subprotocol_<name>` subgroup (named after the step, as before) directly under the enclosing `data`, with its own nested `reading_N` streams inside, instead of being glued onto whichever stream happened to be active around it. This makes the file structure a plain, predictable tree that no longer depends on where a read happens to sit in the protocol.
 
 Fixes:
 - Removed deprecated calls to `bluesky.callbacks.zmq` that broke installs when using `bluesky > 1.15.1`. Replaced with a new and cleaner implementation of the ZMQ proxy. Cleanup is also improved. ZMQ implementation for testing was adapted accordingly.
