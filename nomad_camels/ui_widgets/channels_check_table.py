@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont, QStandardItem
-from nomad_camels.ui_widgets.combo_box_helpers import (SEMANTIC_NONE_LABEL,SEMANTIC_NONE_IRI,apply_table_cell_combobox_style,)
+from nomad_camels.ui_widgets.combo_box_helpers import (apply_table_cell_combobox_style,populate_semantic_combo,)
 
 from nomad_camels.utility import variables_handling
 
@@ -461,22 +461,12 @@ class Channels_Check_Table(QWidget):
                     )
                     item = CheckableTableWidgetItem(checkState=state)
                     self.tableWidget_channels.setItem(n, column, item)
-                    item.setToolTip("Hint: right-click to (un-)check complete column")        
+                    item.setToolTip("Hint: right-click to (un-)check complete column")
+                    if metadata:
+                        item.setToolTip(item.toolTip() + metadata)
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
                     apply_table_cell_combobox_style(combo)
-                    normalized_options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI, "")]
-                    for option in self.combo_boxes[lab]:
-                        if isinstance(option, tuple):
-                            if len(option) == 3:
-                                label, iri, description = option
-                            else:
-                                label, iri = option
-                                description = ""
-                        else:
-                            label, iri, description = option, "", ""
-                        if label:
-                            normalized_options.append((label, iri, description))
                     data_key = self.combo_data_keys.get(lab, "")
                     data_value = ""
                     if (
@@ -487,22 +477,8 @@ class Channels_Check_Table(QWidget):
                         n_chan = self.info_dict["channel"].index(channel)
                         if n_chan < len(self.info_dict[data_key]):
                             data_value = self.info_dict[data_key][n_chan]
-                    for label, iri, description in normalized_options:
-                        combo.addItem(label, iri)
-                        if description:
-                            combo.setItemData(
-                                combo.count() - 1, description, Qt.ToolTipRole
-                            )
-                    selected_index = 0
-                    if data_value:
-                        for index, (_label, iri, _description) in enumerate(
-                            normalized_options
-                        ):
-                            if iri == data_value:
-                                selected_index = index
-                                break
-                    combo.setCurrentIndex(selected_index)
-                    self.tableWidget_channels.setCellWidget(n, column, combo)  
+                    populate_semantic_combo(combo, self.combo_boxes[lab], data_value)
+                    self.tableWidget_channels.setCellWidget(n, column, combo)
                 else:
                     item = QTableWidgetItem(value)
                     self.tableWidget_channels.setItem(n, column, item)

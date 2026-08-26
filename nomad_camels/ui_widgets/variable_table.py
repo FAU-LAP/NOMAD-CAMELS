@@ -5,7 +5,7 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options, semantic_mapping_enabled_for_protocol
 from importlib import resources
 from nomad_camels import graphics
-from nomad_camels.ui_widgets.combo_box_helpers import (SEMANTIC_NONE_LABEL,SEMANTIC_NONE_IRI,apply_table_cell_combobox_style,)
+from nomad_camels.ui_widgets.combo_box_helpers import (apply_table_cell_combobox_style,populate_semantic_combo,)
 
 
 class VariableTable(QTableView):
@@ -212,23 +212,6 @@ class VariableTable(QTableView):
         """Create the semantics dropdown for one variable row."""
         combo = QComboBox(self)
         apply_table_cell_combobox_style(combo)
-        # Always add an empty option first so users can clear a semantic selection.
-        options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI, "")]
-        for option in self.get_semantic_options():
-            if isinstance(option, tuple):
-                if len(option) == 3:
-                    label, iri, description = option
-                else:
-                    label, iri = option
-                    description = ""
-            else:
-                label, iri, description = option, "", ""
-            if label:
-                options.append((label, iri, description))
-        for label, iri, description in options:
-            combo.addItem(label, iri)
-            if description:
-                combo.setItemData(combo.count() - 1, description, Qt.ToolTipRole)
         semantic_iri = ""
         if self.protocol is not None:
             semantic_iri = getattr(
@@ -236,13 +219,7 @@ class VariableTable(QTableView):
                 "variable_semantic_iris",
                 {},
             ).get(variable_name, "")
-        selected_index = 0
-        if semantic_iri:
-            for index, (_label, iri, _description) in enumerate(options):
-                if iri == semantic_iri:
-                    selected_index = index
-                    break
-        combo.setCurrentIndex(selected_index)
+        populate_semantic_combo(combo, self.get_semantic_options(), semantic_iri)
         combo.currentIndexChanged.connect(lambda _index: self.update_variables())
         return combo
 
