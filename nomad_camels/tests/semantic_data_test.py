@@ -219,7 +219,7 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
         entry = file["CAMELS_consolidated"]
         mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
 
-        assert mapping["schema_version"] == "2.1"
+        assert mapping["schema_version"] == "2.2"
 
         annotations = {a["name"]: a for a in mapping["annotations"]}
         resolved = annotations["demo_detX"]
@@ -336,10 +336,68 @@ def test_variable_annotation_reaches_its_own_dataset(tmp_path):
             a for a in mapping_out["annotations"] if a["name"] == "annotated_var"
         )
         assert resolved["type"] == "variable"
-        # the declared annotation now carries the real path it resolved to,
-        # and that path really carries what it claims
-        assert resolved["path"] in file
-        assert file[resolved["path"]].attrs["semantic_iri"] == IRI_CURRENT
+        # the declared annotation now carries every real path it resolved
+        # to, plural - the singular key is gone entirely for variables
+        assert "path" not in resolved
+        assert resolved["paths"] == [data["annotated_var"].name]
+        assert resolved["paths"][0] in file
+        assert file[resolved["paths"][0]].attrs["semantic_iri"] == IRI_CURRENT
+
+
+def test_variable_read_into_two_streams_lists_both_paths(tmp_path):
+    """A protocol variable backed by one shared, mutable namespace can
+    legitimately be read into more than one stream (e.g. once per
+    `reading_N`), each a distinct, real snapshot of its value at that point
+    in the run - so its annotation must list every real path, not silently
+    keep just one of them."""
+    var_signal = variable_reading.Variable_Signal(
+        name="myprotocol_variable_signal",
+        variables_dict={"annotated_var": 1},
+    )
+    mapping = {
+        "schema_version": "1.1",
+        "source": "manual_protocol_mapping",
+        "annotations": [
+            {
+                "target": {"type": "variable", "name": "annotated_var"},
+                "semantic": {"label": "current", "iri": IRI_CURRENT},
+            }
+        ],
+    }
+
+    def plan():
+        yield from bps.open_run(
+            md={
+                "session_name": "variable_multi_stream",
+                "semantic_mapping": json.dumps(mapping),
+            }
+        )
+        yield from helper_functions.trigger_and_read([var_signal], name="primary")
+        yield from helper_functions.trigger_and_read(
+            [var_signal], name="primary||sub_stream||primary_1"
+        )
+        yield from bps.close_run()
+
+    with h5py.File(
+        run_and_read(tmp_path, plan, "variable_multi_stream"), "r"
+    ) as file:
+        entry = file["CAMELS_variable_multi_stream"]
+        data = entry["data"]
+        first = data["myprotocol_variable_signal"]["annotated_var"]
+        second = data["primary"]["primary_1"]["myprotocol_variable_signal"][
+            "annotated_var"
+        ]
+
+        mapping_out = json.loads(entry["measurement_details"]["semantic_mapping"][()])
+        resolved = next(
+            a for a in mapping_out["annotations"] if a["name"] == "annotated_var"
+        )
+        assert resolved["type"] == "variable"
+        assert "path" not in resolved
+        assert resolved["paths"] == sorted([first.name, second.name])
+        for path in resolved["paths"]:
+            assert path in file
+            assert file[path].attrs["semantic_iri"] == IRI_CURRENT
 
 
 def test_experiment_description_does_not_leak_into_the_next_run(tmp_path, detectors):
