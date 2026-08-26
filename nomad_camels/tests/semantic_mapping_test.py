@@ -364,3 +364,27 @@ def test_mapping_document_keeps_unresolvable_channels(demo_channels):
 
 def test_mapping_document_disabled(demo_channels):
     assert semantic_mapping.build_semantic_mapping(object(), enabled=False) is None
+
+
+def test_mapping_document_includes_variable_description(demo_channels):
+    """A protocol variable's selected physical quantity carries its own
+    ontology description too, same as a read channel's (see
+    `Read_Channels_Config_Sub.update_step_config`) - stored on the protocol
+    as `variable_semantic_descriptions` and surfaced in the document's
+    `semantic` entry."""
+
+    class Protocol:
+        experiment_ontology_class = ""
+        experiment_ontology_class_iri = ""
+        variable_semantics = {"annotated_var": "current"}
+        variable_semantic_iris = {"annotated_var": IRI_CURRENT}
+        variable_semantic_descriptions = {
+            "annotated_var": "An electric current."
+        }
+        loop_step_dict = {}
+        loop_steps = []
+
+    mapping = semantic_mapping.build_semantic_mapping(Protocol())
+    annotation = mapping["annotations"][0]
+    assert annotation["target"] == {"type": "variable", "name": "annotated_var"}
+    assert annotation["semantic"]["description"] == "An electric current."

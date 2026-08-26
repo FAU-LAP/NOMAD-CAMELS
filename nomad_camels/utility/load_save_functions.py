@@ -619,6 +619,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.variable_semantics = prot_data["variable_semantics"]
         if "variable_semantic_iris" in prot_data:
             prot.variable_semantic_iris = prot_data["variable_semantic_iris"]
+        if "variable_semantic_descriptions" in prot_data:
+            prot.variable_semantic_descriptions = prot_data[
+                "variable_semantic_descriptions"
+            ]
         if "use_end_protocol" in prot_data:
             prot.use_end_protocol = prot_data["use_end_protocol"]
         if "end_protocol" in prot_data:

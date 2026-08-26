@@ -151,7 +151,14 @@ class VariableTable(QTableView):
         variables = {}
         variable_semantics = {}
         variable_semantic_iris = {}
+        variable_semantic_descriptions = {}
         semantic_column = self.get_semantic_column()
+        # Looked up again below to derive the description matching whichever
+        # IRI ends up selected, same pattern as
+        # Read_Channels_Config_Sub.update_step_config.
+        option_descriptions = {
+            iri: description for _label, iri, description in self.get_semantic_options()
+        }
 
         for row in range(self.model.rowCount()):
             name_item = self.model.item(row, 0)
@@ -170,12 +177,18 @@ class VariableTable(QTableView):
                         label = combo.currentText()
                         variable_semantics[name] = label
                         variable_semantic_iris[name] = iri
+                        variable_semantic_descriptions[name] = (
+                            option_descriptions.get(iri, "")
+                        )
 
         if self.editable_names:
             self.protocol.variables = variables
             if semantic_column is not None:
                 self.protocol.variable_semantics = variable_semantics
                 self.protocol.variable_semantic_iris = variable_semantic_iris
+                self.protocol.variable_semantic_descriptions = (
+                    variable_semantic_descriptions
+                )
             variables_handling.protocol_variables = self.protocol.variables
         else:
             return variables

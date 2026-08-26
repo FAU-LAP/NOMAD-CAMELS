@@ -25,6 +25,7 @@ from suitcase.nomad_camels_hdf5 import Serializer
 SCHEMA_VERSION = "2.1"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
+DESCRIPTION_ATTRIBUTE = "semantic_description"
 
 
 class CAMELSSerializer(Serializer):
@@ -130,10 +131,10 @@ class CAMELSSerializer(Serializer):
         return annotations, mapping.get("source", "manual_protocol_mapping")
 
     def _variable_semantic_map(self):
-        """Returns `{variable_name: {"label": str, "iri": str}}` for every
-        protocol-declared variable annotation that carries an IRI - the IRI
-        is what identifies a meaning, same rule as for channels (see
-        `semantic_mapping.read_step_annotations`)."""
+        """Returns `{variable_name: {"label": str, "iri": str, "description":
+        str}}` for every protocol-declared variable annotation that carries
+        an IRI - the IRI is what identifies a meaning, same rule as for
+        channels (see `semantic_mapping.read_step_annotations`)."""
         mapping = self._loaded_mapping()
         result = {}
         for annotation in mapping.get("annotations", []) or []:
@@ -145,7 +146,11 @@ class CAMELSSerializer(Serializer):
             iri = semantic.get("iri", "")
             if not name or not iri:
                 continue
-            result[name] = {"label": semantic.get("label", ""), "iri": iri}
+            result[name] = {
+                "label": semantic.get("label", ""),
+                "iri": iri,
+                "description": semantic.get("description", ""),
+            }
         return result
 
     def _stamp_variable_semantics(self):
@@ -175,6 +180,8 @@ class CAMELSSerializer(Serializer):
                 return
             obj.attrs[IRI_ATTRIBUTE] = semantic["iri"]
             obj.attrs[LABEL_ATTRIBUTE] = semantic["label"]
+            if semantic.get("description"):
+                obj.attrs[DESCRIPTION_ATTRIBUTE] = semantic["description"]
             self._semantic_datasets[obj.name] = {
                 "path": obj.name,
                 "data_key": obj.name.rsplit("/", 1)[-1],

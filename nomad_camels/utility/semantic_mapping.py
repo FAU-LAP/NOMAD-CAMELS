@@ -174,6 +174,7 @@ def stream_annotation_key(step):
 def _variable_annotations(protocol):
     labels = _get(protocol, "variable_semantics", {}) or {}
     iris = _get(protocol, "variable_semantic_iris", {}) or {}
+    descriptions = _get(protocol, "variable_semantic_descriptions", {}) or {}
     variable_names = set(labels) | set(iris)
     annotations = []
     for name in sorted(variable_names):
@@ -181,13 +182,20 @@ def _variable_annotations(protocol):
         iri = iris.get(name, "")
         if not _is_set(label) and not _is_set(iri):
             continue
+        semantic = _semantic(label, iri)
+        description = descriptions.get(name, "")
+        if _is_set(description):
+            # The selected physical quantity's own ontology description,
+            # captured at selection time - same rule as a read channel's
+            # (see `_read_channel_entries`).
+            semantic["description"] = description
         annotations.append(
             {
                 "target": {
                     "type": "variable",
                     "name": name,
                 },
-                "semantic": _semantic(label, iri),
+                "semantic": semantic,
             }
         )
     return annotations

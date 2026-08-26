@@ -342,6 +342,52 @@ def test_variable_annotation_reaches_its_own_dataset(tmp_path):
         assert file[resolved["path"]].attrs["semantic_iri"] == IRI_CURRENT
 
 
+def test_variable_semantic_description_reaches_its_dataset(tmp_path):
+    """A protocol variable's selected physical quantity carries its own
+    ontology description too, same as a read channel's (see
+    `test_physical_quantity_description_reaches_the_dataset`) - stamped from
+    the consolidated semantic_mapping document at stop time, like the
+    variable's semantic_iri/semantic_label."""
+    var_signal = variable_reading.Variable_Signal(
+        name="myprotocol_variable_signal",
+        variables_dict={"annotated_var": 1, "plain_var": 2},
+    )
+    mapping = {
+        "schema_version": "1.1",
+        "source": "manual_protocol_mapping",
+        "annotations": [
+            {
+                "target": {"type": "variable", "name": "annotated_var"},
+                "semantic": {
+                    "label": "current",
+                    "iri": IRI_CURRENT,
+                    "description": "An electric current.",
+                },
+            }
+        ],
+    }
+
+    def plan():
+        yield from bps.open_run(
+            md={
+                "session_name": "variable_described",
+                "semantic_mapping": json.dumps(mapping),
+            }
+        )
+        yield from helper_functions.trigger_and_read([var_signal], name="primary")
+        yield from bps.close_run()
+
+    with h5py.File(
+        run_and_read(tmp_path, plan, "variable_described"), "r"
+    ) as file:
+        data = file["CAMELS_variable_described"]["data"]["myprotocol_variable_signal"]
+        assert (
+            data["annotated_var"].attrs["semantic_description"]
+            == "An electric current."
+        )
+        assert "semantic_description" not in data["plain_var"].attrs
+
+
 def test_experiment_description_does_not_leak_into_the_next_run(tmp_path, detectors):
     """A run that never sets a description must not see the previous run's."""
     det_x, det_y = detectors

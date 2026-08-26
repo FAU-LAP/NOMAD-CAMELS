@@ -122,6 +122,11 @@ class Measurement_Protocol:
             if "variable_semantic_iris" in kwargs
             else {}
         )
+        self.variable_semantic_descriptions = (
+            kwargs["variable_semantic_descriptions"]
+            if "variable_semantic_descriptions" in kwargs
+            else {}
+        )
         self.semantic_mapping_enabled = (
             kwargs["semantic_mapping_enabled"]
             if "semantic_mapping_enabled" in kwargs
