@@ -168,6 +168,8 @@ class CAMELSSerializer(Serializer):
                     flat[key] = target[key]
             flat[LABEL_ATTRIBUTE] = semantic.get("label", "")
             flat[IRI_ATTRIBUTE] = semantic.get("iri", "")
+            if semantic.get("description"):
+                flat[DESCRIPTION_ATTRIBUTE] = semantic["description"]
             if target.get("type") in ("channel", "variable"):
                 # data_key is only present when it differs from the target's
                 # name (e.g. a channel alias); otherwise the name doubles as
