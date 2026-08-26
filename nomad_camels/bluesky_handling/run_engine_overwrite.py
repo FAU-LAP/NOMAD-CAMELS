@@ -1,5 +1,4 @@
 from bluesky import run_engine, RunEngine
-from bluesky.bundlers import RunBundler
 import logging
 
 from nomad_camels.bluesky_handling import semantic_runtime
@@ -36,71 +35,81 @@ def get_nan_value(value):
     return None
 
 
-class SemanticRunBundler(RunBundler):
-    """A `RunBundler` that writes the semantic annotation of a stream into the
-    data keys of that stream's descriptor.
+def _semantic_document_callback(name, doc):
+    """A `RunEngine` document callback that writes the semantic annotation of a
+    stream into the data keys of that stream's descriptor.
 
     suitcase writes every entry of a data key as an attribute of the dataset it
     belongs to, so this is what carries an IRI from the protocol all the way to
     the data. Doing it here rather than on the signal is what allows one channel
     to mean different things in different read steps: a signal exists once per
     channel, a descriptor exists once per stream.
+
+    Registered as the very first subscriber on `RunEngineOverwrite` (see
+    `RunEngineOverwrite.__init__`), so it runs before every other subscriber
+    (the databroker catalog insert, any ZMQ publisher, `CAMELSSerializer`) and
+    mutates the descriptor document they all receive by reference - unlike a
+    private `RunBundler` hook (only available from bluesky 1.11.0), this only
+    relies on the public, version-stable `RunEngine.subscribe` API.
     """
-
-    def __init__(self, *args, **kwargs):
-        # One bundler is created per run, so this is where a protocol stops
-        # seeing the annotations of the protocol before it.
+    if name == "start":
+        # One run's worth of annotations must not leak into the next.
         semantic_runtime.reset()
-        super().__init__(*args, **kwargs)
+        return
+    if name != "descriptor":
+        return
+    try:
+        _add_semantics(doc)
+    except Exception as e:
+        # An annotation is never worth losing a measurement over.
+        logging.warning(f"Could not add semantic annotation to a descriptor: {e}")
 
-    async def _prepare_stream(self, desc_key, objs_dks):
-        try:
-            objs_dks = self._add_semantics(desc_key, objs_dks)
-        except Exception as e:
-            # An annotation is never worth losing a measurement over.
-            logging.warning(f"Could not add semantic annotation to a descriptor: {e}")
-        return await super()._prepare_stream(desc_key, objs_dks)
 
-    @staticmethod
-    def _add_semantics(desc_key, objs_dks):
-        """Returns `objs_dks` with the annotations of the stream `desc_key`
-        added, or unchanged if there are none."""
-        annotations = semantic_runtime.get(desc_key) or {}
-        description = semantic_runtime.get_experiment_description()
-        if not annotations and not description:
-            return objs_dks
-        # The data keys of an object are its cached `describe()` output, shared
-        # by every stream reading it. Copy before writing, or the annotation of
-        # one stream would show up in all the others. The experiment
-        # description applies to every data key, not just annotated ones, so
-        # every dict is copied whenever there is anything at all to write.
-        copied = {
-            obj: {key: dict(data_key) for key, data_key in data_keys.items()}
-            for obj, data_keys in objs_dks.items()
-        }
-        for data_keys in copied.values():
-            for key, data_key in data_keys.items():
-                if key in annotations:
-                    # Only non-empty strings, h5py cannot store None as an attribute.
-                    if annotations[key].get("iri"):
-                        data_key["semantic_iri"] = str(annotations[key]["iri"])
-                    if annotations[key].get("label"):
-                        data_key["semantic_label"] = str(annotations[key]["label"])
-                    if annotations[key].get("description"):
-                        data_key["semantic_description"] = str(
-                            annotations[key]["description"]
-                        )
-                if description:
-                    data_key["experiment_description"] = description
-        return copied
+def _add_semantics(doc):
+    """Adds the semantic annotation of `doc`'s stream to its data keys, if
+    there is one - in place, so that every subscriber of this descriptor
+    (already registered or not) sees the same, annotated document."""
+    annotations = semantic_runtime.get(doc["name"]) or {}
+    description = semantic_runtime.get_experiment_description()
+    if not annotations and not description:
+        return
+    # The data keys of an object are its cached `describe()` output, shared
+    # by every stream reading it. Copy before writing, or the annotation of
+    # one stream would show up in all the others. The experiment description
+    # applies to every data key, not just annotated ones, so every dict is
+    # copied whenever there is anything at all to write.
+    data_keys = doc["data_keys"]
+    for key, data_key in list(data_keys.items()):
+        own = annotations.get(key) or {}
+        if not own and not description:
+            continue
+        data_key = dict(data_key)
+        # Only non-empty strings, h5py cannot store None as an attribute.
+        if own.get("iri"):
+            data_key["semantic_iri"] = str(own["iri"])
+        if own.get("label"):
+            data_key["semantic_label"] = str(own["label"])
+        if own.get("description"):
+            data_key["semantic_description"] = str(own["description"])
+        if description:
+            data_key["experiment_description"] = str(description)
+        data_keys[key] = data_key
 
 
 class RunEngineOverwrite(RunEngine):
     """
     A class that overwrites the `RunEngine` class from bluesky to add a custom read method.
     This class is used to handle the reading of objects in a more robust way, especially when dealing with exceptions. It allows to keep running the run engine even if an object raises an exception during the read process.
-    It further uses a bundler that annotates descriptors semantically.
+    It further subscribes a callback that annotates descriptors semantically.
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Registered here, before the app adds any of its own subscribers
+        # (databroker catalog insert, ZMQ publisher, CAMELSSerializer, ...),
+        # so this always runs first and every other subscriber sees the
+        # annotated descriptor.
+        self.subscribe(_semantic_document_callback, name="all")
 
     async def _read(self, msg):
         obj = run_engine.check_supports(msg.obj, run_engine.Readable)
@@ -140,11 +149,3 @@ class RunEngineOverwrite(RunEngine):
             await current_run.read(msg, ret)
 
         return ret
-
-
-# `RunEngine` instantiates its bundler via `type(self).RunBundler(...)`, so
-# overwriting the class attribute is enough. Guarded, since `_prepare_stream` is
-# not part of the public bluesky API; without it, data is written as before,
-# only without the semantic annotation.
-if hasattr(RunBundler, "_prepare_stream"):
-    RunEngineOverwrite.RunBundler = SemanticRunBundler

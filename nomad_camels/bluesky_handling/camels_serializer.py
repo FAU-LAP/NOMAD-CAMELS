@@ -2,7 +2,7 @@
 
 Every dataset of an annotated channel carries its IRI as an attribute, written
 by suitcase from the data keys of the descriptor (see
-`run_engine_overwrite.SemanticRunBundler`). This serializer takes over writing
+`run_engine_overwrite._semantic_document_callback`). This serializer takes over writing
 the `semantic_mapping` entry from the base `suitcase-nomad-camels-hdf5`
 package - which would otherwise write it from the protocol design alone, at
 run start - and instead writes one consolidated version at run stop: the same
