@@ -126,6 +126,7 @@ class Set_Channels_Config(Loop_Step_Config):
         self.loop_step.wait_for_set = self.checkBox_wait_for_set.isChecked()
 
     def update_step_config(self):
+        super().update_step_config()
         info = self.sub_widget.get_info()
 
         self.loop_step.channels_values["Channels"] = info["channel"]
