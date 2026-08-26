@@ -329,6 +329,71 @@ def test_read_channels(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
+def test_read_channels_without_semantic_mapping_leaves_no_semantic_trace(
+    qtbot, tmp_path, zmq_setup
+):
+    """A protocol run without semantic mapping enabled - the default for every
+    user who has not configured an ontology - still gets the reworked
+    reading_N stream layout (that part applies to everyone, see the
+    README changelog), but must carry none of the semantic-mapping-specific
+    artifacts: no semantic_mapping entry, and no semantic_iri/semantic_label/
+    semantic_description/experiment_description attribute anywhere."""
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import read_channels
+
+    # Defensive: this suite has no conftest.py resetting global state between
+    # files, so make sure no other test left an ontology path configured.
+    variables_handling.preferences["experimental_techniques_ontology_path"] = ""
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_read_channels_no_semantics_protocol"
+    )
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, read_channels.Read_Channels_Config)
+    table = conf_widge.sub_widget.read_table.tableWidget_channels
+    row = get_row_from_channel_table("demo_instrument_detectorX", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_read_channels_no_semantics_protocol"
+    assert prot.semantic_mapping_enabled is False
+
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    savepath = run_test_protocol(
+        tmp_path, prot, publisher, dispatcher, return_savepath=True
+    )
+
+    import h5py
+
+    with h5py.File(savepath, "r") as f:
+        entry = f["CAMELS_entry"]
+        assert "reading_1" in entry["data"]
+        assert "semantic_mapping" not in entry["measurement_details"]
+
+        semantic_attrs = (
+            "semantic_iri",
+            "semantic_label",
+            "semantic_description",
+            "experiment_description",
+        )
+        visited_datasets = []
+
+        def check(name, obj):
+            if isinstance(obj, h5py.Dataset):
+                visited_datasets.append(name)
+            for attr in semantic_attrs:
+                assert attr not in obj.attrs, f"unexpected {attr!r} on {name!r}"
+
+        entry.visititems(check)
+        assert visited_datasets, "sanity check: the tree walk must not be empty"
+
+
 @pytest.mark.order(2)
 def test_run_subprotocol(qtbot, tmp_path, zmq_setup, monkeypatch):
     """ """
