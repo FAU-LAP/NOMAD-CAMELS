@@ -30,10 +30,15 @@ Attributes
         Whether dark-mode is currently active.
     copied_step : Loop_Step
         The last step, that was copied.
-    read_channel_sets : list[set]
-        Sets of the different channel-compositions for read-channels. Used to distinguish different reads with different channels for bluesky
+    read_channel_sets : list[tuple[frozenset, tuple]]
+        The different channel-compositions for read-channels, each paired with the
+        semantic annotation of those channels. Used to distinguish different reads
+        for bluesky, which allows only one composition and one annotation per stream.
     read_channel_names : list[str]
-        Names of the different read-channel steps in use. Used to distinguish the different reads.
+        The "reading_N" leaf stream name for each entry of `read_channel_sets`, at
+        the same index. Used to distinguish the different reads.
+    semantic_mapping_active : bool
+        Whether the protocol currently being built writes its semantic mapping.
     evaluation_functions_names : dict
         Used to provide the right-click menu to use mathematical functions.
     operator_names : dict
@@ -75,6 +80,45 @@ instrument_aliases = {"Instrument": [], "Alias": []}
 
 read_channel_sets = []
 read_channel_names = []
+
+
+def register_reading_stream(key):
+    """Returns the leaf stream name ("reading_N") for `key`, a hashable value
+    identifying a read's shape/semantics (e.g. its channel set). Reuses the
+    same name if this exact key was already registered during the current
+    protocol build, so two reads of the same shape end up in one stream."""
+    if key in read_channel_sets:
+        n = read_channel_sets.index(key)
+    else:
+        n = len(read_channel_sets)
+        read_channel_sets.append(key)
+        read_channel_names.append(f"reading_{n + 1}")
+    return read_channel_names[n]
+
+
+def stream_matches(doc_name, stream_name, multi_stream=False):
+    """Whether a bluesky descriptor named `doc_name` belongs to the stream
+    identified by `stream_name`, as used by the live-plot widgets. In
+    `multi_stream` mode, every stream sharing `stream_name` as a prefix
+    matches, except one nested inside a sub-protocol - "reading" (the
+    top-level protocol's own multi_stream default, see
+    `nomad_camels.bluesky_handling.builder_helper_functions.plot_creator`)
+    matches its own "reading_N" streams this way, without also matching a
+    sub-protocol's "Subprotocol_X" entries.
+    """
+    if doc_name == stream_name:
+        return True
+    if not multi_stream:
+        return False
+    return doc_name.startswith(stream_name) and not doc_name[
+        len(stream_name) :
+    ].startswith("||subprotocol_stream||")
+
+
+# Whether the protocol currently being built writes its semantic mapping. Set by
+# `protocol_builder.build_protocol` for the duration of one build, since a
+# sub-protocol carries its own `semantic_mapping_enabled`.
+semantic_mapping_active = False
 
 evaluation_functions_names = {
     "randint()": "randint(x) - random integer below x",
@@ -256,6 +300,59 @@ def get_channels(use_aliases=True):
                 )
         return channels_dict
     return channels
+
+
+def get_channel_name(gui_name, use_aliases=True):
+    """Returns the internal name of a channel, i.e. "<device>.<attribute>".
+
+    The name shown in the GUI and stored inside a protocol may be an alias,
+    which only replaces the key of the channel dictionary, not the name of the
+    `Measurement_Channel` itself.
+
+    Parameters
+    ----------
+    gui_name : str
+        The channel as it is named in the GUI / stored in a protocol step.
+    use_aliases : bool, optional
+        (Default value = True)
+        Whether `gui_name` may be an alias.
+
+    Returns
+    -------
+    str, None
+        The internal name, or None if the channel is unknown.
+    """
+    channels_dict = get_channels(use_aliases)
+    if gui_name not in channels_dict:
+        return None
+    return channels_dict[gui_name].name
+
+
+def channel_to_data_key(gui_name, use_aliases=True):
+    """Returns the bluesky data key of a channel, which is also the name of its
+    dataset in the resulting HDF5 file.
+
+    Ophyd names a signal "<device>_<attribute>", while CAMELS handles it
+    internally as "<device>.<attribute>". This is the single place converting
+    between the name a protocol uses and the name the data carries.
+
+    Parameters
+    ----------
+    gui_name : str
+        The channel as it is named in the GUI / stored in a protocol step.
+    use_aliases : bool, optional
+        (Default value = True)
+        Whether `gui_name` may be an alias.
+
+    Returns
+    -------
+    str, None
+        The data key, or None if the channel is unknown.
+    """
+    name = get_channel_name(gui_name, use_aliases)
+    if name is None:
+        return None
+    return name.replace(".", "_")
 
 
 def get_non_channel_functions():

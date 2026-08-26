@@ -49,7 +49,7 @@ class PlotWidget_2D(QWidget):
         ylabel="",
         xlabel="",
         title="",
-        stream_name="primary",
+        stream_name="",
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -137,7 +137,7 @@ class LivePlot_2D(LiveScatter, QObject):
         zlabel="",
         cmap="viridis",
         evaluator=None,
-        stream_name="primary",
+        stream_name="",
         **kwargs,
     ):
         LiveScatter.__init__(

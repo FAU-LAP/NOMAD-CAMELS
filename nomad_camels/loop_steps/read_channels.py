@@ -5,6 +5,11 @@ from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.gui.read_channels import Ui_read_channels_config
 
 from nomad_camels.utility import variables_handling, fit_variable_renaming
+from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options
+from nomad_camels.utility.semantic_mapping import (
+    read_step_annotations,
+    stream_annotation_key,
+)
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
@@ -38,10 +43,46 @@ class Read_Channels(Loop_Step):
             self.channel_list = step_info["channel_list"]
         else:
             self.channel_list = []
+
         if "skip_failed" in step_info:
             self.skip_failed = step_info["skip_failed"]
         else:
             self.skip_failed = [False] * len(self.channel_list)
+
+        if "channel_semantics" in step_info:
+            self.channel_semantics = step_info["channel_semantics"]
+        else:
+            self.channel_semantics = [""] * len(self.channel_list)
+        if "channel_semantic_iris" in step_info:
+            self.channel_semantic_iris = step_info["channel_semantic_iris"]
+        else:
+            self.channel_semantic_iris = [""] * len(self.channel_list)
+        if "channel_semantic_descriptions" in step_info:
+            self.channel_semantic_descriptions = step_info["channel_semantic_descriptions"]
+        else:
+            self.channel_semantic_descriptions = [""] * len(self.channel_list)
+        # make sure that the channel semantics, iri, lists have same length
+        while len(self.channel_semantic_iris) < len(self.channel_list):
+            self.channel_semantic_iris.append("")
+        if len(self.channel_semantic_iris) > len(self.channel_list):
+            self.channel_semantic_iris = self.channel_semantic_iris[: len(self.channel_list)]
+
+        # Backward compatibility to update existing protocols that do not have the channel_semantics field
+        while len(self.channel_semantics) < len(self.channel_list):
+            self.channel_semantics.append("")
+
+        if len(self.channel_semantics) > len(self.channel_list):
+            self.channel_semantics = self.channel_semantics[: len(self.channel_list)]
+
+        # Backward compatibility to update existing protocols that do not have the channel_semantic_descriptions field
+        while len(self.channel_semantic_descriptions) < len(self.channel_list):
+            self.channel_semantic_descriptions.append("")
+
+        if len(self.channel_semantic_descriptions) > len(self.channel_list):
+            self.channel_semantic_descriptions = self.channel_semantic_descriptions[
+                : len(self.channel_list)
+            ]
+
         if "read_variables" in step_info:
             self.read_variables = step_info["read_variables"]
         else:
@@ -112,9 +153,12 @@ class Read_Channels(Loop_Step):
         including all the channels, that are selected to be read. Then
         `bps.trigger_and_read` (or `helper_functions.read_wo_trigger`) is called
         on these channels.
-        The stream in which the data is written will be numbered if there are
-        other read_channels that are reading different channels, since bluesky
-        only allows reading the same channels inside one stream."""
+        The stream in which the data is written ("reading_1", "reading_2", ...)
+        is a new one for every distinct set of read channels, since bluesky
+        only allows reading the same channels inside one stream. Two steps
+        reading the same channels but annotating them differently get their
+        own stream as well, since the annotation is written per stream and one
+        stream can only carry one meaning per channel."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
         skip_failed = list(self.skip_failed)
@@ -122,39 +166,33 @@ class Read_Channels(Loop_Step):
             skip_failed = [False] * len(chan_list)
         if self.read_variables:
             skip_failed.append(False)
-        channels_w_variables = set(list(chan_list) + [self.read_variables])
-        if channels_w_variables in variables_handling.read_channel_sets:
-            n = variables_handling.read_channel_sets.index(channels_w_variables)
+        if variables_handling.semantic_mapping_active:
+            semantics = read_step_annotations(self)
         else:
-            n = len(variables_handling.read_channel_names)
-            variables_handling.read_channel_sets.append(channels_w_variables)
-            if n > 0:
-                variables_handling.read_channel_names.append(f'f"{{stream_name}}_{n}"')
-            else:
-                variables_handling.read_channel_names.append("stream_name")
-        stream = variables_handling.read_channel_names[n]
-
-        if variables_handling.preferences.get("nested_data", True):
-            if stream.startswith('f"'):
-                inner = stream[2:-1]
-                stream = (
-                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
-                    + inner
-                    + '"'
-                )
-            else:
-                stream = (
-                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
-                    + stream.replace('"', "")
-                    + '"'
-                )
+            semantics = {}
+        # `read_variables` is a bool and part of the set on purpose, it
+        # discriminates a read with and without the protocol variables.
+        channels_w_variables = (
+            frozenset(list(chan_list) + [self.read_variables]),
+            stream_annotation_key(self) if semantics else (),
+        )
+        leaf = variables_handling.register_reading_stream(channels_w_variables)
+        marker = (
+            "||sub_stream||"
+            if variables_handling.preferences.get("nested_data", True)
+            else "_"
+        )
+        stream = f'helper_functions.nested_stream_name(stream_name, "{leaf}", marker="{marker}")'
+        # Only passed along when there is something to say, so that protocols
+        # without semantic mapping produce exactly the script they did before.
+        semantics_arg = f", semantics={semantics!r}" if semantics else ""
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream}, skip_on_exception={skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream}, skip_on_exception={skip_failed}{semantics_arg})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream}, skip_on_exception={skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream}, skip_on_exception={skip_failed}{semantics_arg})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -174,7 +212,9 @@ def get_channel_string(channel):
     channel : str
         The channel that should be converted.
     """
-    name = variables_handling.get_channels()[channel].name
+    name = variables_handling.get_channel_name(channel)
+    if name is None:
+        raise KeyError(channel)
     if "." in name:
         dev, chan = name.split(".")
         return f'devs["{dev}"].{chan}, '
@@ -215,15 +255,39 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.loop_step = loop_step
         self.checkBox_read_all.stateChanged.connect(self.read_type_changed)
         self.checkBox_split_trigger.stateChanged.connect(self.use_trigger)
-
         self.load_data()
-        labels = ["read?", "channel", "ignore failed"]
+        protocol = getattr(self.loop_step, "protocol", None)
+        if protocol is None:
+            protocol = getattr(variables_handling, "current_protocol", None)
+        semantic_options = get_protocol_physical_quantity_options(protocol)
+        show_semantics = bool(semantic_options)
+        labels = ["read?", "channel"]
         info_dict = {
             "channel": self.loop_step.channel_list,
             "ignore failed": self.loop_step.skip_failed,
         }
+        combo_boxes = {}
+        combo_data_keys = {}
+        # Looked up again in update_step_config() to derive the description
+        # matching whichever IRI ends up selected.
+        self._semantic_option_descriptions = {
+            iri: description for _label, iri, description in semantic_options
+        }
+        if show_semantics:
+            labels.append("semantics")
+            info_dict["semantics"] = self.loop_step.channel_semantics
+            info_dict["semantic_iris"] = self.loop_step.channel_semantic_iris
+            combo_boxes["semantics"] = semantic_options
+            combo_data_keys["semantics"] = "semantic_iris"
+        labels.append("ignore failed")
         self.read_table = Channels_Check_Table(
-            self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
+            self,
+            labels,
+            info_dict=info_dict,
+            title="Read-Channels",
+            checkables=[labels.index("ignore failed")],
+            combo_boxes=combo_boxes,
+            combo_data_keys=combo_data_keys,
         )
         self.read_type_changed()
         self.layout().addWidget(self.read_table, 5, 0, 1, 3)
@@ -256,12 +320,17 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.checkBox_split_trigger.setChecked(self.loop_step.split_trigger)
 
     def update_step_config(self):
-        """ """
         info = self.read_table.get_info()
         self.loop_step.channel_list = info["channel"]
-        read_variables = self.checkBox_read_variables.isChecked()
+        if "semantics" in info:
+            self.loop_step.channel_semantics = info["semantics"]
+            self.loop_step.channel_semantic_iris = info.get("semantic_iris", [])
+            self.loop_step.channel_semantic_descriptions = [
+                self._semantic_option_descriptions.get(iri, "")
+                for iri in self.loop_step.channel_semantic_iris
+            ]
         self.loop_step.skip_failed = info["ignore failed"]
-        self.loop_step.read_variables = read_variables
+        self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
 
 
 class Trigger_Channels_Step(Loop_Step):
