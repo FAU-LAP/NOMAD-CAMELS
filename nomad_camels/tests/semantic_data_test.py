@@ -12,46 +12,49 @@ import logging
 import bluesky.plan_stubs as bps
 import h5py
 import pytest
-from bluesky.bundlers import RunBundler
 from event_model import RunRouter
 from ophyd import Signal
 
-from nomad_camels.bluesky_handling import helper_functions, semantic_runtime, variable_reading
+from nomad_camels.bluesky_handling import helper_functions, variable_reading
 from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite
 
 IRI_CURRENT = "http://purl.org/example#ElectricCurrent"
 IRI_VOLTAGE = "http://purl.org/example#Voltage"
 
-# `_prepare_stream` and `RunEngine.RunBundler` only exist from bluesky 1.11.0,
-# while the declared minimum is 1.9.0. Below that the data is written as before,
-# just without the annotation.
-needs_descriptor_hook = pytest.mark.skipif(
-    not hasattr(RunBundler, "_prepare_stream"),
-    reason="bluesky < 1.11.0 cannot annotate descriptors",
-)
 
-
-def test_warns_once_when_bluesky_is_too_old_to_annotate(monkeypatch, caplog):
-    """Below bluesky 1.11.0, `RunBundler` has no `_prepare_stream` hook to
-    annotate descriptors through. `register` must still accept the
-    annotation without raising - so a caller never has to check first - but
-    warn once per run instead of silently dropping it. The old bluesky shape
-    is simulated directly, so this runs regardless of the bluesky version
-    actually installed (see `needs_descriptor_hook` above for the real one)."""
+def test_annotation_reaches_the_dataset_without_prepare_stream_hook(
+    monkeypatch, caplog, tmp_path, detectors
+):
+    """The annotation mechanism no longer relies on `RunBundler._prepare_stream`
+    (a private bluesky hook only present from 1.11.0, while the declared
+    minimum is 1.9.0) - it is a plain `RunEngine.subscribe` document callback
+    instead. A `RunBundler` without that hook, simulated directly so this runs
+    regardless of the bluesky version actually installed, must therefore make
+    no difference at all: full annotation, no warning."""
 
     class OldRunBundler:
         """Stand-in for a pre-1.11.0 RunBundler: no `_prepare_stream`."""
 
     monkeypatch.setattr("bluesky.bundlers.RunBundler", OldRunBundler)
-    semantic_runtime.reset()
-    try:
-        with caplog.at_level(logging.WARNING):
-            semantic_runtime.register("reading_1", {"demo_detX": {"iri": IRI_CURRENT}})
-            semantic_runtime.register("reading_1", {"demo_detY": {"iri": IRI_VOLTAGE}})
-        assert len(caplog.records) == 1
-        assert "bluesky >= 1.11.0" in caplog.text
-    finally:
-        semantic_runtime.reset()
+    det_x, det_y = detectors
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "old_bluesky"})
+        yield from helper_functions.trigger_and_read(
+            [det_x, det_y],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from bps.close_run()
+
+    with caplog.at_level(logging.WARNING):
+        path = run_and_read(tmp_path, plan, "old_bluesky")
+    assert caplog.records == []
+    with h5py.File(path, "r") as file:
+        data = file["CAMELS_old_bluesky"]["data"]
+        assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
+        assert data["demo_detX"].attrs["semantic_label"] == "current"
+
 
 READ_CHANNEL_MAPPING = {
     "schema_version": "1.1",
@@ -91,7 +94,6 @@ def detectors():
     return Signal(name="demo_detX", value=1.0), Signal(name="demo_detY", value=2.0)
 
 
-@needs_descriptor_hook
 def test_annotation_reaches_the_dataset(tmp_path, detectors):
     """The case the whole mechanism exists for: one signal, read twice with a
     different meaning, and once without any."""
@@ -132,7 +134,41 @@ def test_annotation_reaches_the_dataset(tmp_path, detectors):
         assert "dtype" in first.attrs and "source" in first.attrs
 
 
-@needs_descriptor_hook
+def test_annotating_a_stream_does_not_mutate_the_shared_describe_cache(
+    tmp_path, detectors
+):
+    """The two-different-meanings case in `test_annotation_reaches_the_dataset`
+    only proves the two datasets end up different - it would pass even if the
+    second write mutated the shared source dict in place, as long as nothing
+    reads that dict again afterwards. This test targets the mutation itself:
+    the annotator must copy `demo_detX`'s per-key `describe()` dict before
+    writing into it, never touch the original, so that a *third*, later read
+    of the same signal - genuinely unannotated this time - is unaffected
+    regardless of read order."""
+    det_x, det_y = detectors
+    original_data_key = dict(det_x.describe()["demo_detX"])
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "no_leak"})
+        yield from helper_functions.trigger_and_read(
+            [det_x, det_y],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from helper_functions.trigger_and_read(
+            [det_x],
+            name="primary||sub_stream||primary_1",
+            semantics={"demo_detX": {"label": "voltage", "iri": IRI_VOLTAGE}},
+        )
+        yield from bps.close_run()
+
+    run_and_read(tmp_path, plan, "no_leak")
+    # the signal's own cached describe() output must be exactly what it was
+    # before the run - never mutated by either annotation
+    assert det_x.describe()["demo_detX"] == original_data_key
+    assert "semantic_iri" not in det_x.describe()["demo_detX"]
+
+
 def test_physical_quantity_description_reaches_the_dataset(tmp_path, detectors):
     """The selected physical quantity's own ontology description (distinct
     from the whole-experiment description) is stamped onto its channel's
@@ -163,7 +199,6 @@ def test_physical_quantity_description_reaches_the_dataset(tmp_path, detectors):
         assert "semantic_description" not in data["demo_detY"].attrs
 
 
-@needs_descriptor_hook
 def test_annotation_without_description_omits_the_attribute(tmp_path, detectors):
     det_x, _ = detectors
 
@@ -184,7 +219,6 @@ def test_annotation_without_description_omits_the_attribute(tmp_path, detectors)
         assert "semantic_description" not in data["demo_detX"].attrs
 
 
-@needs_descriptor_hook
 def test_repeated_reads_keep_one_annotated_dataset(tmp_path, detectors):
     """A read inside a loop appends to one stream, the attribute is only written
     when the dataset is created."""
@@ -212,7 +246,6 @@ def test_repeated_reads_keep_one_annotated_dataset(tmp_path, detectors):
         assert "mixed_value_logs" not in mapping
 
 
-@needs_descriptor_hook
 def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, detectors):
     """The consolidated `semantic_mapping` entry carries the protocol's
     declared annotations, enriched with the real path a channel annotation
@@ -282,7 +315,6 @@ def test_unannotated_run_stays_untouched(tmp_path, detectors):
             assert "semantic_label" not in entry["data"][channel].attrs
 
 
-@needs_descriptor_hook
 def test_experiment_description_reaches_every_dataset(tmp_path, detectors):
     """The selected experiment class's description is stamped onto every read
     channel's dataset, not just ones that also carry their own semantic_iri/
@@ -490,3 +522,77 @@ def test_experiment_description_does_not_leak_into_the_next_run(tmp_path, detect
         data = file["CAMELS_plain2"]["data"]
         assert "experiment_description" not in data["demo_detX"].attrs
         assert "experiment_description" not in data["demo_detY"].attrs
+
+
+class _CapturedRun:
+    """Minimal stand-in for a `databroker.core.BlueskyRun`: implements only
+    `.documents(fill="yes")`, which is all `export_function` needs."""
+
+    def __init__(self, docs):
+        self._docs = docs
+
+    def documents(self, fill="yes"):
+        return iter(self._docs)
+
+
+def run_and_capture(tmp_path, plan, session_name):
+    """Like `run_and_read`, but also captures every document emitted (after
+    `_semantic_document_callback` has already annotated it, since that
+    callback is registered first), so a caller can replay them through
+    `export_function` afterwards, the way re-exporting an old run does."""
+    save_path = tmp_path / session_name
+    engine = RunEngineOverwrite()
+    captured = []
+    engine.subscribe(lambda name, doc: captured.append((name, doc)))
+    router = RunRouter(
+        [
+            lambda name, doc: helper_functions.saving_function(
+                name, doc, str(save_path), False, None, False, 0
+            )
+        ]
+    )
+    engine.subscribe(router)
+    engine(plan())
+    return f"{save_path}.h5", captured
+
+
+def test_export_reproduces_channel_annotations(tmp_path, detectors):
+    """`export_function` (used to re-export an already-recorded run) replays
+    a run's own stored documents through a fresh `CAMELSSerializer`, long
+    after the live RunEngine - and its `semantic_runtime` registry - is gone.
+    This only works because the semantic annotation is now baked into the
+    descriptor document itself, the same one every subscriber (including a
+    real databroker catalog) receives - not a serializer-local copy nobody
+    else, including a later export, would ever see. This is the regression a
+    purely serializer-local injection would have reintroduced."""
+    det_x, det_y = detectors
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "exported"})
+        yield from helper_functions.trigger_and_read(
+            [det_x, det_y],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from bps.close_run()
+
+    live_path, captured = run_and_capture(tmp_path, plan, "exported")
+    with h5py.File(live_path, "r") as file:
+        assert (
+            file["CAMELS_exported"]["data"]["demo_detX"].attrs["semantic_iri"]
+            == IRI_CURRENT
+        )
+
+    export_path = tmp_path / "exported_replay"
+    helper_functions.export_function(
+        _CapturedRun(captured),
+        str(export_path),
+        True,
+        new_file_each=False,
+        do_nexus_output=False,
+    )
+    with h5py.File(f"{export_path}.h5", "r") as file:
+        data = file["CAMELS_exported"]["data"]
+        assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
+        assert data["demo_detX"].attrs["semantic_label"] == "current"
+        assert "semantic_iri" not in data["demo_detY"].attrs

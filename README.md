@@ -25,8 +25,7 @@ Features:
 - Added the semantic mapping at `<entry>/measurement_details/semantic_mapping`, a single JSON string listing every annotation (read channels, protocol variables and the experiment class), with each channel annotation carrying the full path of the dataset it resolves to whenever one exists. It is collected from what was actually written, so it never names a dataset that does not exist. A channel that was read with more than one meaning has no single dataset for its merged `value_log` view; that case is listed separately under `unresolved`.
 - The semantic mapping is now written whenever it is enabled for a protocol. Previously it also required a loadable ontology file to be configured locally, so a protocol that was annotated elsewhere lost its annotations silently. Selecting ontology classes in the GUI still needs the ontology.
 - The `semantic_mapping` document gained the step and the data key of each annotated channel; the version written to the file is now `2.0`, reflecting the added dataset paths. Without the step, two read steps annotating one channel differently produced two indistinguishable entries.
-
-Note: writing the annotations to the datasets needs `bluesky >= 1.11.0`. With older versions the data is written as before, the mapping still reaches the metadata, and a warning is logged.
+- Writing the annotations to the datasets no longer needs `bluesky >= 1.11.0`. It used to rely on a private `RunBundler` hook only present from that version; it now uses a plain `RunEngine.subscribe` document callback instead, which works with any bluesky version CAMELS supports (`>= 1.9.0`).
 
 Changes:
 - `Set Channels` no longer offers semantic mapping. A set channel is never read, so it never had a dataset to annotate; it only ever showed up unresolved, without adding value.
