@@ -7,6 +7,7 @@ depending on an instrument driver being installed.
 """
 
 import json
+import logging
 
 import bluesky.plan_stubs as bps
 import h5py
@@ -15,7 +16,7 @@ from bluesky.bundlers import RunBundler
 from event_model import RunRouter
 from ophyd import Signal
 
-from nomad_camels.bluesky_handling import helper_functions, variable_reading
+from nomad_camels.bluesky_handling import helper_functions, semantic_runtime, variable_reading
 from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite
 
 IRI_CURRENT = "http://purl.org/example#ElectricCurrent"
@@ -28,6 +29,29 @@ needs_descriptor_hook = pytest.mark.skipif(
     not hasattr(RunBundler, "_prepare_stream"),
     reason="bluesky < 1.11.0 cannot annotate descriptors",
 )
+
+
+def test_warns_once_when_bluesky_is_too_old_to_annotate(monkeypatch, caplog):
+    """Below bluesky 1.11.0, `RunBundler` has no `_prepare_stream` hook to
+    annotate descriptors through. `register` must still accept the
+    annotation without raising - so a caller never has to check first - but
+    warn once per run instead of silently dropping it. The old bluesky shape
+    is simulated directly, so this runs regardless of the bluesky version
+    actually installed (see `needs_descriptor_hook` above for the real one)."""
+
+    class OldRunBundler:
+        """Stand-in for a pre-1.11.0 RunBundler: no `_prepare_stream`."""
+
+    monkeypatch.setattr("bluesky.bundlers.RunBundler", OldRunBundler)
+    semantic_runtime.reset()
+    try:
+        with caplog.at_level(logging.WARNING):
+            semantic_runtime.register("reading_1", {"demo_detX": {"iri": IRI_CURRENT}})
+            semantic_runtime.register("reading_1", {"demo_detY": {"iri": IRI_VOLTAGE}})
+        assert len(caplog.records) == 1
+        assert "bluesky >= 1.11.0" in caplog.text
+    finally:
+        semantic_runtime.reset()
 
 READ_CHANNEL_MAPPING = {
     "schema_version": "1.1",
