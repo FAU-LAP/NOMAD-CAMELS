@@ -74,11 +74,13 @@ def load_local_ontology(ontology_path=None, run_reasoner=False):
             "No valid Experimental Techniques Ontology path configured. "
             "Set it in the CAMELS settings first."
         )
-    return _load_local_ontology_cached(str(path), bool(run_reasoner))
+    return _load_local_ontology_cached(str(path), path.stat().st_mtime, bool(run_reasoner))
 
 
 @lru_cache(maxsize=4)
-def _load_local_ontology_cached(path, run_reasoner):
+def _load_local_ontology_cached(path, mtime, run_reasoner):
+    # mtime isn't used below - it's part of the cache key so an ontology file
+    # edited in place gets reloaded instead of serving a stale cached object.
     ontology = get_ontology(path).load()
     if run_reasoner:
         try:
@@ -158,7 +160,9 @@ def get_physical_quantities(ontology_path=None, class_name=None):
     path = get_effective_ontology_path(ontology_path)
     if path is None:
         return []
-    return list(_get_physical_quantities_cached(str(path), class_name))
+    return list(
+        _get_physical_quantities_cached(str(path), path.stat().st_mtime, class_name)
+    )
 
 
 def semantic_mapping_enabled_for_protocol(protocol):
@@ -184,7 +188,8 @@ def get_protocol_physical_quantity_options(protocol):
 
 
 @lru_cache(maxsize=128)
-def _get_physical_quantities_cached(ontology_path, class_name):
+def _get_physical_quantities_cached(ontology_path, mtime, class_name):
+    # mtime isn't used below - see _load_local_ontology_cached's comment.
     ontology = load_local_ontology(ontology_path, run_reasoner=True)
     experiment_class = ontology[class_name]
     if not experiment_class:
