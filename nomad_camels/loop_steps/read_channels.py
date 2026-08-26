@@ -153,11 +153,11 @@ class Read_Channels(Loop_Step):
         including all the channels, that are selected to be read. Then
         `bps.trigger_and_read` (or `helper_functions.read_wo_trigger`) is called
         on these channels.
-        The stream in which the data is written will be numbered if there are
-        other read_channels that are reading different channels, since bluesky
+        The stream in which the data is written ("reading_1", "reading_2", ...)
+        is a new one for every distinct set of read channels, since bluesky
         only allows reading the same channels inside one stream. Two steps
-        reading the same channels but annotating them differently are numbered
-        apart as well, since the annotation is written per stream and one
+        reading the same channels but annotating them differently get their
+        own stream as well, since the annotation is written per stream and one
         stream can only carry one meaning per channel."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
@@ -176,31 +176,13 @@ class Read_Channels(Loop_Step):
             frozenset(list(chan_list) + [self.read_variables]),
             stream_annotation_key(self) if semantics else (),
         )
-        if channels_w_variables in variables_handling.read_channel_sets:
-            n = variables_handling.read_channel_sets.index(channels_w_variables)
-        else:
-            n = len(variables_handling.read_channel_names)
-            variables_handling.read_channel_sets.append(channels_w_variables)
-            if n > 0:
-                variables_handling.read_channel_names.append(f'f"{{stream_name}}_{n}"')
-            else:
-                variables_handling.read_channel_names.append("stream_name")
-        stream = variables_handling.read_channel_names[n]
-
-        if variables_handling.preferences.get("nested_data", True):
-            if stream.startswith('f"'):
-                inner = stream[2:-1]
-                stream = (
-                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
-                    + inner
-                    + '"'
-                )
-            else:
-                stream = (
-                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
-                    + stream.replace('"', "")
-                    + '"'
-                )
+        leaf = variables_handling.register_reading_stream(channels_w_variables)
+        marker = (
+            "||sub_stream||"
+            if variables_handling.preferences.get("nested_data", True)
+            else "_"
+        )
+        stream = f'helper_functions.nested_stream_name(stream_name, "{leaf}", marker="{marker}")'
         # Only passed along when there is something to say, so that protocols
         # without semantic mapping produce exactly the script they did before.
         semantics_arg = f", semantics={semantics!r}" if semantics else ""

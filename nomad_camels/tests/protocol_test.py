@@ -430,7 +430,7 @@ def test_run_subprotocol(qtbot, tmp_path, zmq_setup, monkeypatch):
 
     with h5py.File(savepath, "r") as f:
         # Check if the output variable is set correctly
-        variable_data = f["CAMELS_entry"]["data"][
+        variable_data = f["CAMELS_entry"]["data"]["reading_1"][
             "test_run_subprotocol_protocol_variable_signal"
         ]["condition_out"]
         assert len(variable_data) == 2
@@ -649,23 +649,23 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
         file_ending = ".h5"
     savepath = tmp_path / (prot.name + file_ending)
     with h5py.File(savepath, "r") as f:
-        x_data = f[list(f.keys())[0]]["data"][
+        x_data = f[list(f.keys())[0]]["data/reading_1"][
             "test_for_loop_set_var_protocol_variable_signal"
         ]["For_Loop_Value"][
             :
         ]  # for-loop (x-axis) values
-        y_data = f[list(f.keys())[0]]["data"][
+        y_data = f[list(f.keys())[0]]["data/reading_1"][
             "test_for_loop_set_var_protocol_variable_signal"
         ]["set_var"][
             :
         ]  # recorded set_var values
-        slope_camels_fit = f[list(f.keys())[0]]["data/plot_1/fit"][
-            "Linear_set_var_v_For_Loop_Value_primary"
+        slope_camels_fit = f[list(f.keys())[0]]["data/reading_1/plot_1/fit"][
+            "Linear_set_var_v_For_Loop_Value_reading"
         ]["slope"][
             :
         ]  # linear fit values
-        intercept_camels_fit = f[list(f.keys())[0]]["data/plot_1/fit"][
-            "Linear_set_var_v_For_Loop_Value_primary"
+        intercept_camels_fit = f[list(f.keys())[0]]["data/reading_1/plot_1/fit"][
+            "Linear_set_var_v_For_Loop_Value_reading"
         ]["intercept"][
             :
         ]  # linear fit intercept

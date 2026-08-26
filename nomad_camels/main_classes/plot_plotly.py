@@ -29,6 +29,7 @@ sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 
 # For substituting variable names in the fit model.
 from nomad_camels.utility.fit_variable_renaming import replace_name
+from nomad_camels.utility import variables_handling
 
 from bluesky.callbacks.core import CallbackBase
 
@@ -500,7 +501,9 @@ class PlotlyLiveCallback(CallbackBase):
             self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
             self.ignore_fit_docs.append(doc["uid"])
-        elif self.multi_stream and doc["name"].startswith(self.stream_name):
+        elif self.multi_stream and variables_handling.stream_matches(
+            doc["name"], self.stream_name, multi_stream=True
+        ):
             self.desc.append(doc["uid"])
 
     def setup(self):

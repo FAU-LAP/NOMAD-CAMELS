@@ -6,14 +6,21 @@ by suitcase from the data keys of the descriptor (see
 the `semantic_mapping` entry from the base `suitcase-nomad-camels-hdf5`
 package - which would otherwise write it from the protocol design alone, at
 run start - and instead writes one consolidated version at run stop: the same
-protocol-declared annotations, enriched with the real path of the dataset
-each channel annotation resolves to, plus a mixed-meaning `value_log` case
-that resolving from the protocol alone could not know about.
+protocol-declared annotations, each channel annotation enriched with the real
+path of the dataset it resolves to and each variable annotation with every
+real path it resolves to (a variable's value can be written into more than
+one stream), plus a mixed-meaning `value_log` case that resolving from the
+protocol alone could not know about.
 
 It is built from what was actually written rather than only from the
 protocol, so the paths and the attributes cannot drift apart. The serializer
 is the only component that knows the real paths, which is why this lives
 here.
+
+Also resolves the generic "reading" stream name of the protocol's own
+top-level, multi_stream plot widget to a concrete "reading_N" stream (see
+`descriptor` below), since the base package's plot-to-NXdata linking looks
+up `plot.stream_name` by exact match.
 """
 
 import json
@@ -22,7 +29,7 @@ import logging
 import h5py
 from suitcase.nomad_camels_hdf5 import Serializer
 
-SCHEMA_VERSION = "2.1"
+SCHEMA_VERSION = "2.2"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
 DESCRIPTION_ATTRIBUTE = "semantic_description"
@@ -37,6 +44,39 @@ class CAMELSSerializer(Serializer):
         super().__init__(*args, **kwargs)
         # {dataset path: entry of the mapping}
         self._semantic_datasets = {}
+
+    def descriptor(self, doc):
+        super().descriptor(doc)
+        stream_name = doc["name"].replace("||sub_stream||", "/").replace(
+            "||subprotocol_stream||", "/"
+        )
+        if (
+            "reading" not in self._stream_names
+            and stream_name.startswith("reading_")
+            and "_fits_readying_" not in stream_name
+        ):
+            # The protocol's own top-level, multi_stream plot widget is
+            # tagged with the generic "reading" stream name (see
+            # `builder_helper_functions.plot_creator`), never a specific
+            # "reading_N" - the base writer's plot-to-NXdata linking only does
+            # an exact `_stream_names` lookup, so alias it here to the first
+            # of this build's own reading streams, the same one "primary"
+            # used to resolve to before CAMELS stopped flattening it.
+            self._stream_names["reading"] = self._stream_names[stream_name]
+
+    def _recreate_paths(self, include_channel_links=True):
+        # The base implementation walks every `_stream_names` entry and
+        # creates a group for whichever isn't already a real HDF5 group name
+        # - the "reading" alias from `descriptor` above is deliberately not
+        # one, so it has to sit out that walk, or it would get its own bogus
+        # empty group. Restored after, since `_make_stop_entry` still needs
+        # it (called right after this, once per output file).
+        reading_alias = self._stream_names.pop("reading", None)
+        try:
+            super()._recreate_paths(include_channel_links=include_channel_links)
+        finally:
+            if reading_alias is not None:
+                self._stream_names["reading"] = reading_alias
 
     def _make_start_entry(self, doc):
         # Written by _write_semantic_mapping at stop instead, once the real
@@ -97,17 +137,27 @@ class CAMELSSerializer(Serializer):
 
     def _mapped_annotations(self):
         """Returns the protocol-declared annotations and their source, one
-        flat dict per annotation, each channel/variable annotation enriched
-        with the real dataset path it resolves to, if any."""
+        flat dict per annotation: each channel annotation enriched with the
+        single real dataset path it resolves to, if any, and each variable
+        annotation with the sorted list of every real dataset path it
+        resolves to, if any - a variable's value can legitimately be written
+        into more than one stream, so there is no single canonical path for
+        it."""
         mapping = self._loaded_mapping()
         if not mapping:
             return [], "manual_protocol_mapping"
         # The IRI is part of the key so that one data key annotated with two
         # different meanings across steps still resolves unambiguously.
-        paths_by_data_key_iri = {
-            (entry["data_key"], entry["iri"]): entry["path"]
-            for entry in self._semantic_datasets.values()
-        }
+        # Accumulated as a list, appended in the same order as
+        # self._semantic_datasets, instead of overwritten: a channel only ever
+        # has one real path per (data_key, iri), so the list's last element is
+        # the same path an overwrite would have left, but a variable's
+        # namespace is one shared, mutable object, so the same (data_key, iri)
+        # can legitimately collect one real path per stream that read it.
+        paths_by_data_key_iri = {}
+        for entry in self._semantic_datasets.values():
+            key = (entry["data_key"], entry["iri"])
+            paths_by_data_key_iri.setdefault(key, []).append(entry["path"])
         annotations = []
         for annotation in mapping.get("annotations", []) or []:
             target = annotation.get("target", {}) or {}
@@ -124,9 +174,14 @@ class CAMELSSerializer(Serializer):
                 # the key. Variables have no alias concept, so this always
                 # falls back to their name.
                 data_key = target.get("data_key") or target.get("name", "")
-                path = paths_by_data_key_iri.get((data_key, flat[IRI_ATTRIBUTE]))
-                if path:
-                    flat["path"] = path
+                paths = paths_by_data_key_iri.get(
+                    (data_key, flat[IRI_ATTRIBUTE]), []
+                )
+                if target.get("type") == "variable":
+                    if paths:
+                        flat["paths"] = sorted(paths)
+                elif paths:
+                    flat["path"] = paths[-1]
             annotations.append(flat)
         return annotations, mapping.get("source", "manual_protocol_mapping")
 
