@@ -131,13 +131,18 @@ class ND_Sweep(Loop_Step):
         started, with the channels each being set inside it."""
         tabs = "\t" * n_tabs
 
-        leaf = self._reading_leaf()
-        if self.data_output == "main stream" or variables_handling.preferences.get(
-            "nested_data", True
-        ):
-            stream = f'helper_functions.nested_stream_name(stream_name, "{leaf}")'
+        if self.data_output == "main stream":
+            # A true runtime merge into whatever stream is currently enclosing
+            # this step, at any nesting depth - not a fixed leaf name, or this
+            # would nest under (rather than merge into) the enclosing stream
+            # whenever this step lives inside a subprotocol.
+            stream = "stream_name"
         else:
-            stream = f'"{leaf}"'
+            leaf = self._reading_leaf()
+            if variables_handling.preferences.get("nested_data", True):
+                stream = f'helper_functions.nested_stream_name(stream_name, "{leaf}")'
+            else:
+                stream = f'"{leaf}"'
 
         skip_failed = list(self.skip_failed)
 
