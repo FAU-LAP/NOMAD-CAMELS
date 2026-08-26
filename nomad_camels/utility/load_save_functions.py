@@ -613,6 +613,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.experiment_ontology_class = prot_data["experiment_ontology_class"]
         if "experiment_ontology_class_iri" in prot_data:
             prot.experiment_ontology_class_iri = prot_data["experiment_ontology_class_iri"]
+        if "experiment_ontology_class_description" in prot_data:
+            prot.experiment_ontology_class_description = prot_data[
+                "experiment_ontology_class_description"
+            ]
         if "semantic_mapping_enabled" in prot_data:
             prot.semantic_mapping_enabled = prot_data["semantic_mapping_enabled"]
         if "variable_semantics" in prot_data:

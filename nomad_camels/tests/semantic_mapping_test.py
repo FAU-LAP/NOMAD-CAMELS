@@ -10,7 +10,7 @@ import pytest
 
 from nomad_camels.loop_steps.read_channels import Read_Channels
 from nomad_camels.main_classes.measurement_channel import Measurement_Channel
-from nomad_camels.utility import semantic_mapping, variables_handling
+from nomad_camels.utility import load_save_functions, semantic_mapping, variables_handling
 
 IRI_CURRENT = "http://purl.org/example#ElectricCurrent"
 IRI_VOLTAGE = "http://purl.org/example#Voltage"
@@ -280,7 +280,8 @@ def test_annotated_source_passes_the_annotation_on(demo_channels):
         [make_read_step("A", ["demo_detX"], [IRI_CURRENT])],
         semantic_mapping_active=True,
     )[0]
-    assert f"semantics={{'demo_detX': {{'label': 'quantity', 'iri': '{IRI_CURRENT}'}}}}"
+    expected = f"semantics={{'demo_detX': {{'label': 'quantity', 'iri': '{IRI_CURRENT}'}}}}"
+    assert expected in source
 
 
 def test_split_trigger_also_passes_the_annotation_on(demo_channels):
@@ -388,3 +389,63 @@ def test_mapping_document_includes_variable_description(demo_channels):
     annotation = mapping["annotations"][0]
     assert annotation["target"] == {"type": "variable", "name": "annotated_var"}
     assert annotation["semantic"]["description"] == "An electric current."
+
+
+# ------------------------------------------------------------------ protocol load
+
+
+def test_load_protocols_dict_restores_experiment_description():
+    """experiment_ontology_class_description is saved generically (it is a
+    plain Measurement_Protocol attribute), so it must be restored the same
+    way its siblings experiment_ontology_class/_iri already are."""
+    prot_data = {
+        "old_protocol": {
+            "experiment_ontology_class": "FooExperiment",
+            "experiment_ontology_class_iri": "http://purl.org/example#FooExperiment",
+            "experiment_ontology_class_description": "Does the foo.",
+        }
+    }
+    protocols = {}
+    load_save_functions.load_protocols_dict(prot_data, protocols)
+    assert (
+        protocols["old_protocol"].experiment_ontology_class_description
+        == "Does the foo."
+    )
+
+
+def test_load_protocols_dict_defaults_missing_semantic_keys():
+    """A protocol saved by the pre-semantic-mapping `development` branch has
+    none of these keys at all. Loading it must not crash and must leave every
+    new field at its safe, disabled default - both on the protocol and on a
+    Read_Channels step, which pads its own semantic lists independently."""
+    prot_data = {
+        "old_protocol": {
+            "filename": "old_protocol",
+            "variables": {},
+            "loop_steps": [
+                {
+                    "step_type": "Read Channels",
+                    "name": "Read_Channels",
+                    "full_name": "Read Channels (Read_Channels)",
+                    "channel_list": ["demo_detX"],
+                    "skip_failed": [False],
+                }
+            ],
+        }
+    }
+    protocols = {}
+    load_save_functions.load_protocols_dict(prot_data, protocols)
+    prot = protocols["old_protocol"]
+
+    assert prot.semantic_mapping_enabled is False
+    assert prot.experiment_ontology_class == ""
+    assert prot.experiment_ontology_class_iri == ""
+    assert prot.experiment_ontology_class_description == ""
+    assert prot.variable_semantics == {}
+    assert prot.variable_semantic_iris == {}
+    assert prot.variable_semantic_descriptions == {}
+
+    step = prot.loop_step_dict["Read Channels (Read_Channels)"]
+    assert step.channel_semantics == [""]
+    assert step.channel_semantic_iris == [""]
+    assert step.channel_semantic_descriptions == [""]
