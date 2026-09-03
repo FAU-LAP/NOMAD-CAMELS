@@ -554,6 +554,96 @@ def run_and_capture(tmp_path, plan, session_name):
     return f"{save_path}.h5", captured
 
 
+def test_missing_semantic_callback_warns_about_unresolved_annotations(
+    caplog, tmp_path, detectors
+):
+    """If `_semantic_document_callback` never runs - simulated here by
+    literally unsubscribing it right after construction, the way a stray
+    plain `RunEngine`, a changed subscriber order, or a document-copying
+    subscriber setup could in practice - none of the descriptors get
+    annotated, so every protocol-declared channel annotation fails to
+    resolve to a written dataset. `CAMELSSerializer`'s self-check exists
+    exactly to catch this silent total failure, so it must warn."""
+    det_x, _ = detectors
+
+    def plan():
+        yield from bps.open_run(
+            md={
+                "session_name": "missing_callback",
+                "semantic_mapping": json.dumps(READ_CHANNEL_MAPPING),
+            }
+        )
+        yield from helper_functions.trigger_and_read(
+            [det_x],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from bps.close_run()
+
+    save_path = tmp_path / "missing_callback"
+    engine = RunEngineOverwrite()
+    # RunEngineOverwrite.__init__ subscribes only _semantic_document_callback
+    # before this - nothing else is registered on a fresh instance yet - so
+    # this removes exactly that subscription.
+    engine.dispatcher.unsubscribe_all()
+    router = RunRouter(
+        [
+            lambda name, doc: helper_functions.saving_function(
+                name, doc, str(save_path), False, None, False, 0
+            )
+        ]
+    )
+    engine.subscribe(router)
+    with caplog.at_level(logging.WARNING):
+        engine(plan())
+
+    assert any(
+        "semantic" in record.message.lower() for record in caplog.records
+    )
+    with h5py.File(f"{save_path}.h5", "r") as file:
+        data = file["CAMELS_missing_callback"]["data"]
+        assert "semantic_iri" not in data["demo_detX"].attrs
+
+
+def test_normal_annotated_run_does_not_warn(caplog, tmp_path, detectors):
+    """The ordinary case the self-check must stay quiet for: annotations are
+    declared and every one of them does resolve to a written dataset."""
+    det_x, _ = detectors
+
+    def plan():
+        yield from bps.open_run(
+            md={
+                "session_name": "healthy",
+                "semantic_mapping": json.dumps(READ_CHANNEL_MAPPING),
+            }
+        )
+        yield from helper_functions.trigger_and_read(
+            [det_x],
+            name="primary",
+            semantics={"demo_detX": {"label": "current", "iri": IRI_CURRENT}},
+        )
+        yield from bps.close_run()
+
+    with caplog.at_level(logging.WARNING):
+        run_and_read(tmp_path, plan, "healthy")
+    assert caplog.records == []
+
+
+def test_run_without_semantics_does_not_warn(caplog, tmp_path, detectors):
+    """No annotations declared at all is not a failure - it must not warn
+    either, the same as a run with only some annotations unresolved."""
+    det_x, det_y = detectors
+
+    def plan():
+        yield from bps.open_run(md={"session_name": "no_semantics_at_all"})
+        yield from helper_functions.trigger_and_read([det_x, det_y], name="primary")
+        yield from bps.close_run()
+
+    with caplog.at_level(logging.WARNING):
+        run_and_read(tmp_path, plan, "no_semantics_at_all")
+    assert caplog.records == []
+
+
 def test_export_reproduces_channel_annotations(tmp_path, detectors):
     """`export_function` (used to re-export an already-recorded run) replays
     a run's own stored documents through a fresh `CAMELSSerializer`, long

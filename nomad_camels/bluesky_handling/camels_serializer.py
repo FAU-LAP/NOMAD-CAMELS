@@ -46,6 +46,10 @@ class CAMELSSerializer(Serializer):
         super().__init__(*args, **kwargs)
         # {dataset path: entry of the mapping}
         self._semantic_datasets = {}
+        # A run can produce more than one physical file (_make_stop_entry
+        # runs once per file); the health check below is about the protocol,
+        # not about any one file, so it must only run - and warn - once.
+        self._semantic_health_checked = False
 
     def descriptor(self, doc):
         super().descriptor(doc)
@@ -202,6 +206,34 @@ class CAMELSSerializer(Serializer):
             annotations.append(flat)
         return annotations, mapping.get("source", "manual_protocol_mapping")
 
+    def _check_semantic_annotation_health(self, annotations):
+        """Warns once if every protocol-declared channel annotation with an
+        IRI failed to resolve to a written dataset.
+
+        A single unresolved annotation is legitimate - its channel's read
+        step may simply not have run this time (an untaken branch, a
+        disabled step). A total failure across every declared channel
+        annotation is not: it is the signature of the descriptor-based
+        annotation mechanism not having run at all (a plain `RunEngine`
+        instead of `RunEngineOverwrite`, a changed subscriber order, or
+        descriptor documents copied instead of shared by reference - see
+        `run_engine_overwrite._semantic_document_callback`), which would
+        otherwise leave every semantic_iri attribute silently missing.
+        """
+        declared = [
+            a for a in annotations if a.get("type") == "channel" and a.get(IRI_ATTRIBUTE)
+        ]
+        if not declared or any("path" in a for a in declared):
+            return
+        logging.warning(
+            "%d protocol-declared channel semantic annotation(s) did not "
+            "resolve to any written dataset in this run - semantic_iri "
+            "attributes are missing from the data. The descriptor-based "
+            "annotation step likely did not run at all (wrong RunEngine "
+            "class, a changed subscriber order, or descriptor documents no "
+            "longer shared by reference between subscribers)." % len(declared)
+        )
+
     def _variable_semantic_map(self):
         """Returns `{variable_name: {"label": str, "iri": str, "description":
         str}}` for every protocol-declared variable annotation that carries
@@ -273,6 +305,9 @@ class CAMELSSerializer(Serializer):
         """
         self._stamp_variable_semantics()
         annotations, source = self._mapped_annotations()
+        if not self._semantic_health_checked:
+            self._semantic_health_checked = True
+            self._check_semantic_annotation_health(annotations)
         mixed_value_logs = self._mixed_value_logs()
         if not annotations and not self._semantic_datasets and not mixed_value_logs:
             return
