@@ -28,11 +28,15 @@ def _experiment_annotation(protocol):
     iri = _get(protocol, "experiment_ontology_class_iri", "")
     if not _is_set(label) and not _is_set(iri):
         return None
+    semantic = _semantic(label, iri)
+    description = _get(protocol, "experiment_ontology_class_description", "")
+    if _is_set(description):
+        semantic["description"] = description
     return {
         "target": {
             "type": "measurement",
         },
-        "semantic": _semantic(label, iri),
+        "semantic": semantic,
     }
 
 

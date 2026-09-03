@@ -367,6 +367,26 @@ def test_mapping_document_disabled(demo_channels):
     assert semantic_mapping.build_semantic_mapping(object(), enabled=False) is None
 
 
+def test_mapping_document_includes_experiment_class_description(demo_channels):
+    """The selected experiment class's own ontology description carries into
+    the document's "measurement" annotation, same as a read channel's or a
+    protocol variable's own physical quantity description."""
+
+    class Protocol:
+        experiment_ontology_class = "FooExperiment"
+        experiment_ontology_class_iri = IRI_CURRENT
+        experiment_ontology_class_description = "Measures the foo of a sample."
+        variable_semantics = {}
+        variable_semantic_iris = {}
+        loop_step_dict = {}
+        loop_steps = []
+
+    mapping = semantic_mapping.build_semantic_mapping(Protocol())
+    annotation = mapping["annotations"][0]
+    assert annotation["target"] == {"type": "measurement"}
+    assert annotation["semantic"]["description"] == "Measures the foo of a sample."
+
+
 def test_mapping_document_includes_read_channel_description(demo_channels):
     """A read channel's selected physical quantity carries its own ontology
     description into the document's `semantic` entry, same as a protocol
