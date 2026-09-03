@@ -35,7 +35,6 @@ SCHEMA_VERSION = "1.0"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
 DESCRIPTION_ATTRIBUTE = "semantic_description"
-EXPERIMENT_DESCRIPTION_ATTRIBUTE = "experiment_description"
 
 
 class CAMELSSerializer(Serializer):
@@ -133,11 +132,12 @@ class CAMELSSerializer(Serializer):
 
     def _write_experiment_description(self):
         """Writes the protocol's selected experiment-class description once,
-        as an attribute of the top-level "data" group, rather than repeating
-        it on every read channel's dataset."""
+        as a `semantic_description` attribute of the top-level "data" group -
+        the same attribute name a channel or variable's own description
+        carries - rather than repeating it on every read channel's dataset."""
         description = semantic_runtime.get_experiment_description()
         if description:
-            self._data_entry.attrs[EXPERIMENT_DESCRIPTION_ATTRIBUTE] = description
+            self._data_entry.attrs[DESCRIPTION_ATTRIBUTE] = description
 
     def _loaded_mapping(self):
         """Returns the protocol-declared `semantic_mapping` document as a

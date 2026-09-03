@@ -1,8 +1,8 @@
 """Tests for the experiment-class selector in General_Protocol_Settings
 (protocol_class.py): the selected class's description is stored (needed for
-the experiment_description HDF5 attribute), but deliberately not shown as a
-tooltip on the selector itself - that's reserved for physical-quantity
-options instead (see physical_quantity_tooltip_test.py).
+the "data" group's semantic_description HDF5 attribute), but deliberately not
+shown as a tooltip on the selector itself - that's reserved for
+physical-quantity options instead (see physical_quantity_tooltip_test.py).
 
 These call the relevant methods against a minimal stand-in instead of a real
 General_Protocol_Settings (which needs Ui_Protocol_Settings.setupUi() and a

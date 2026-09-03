@@ -343,7 +343,7 @@ def test_read_channels_without_semantic_mapping_leaves_no_semantic_trace(
     reading_N stream layout (that part applies to everyone, see the
     README changelog), but must carry none of the semantic-mapping-specific
     artifacts: no semantic_mapping entry, and no semantic_iri/semantic_label/
-    semantic_description/experiment_description attribute anywhere."""
+    semantic_description attribute anywhere."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import read_channels
 
@@ -386,7 +386,6 @@ def test_read_channels_without_semantic_mapping_leaves_no_semantic_trace(
             "semantic_iri",
             "semantic_label",
             "semantic_description",
-            "experiment_description",
         )
         visited_datasets = []
 

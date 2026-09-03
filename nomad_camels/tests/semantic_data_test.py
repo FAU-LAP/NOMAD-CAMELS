@@ -333,12 +333,12 @@ def test_experiment_description_is_written_once_on_the_data_group(tmp_path, dete
 
     with h5py.File(run_and_read(tmp_path, plan, "described"), "r") as file:
         data = file["CAMELS_described"]["data"]
-        assert data.attrs["experiment_description"] == (
+        assert data.attrs["semantic_description"] == (
             "Measures the foo of a sample."
         )
         # not repeated on the individual channel datasets
-        assert "experiment_description" not in data["demo_detX"].attrs
-        assert "experiment_description" not in data["demo_detY"].attrs
+        assert "semantic_description" not in data["demo_detX"].attrs
+        assert "semantic_description" not in data["demo_detY"].attrs
         # its own annotation is unaffected
         assert data["demo_detX"].attrs["semantic_iri"] == IRI_CURRENT
         assert "semantic_iri" not in data["demo_detY"].attrs
@@ -519,7 +519,7 @@ def test_experiment_description_does_not_leak_into_the_next_run(tmp_path, detect
     run_and_read(tmp_path, described_plan, "described2")
     with h5py.File(run_and_read(tmp_path, plain_plan, "plain2"), "r") as file:
         data = file["CAMELS_plain2"]["data"]
-        assert "experiment_description" not in data.attrs
+        assert "semantic_description" not in data.attrs
 
 
 class _CapturedRun:
