@@ -367,6 +367,32 @@ def test_mapping_document_disabled(demo_channels):
     assert semantic_mapping.build_semantic_mapping(object(), enabled=False) is None
 
 
+def test_mapping_document_includes_read_channel_description(demo_channels):
+    """A read channel's selected physical quantity carries its own ontology
+    description into the document's `semantic` entry, same as a protocol
+    variable's (see `test_mapping_document_includes_variable_description`)."""
+
+    class Protocol:
+        experiment_ontology_class = ""
+        experiment_ontology_class_iri = ""
+        variable_semantics = {}
+        variable_semantic_iris = {}
+        loop_step_dict = {}
+        loop_steps = [
+            make_read_step(
+                "A",
+                ["demo_detX"],
+                [IRI_CURRENT],
+                descriptions=["An electric current."],
+            )
+        ]
+
+    mapping = semantic_mapping.build_semantic_mapping(Protocol())
+    annotation = mapping["annotations"][0]
+    assert annotation["target"]["name"] == "demo_detX"
+    assert annotation["semantic"]["description"] == "An electric current."
+
+
 def test_mapping_document_includes_variable_description(demo_channels):
     """A protocol variable's selected physical quantity carries its own
     ontology description too, same as a read channel's (see

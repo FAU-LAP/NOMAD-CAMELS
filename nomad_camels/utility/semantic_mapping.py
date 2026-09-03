@@ -89,13 +89,21 @@ def _channel_target(channel, step):
 
 
 def _read_channel_annotations(step):
-    return [
-        {
-            "target": _channel_target(channel, step),
-            "semantic": _semantic(label, iri),
-        }
-        for channel, label, iri, _description in _read_channel_entries(step)
-    ]
+    annotations = []
+    for channel, label, iri, description in _read_channel_entries(step):
+        semantic = _semantic(label, iri)
+        if _is_set(description):
+            # The selected physical quantity's own ontology description,
+            # captured at selection time - same rule as a variable's
+            # (see `_variable_annotations`).
+            semantic["description"] = description
+        annotations.append(
+            {
+                "target": _channel_target(channel, step),
+                "semantic": semantic,
+            }
+        )
+    return annotations
 
 
 def read_step_annotations(step):
