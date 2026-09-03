@@ -231,7 +231,7 @@ def build_semantic_mapping(protocol, enabled=True):
             annotations.extend(_read_channel_annotations(step))
     annotations.extend(_variable_annotations(protocol))
     return {
-        "schema_version": "1.1",
+        "schema_version": "1.0",
         "source": "manual_protocol_mapping",
         "annotations": annotations,
     }

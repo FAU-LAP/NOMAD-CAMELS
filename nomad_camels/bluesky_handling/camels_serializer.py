@@ -31,7 +31,7 @@ from suitcase.nomad_camels_hdf5 import Serializer
 
 from nomad_camels.bluesky_handling import semantic_runtime
 
-SCHEMA_VERSION = "2.2"
+SCHEMA_VERSION = "1.0"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
 DESCRIPTION_ATTRIBUTE = "semantic_description"

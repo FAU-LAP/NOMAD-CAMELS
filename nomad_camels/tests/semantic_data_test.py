@@ -57,7 +57,7 @@ def test_annotation_reaches_the_dataset_without_prepare_stream_hook(
 
 
 READ_CHANNEL_MAPPING = {
-    "schema_version": "1.1",
+    "schema_version": "1.0",
     "source": "manual_protocol_mapping",
     "annotations": [
         {
@@ -276,7 +276,7 @@ def test_semantic_mapping_lists_the_real_paths_and_mixed_channels(tmp_path, dete
         entry = file["CAMELS_consolidated"]
         mapping = json.loads(entry["measurement_details"]["semantic_mapping"][()])
 
-        assert mapping["schema_version"] == "2.2"
+        assert mapping["schema_version"] == "1.0"
 
         annotations = {a["name"]: a for a in mapping["annotations"]}
         resolved = annotations["demo_detX"]
@@ -357,7 +357,7 @@ def test_variable_annotation_reaches_its_own_dataset(tmp_path):
         variables_dict={"annotated_var": 1, "plain_var": 2},
     )
     mapping = {
-        "schema_version": "1.1",
+        "schema_version": "1.0",
         "source": "manual_protocol_mapping",
         "annotations": [
             {
@@ -410,7 +410,7 @@ def test_variable_read_into_two_streams_lists_both_paths(tmp_path):
         variables_dict={"annotated_var": 1},
     )
     mapping = {
-        "schema_version": "1.1",
+        "schema_version": "1.0",
         "source": "manual_protocol_mapping",
         "annotations": [
             {
@@ -466,7 +466,7 @@ def test_variable_semantic_description_reaches_its_dataset(tmp_path):
         variables_dict={"annotated_var": 1, "plain_var": 2},
     )
     mapping = {
-        "schema_version": "1.1",
+        "schema_version": "1.0",
         "source": "manual_protocol_mapping",
         "annotations": [
             {
