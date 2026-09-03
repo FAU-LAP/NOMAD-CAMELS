@@ -47,8 +47,9 @@ def get(stream_name):
 
 def set_experiment_description(description):
     """Records the protocol's selected experiment-class description for the
-    run currently being built, so it can be stamped onto every read channel's
-    dataset. Called once, right after `open_run`."""
+    run currently being built, so it can be stamped once onto the run's
+    top-level "data" group by `CAMELSSerializer`. Called once, right after
+    `open_run`."""
     global _experiment_description
     _experiment_description = str(description) if description else ""
 

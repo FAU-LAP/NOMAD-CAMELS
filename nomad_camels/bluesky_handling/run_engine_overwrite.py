@@ -68,20 +68,22 @@ def _semantic_document_callback(name, doc):
 def _add_semantics(doc):
     """Adds the semantic annotation of `doc`'s stream to its data keys, if
     there is one - in place, so that every subscriber of this descriptor
-    (already registered or not) sees the same, annotated document."""
+    (already registered or not) sees the same, annotated document.
+
+    The experiment-class description is not part of this: it is written once,
+    as an attribute of the run's top-level "data" group, by
+    `CAMELSSerializer._write_experiment_description` instead of being
+    repeated onto every data key here."""
     annotations = semantic_runtime.get(doc["name"]) or {}
-    description = semantic_runtime.get_experiment_description()
-    if not annotations and not description:
+    if not annotations:
         return
     # The data keys of an object are its cached `describe()` output, shared
     # by every stream reading it. Copy before writing, or the annotation of
-    # one stream would show up in all the others. The experiment description
-    # applies to every data key, not just annotated ones, so every dict is
-    # copied whenever there is anything at all to write.
+    # one stream would show up in all the others.
     data_keys = doc["data_keys"]
     for key, data_key in list(data_keys.items()):
-        own = annotations.get(key) or {}
-        if not own and not description:
+        own = annotations.get(key)
+        if not own:
             continue
         data_key = dict(data_key)
         # Only non-empty strings, h5py cannot store None as an attribute.
@@ -91,8 +93,6 @@ def _add_semantics(doc):
             data_key["semantic_label"] = str(own["label"])
         if own.get("description"):
             data_key["semantic_description"] = str(own["description"])
-        if description:
-            data_key["experiment_description"] = str(description)
         data_keys[key] = data_key
 
 

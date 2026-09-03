@@ -244,8 +244,8 @@ def trigger_multi(devices, grp=None):
 
 def set_experiment_description(description):
     """Registers the protocol's selected experiment-class description for the
-    run currently being built, so it is stamped onto every read channel's
-    dataset. Called once per run, right after `open_run`.
+    run currently being built, so it is stamped once onto the run's top-level
+    "data" group. Called once per run, right after `open_run`.
 
     Parameters
     ----------

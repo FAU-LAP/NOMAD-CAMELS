@@ -29,10 +29,13 @@ import logging
 import h5py
 from suitcase.nomad_camels_hdf5 import Serializer
 
+from nomad_camels.bluesky_handling import semantic_runtime
+
 SCHEMA_VERSION = "2.2"
 IRI_ATTRIBUTE = "semantic_iri"
 LABEL_ATTRIBUTE = "semantic_label"
 DESCRIPTION_ATTRIBUTE = "semantic_description"
+EXPERIMENT_DESCRIPTION_ATTRIBUTE = "experiment_description"
 
 
 class CAMELSSerializer(Serializer):
@@ -119,10 +122,22 @@ class CAMELSSerializer(Serializer):
     def _make_stop_entry(self, doc):
         # Has to happen before, the parent closes the file at the end of it.
         try:
+            self._write_experiment_description()
+        except Exception as e:
+            logging.warning(f"Could not write the experiment description: {e}")
+        try:
             self._write_semantic_mapping()
         except Exception as e:
             logging.warning(f"Could not write the semantic mapping: {e}")
         super()._make_stop_entry(doc)
+
+    def _write_experiment_description(self):
+        """Writes the protocol's selected experiment-class description once,
+        as an attribute of the top-level "data" group, rather than repeating
+        it on every read channel's dataset."""
+        description = semantic_runtime.get_experiment_description()
+        if description:
+            self._data_entry.attrs[EXPERIMENT_DESCRIPTION_ATTRIBUTE] = description
 
     def _loaded_mapping(self):
         """Returns the protocol-declared `semantic_mapping` document as a
