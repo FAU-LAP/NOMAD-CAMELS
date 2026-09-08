@@ -779,6 +779,55 @@ e.g. self-written or adjusted ones</string>
             </property>
            </widget>
           </item>
+          <item row="2" column="0" colspan="3">
+           <widget class="Line" name="line_ontology">
+            <property name="frameShadow">
+             <enum>QFrame::Shadow::Raised</enum>
+            </property>
+            <property name="lineWidth">
+             <number>5</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_ontology">
+            <property name="font">
+             <font>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Ontology</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_experimental_techniques_ontology">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>17</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Path to the ontology file used for semantic mapping.</string>
+            </property>
+            <property name="text">
+             <string>Experimental Techniques Ontology</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="2">
+           <widget class="Path_Button_Edit" name="pathButton_experimental_techniques_ontology" native="true">
+            <property name="toolTip">
+             <string>path to the Experimental Techniques ontology file used for semantic mapping,
+e.g. LAP_ET.owl</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

@@ -103,12 +103,17 @@ class Set_Channels_Config(Loop_Step_Config):
         for channel in channels:
             if channels[channel].output:
                 box.append(channel)
+        labels = ["set", "channel", "value"]
         info_dict = {
             "channel": self.loop_step.channels_values["Channels"],
             "value": self.loop_step.channels_values["Values"],
         }
         self.sub_widget = Channels_Check_Table(
-            self, ["set", "channel", "value"], True, info_dict, [2]
+            self,
+            labels,
+            True,
+            info_dict,
+            [labels.index("value")],
         )
         self.checkBox_wait_for_set = QCheckBox("Wait for set")
         self.checkBox_wait_for_set.setChecked(True)
@@ -121,12 +126,8 @@ class Set_Channels_Config(Loop_Step_Config):
         self.loop_step.wait_for_set = self.checkBox_wait_for_set.isChecked()
 
     def update_step_config(self):
-        """ """
         super().update_step_config()
         info = self.sub_widget.get_info()
-        self.loop_step.channels_values = {
-            "Channels": info["channel"],
-            "Values": info["value"],
-        }
-        # self.sub_widget.update_table_data()
-        # self.loop_step.channels_values = self.sub_widget.tableData
+
+        self.loop_step.channels_values["Channels"] = info["channel"]
+        self.loop_step.channels_values["Values"] = info["value"]

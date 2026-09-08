@@ -90,11 +90,19 @@ class Simple_Sweep(For_Loop_Step):
             )[0]
         return ""
 
+    def _reading_leaf(self):
+        """The leaf stream name for this sweep's own data/plots: "reading_1"
+        for "main stream" (merges into the enclosing protocol's first
+        reading), otherwise its own, uniquely registered "reading_N"."""
+        if self.data_output == "main stream":
+            return "reading_1"
+        return variables_handling.register_reading_stream(
+            ("step_stream", self.full_name)
+        )
+
     def get_add_main_string(self):
         """Calling the plot_creator from steps_add_main"""
-        stream = f'"{self.name}"'
-        if self.data_output == "main stream":
-            stream = '"primary"'
+        stream = f'"{self._reading_leaf()}"'
         add_main_string = ""
         if self.plots:
             add_main_string += builder_helper_functions.get_plot_add_string(
@@ -107,15 +115,18 @@ class Simple_Sweep(For_Loop_Step):
         started, setting the channel, then reading."""
         tabs = "\t" * n_tabs
 
-        stream = f'"{self.name}"'
-        if variables_handling.preferences.get("nested_data", True):
-            stream = (
-                f'{stream} if stream_name == "primary" else f"{{stream_name}}||sub_stream||'
-                + stream.replace('"', "")
-                + '"'
-            )
         if self.data_output == "main stream":
+            # A true runtime merge into whatever stream is currently enclosing
+            # this step, at any nesting depth - not a fixed leaf name, or this
+            # would nest under (rather than merge into) the enclosing stream
+            # whenever this step lives inside a subprotocol.
             stream = "stream_name"
+        else:
+            leaf = self._reading_leaf()
+            if variables_handling.preferences.get("nested_data", True):
+                stream = f'helper_functions.nested_stream_name(stream_name, "{leaf}")'
+            else:
+                stream = f'"{leaf}"'
 
         skip_failed = list(self.skip_failed)
 

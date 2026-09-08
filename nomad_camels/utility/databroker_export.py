@@ -305,11 +305,8 @@ def broker_to_NX(
                         )
                     except Exception as e:
                         logging.warning(e)
-                if stream == "primary":
-                    group = data_entry
-                else:
-                    group = data_entry.create_group(stream)
-                    group.attrs["NX_class"] = "NXdata"
+                group = data_entry.create_group(stream)
+                group.attrs["NX_class"] = "NXdata"
                 for coord in dataset.coords:
                     if coord == "time":
                         isos = []

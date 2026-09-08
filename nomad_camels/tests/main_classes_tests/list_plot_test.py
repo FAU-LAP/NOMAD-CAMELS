@@ -31,7 +31,7 @@ def table():
 
 @pytest.fixture
 def live_list(value_list, table):
-    return Live_List(value_list, table)
+    return Live_List(value_list, table, stream_name="reading_1")
 
 
 def test_values_list_plot_initialization(app, value_list):
@@ -76,7 +76,7 @@ def test_live_list_add_to_table(live_list):
 
 
 def test_live_list_descriptor(live_list):
-    doc = {"name": "primary", "uid": "test_uid"}
+    doc = {"name": "reading_1", "uid": "test_uid"}
     live_list.descriptor(doc)
     assert "test_uid" in live_list.desc
 

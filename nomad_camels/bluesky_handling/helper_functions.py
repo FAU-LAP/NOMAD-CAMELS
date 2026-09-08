@@ -31,8 +31,8 @@ from PySide6.QtGui import QFont, QIcon, QKeyEvent
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 from nomad_camels import graphics
-
-from suitcase.nomad_camels_hdf5 import Serializer, export
+from nomad_camels.bluesky_handling import semantic_runtime
+from nomad_camels.bluesky_handling.camels_serializer import CAMELSSerializer
 
 import inspect
 import os
@@ -147,14 +147,18 @@ def export_function(
             runs = [runs]
         for run in runs:
             docs = run.documents(fill="yes")
-            export(
-                docs,
+            # Same as suitcase's `export`, but with the CAMELS serializer, so
+            # that exporting after the run writes the same file as writing
+            # during it.
+            with CAMELSSerializer(
                 path,
                 fname,
-                new_file_each,
+                new_file_each=new_file_each,
                 plot_data=plot_data,
                 do_nexus_output=do_nexus_output,
-            )
+            ) as serializer:
+                for item in docs:
+                    serializer(*item)
     if export_csv or export_json:
         from nomad_camels.utility.databroker_export import export_h5_to_csv_json
 
@@ -210,7 +214,7 @@ def saving_function(
         fname = os.path.basename(path)
         path = os.path.dirname(path)
     return [
-        Serializer(
+        CAMELSSerializer(
             path,
             fname,
             new_file_each=new_file_each,
@@ -238,7 +242,22 @@ def trigger_multi(devices, grp=None):
             yield from bps.trigger(obj, group=grp)
 
 
-def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None):
+def set_experiment_description(description):
+    """Registers the protocol's selected experiment-class description for the
+    run currently being built, so it is stamped onto every read channel's
+    dataset. Called once per run, right after `open_run`.
+
+    Parameters
+    ----------
+    description : str
+        The rdfs:comment of the selected ontology experiment class.
+    """
+    semantic_runtime.set_experiment_description(description)
+
+
+def read_wo_trigger(
+    devices, grp=None, stream="", skip_on_exception=None, semantics=None
+):
     """
     Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
 
@@ -249,8 +268,12 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
     grp : string (or any hashable object), optional
         identifier used by 'wait'; None by default
     stream : string, optional
-        event stream name, a convenient human-friendly identifier; default
-        name is 'primary'
+        event stream name, a convenient human-friendly identifier
+    semantics : dict, optional
+        (Default value = None)
+        {data_key: {"label": str, "iri": str}}, the semantic annotation of the
+        channels being read. Registered for `stream`, so that the descriptor of
+        that stream can carry it into the data file.
 
     Returns
     -------
@@ -265,6 +288,9 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
             obj.__read_w_except__ = False
     if grp is not None:
         yield from bps.wait(grp)
+    # Has to happen before `create`, which is what makes the RunEngine compose
+    # the descriptor this annotation belongs to.
+    semantic_runtime.register(stream, semantics)
     yield from bps.create(stream)
 
     def read_plan():
@@ -288,15 +314,29 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
     return ret
 
 
-def trigger_and_read(devices, name="primary", skip_on_exception=None):
+def trigger_and_read(devices, name="", skip_on_exception=None, semantics=None):
     rewindable = all_safe_rewind(devices)
 
     def inner_trigger_read():
         grp = short_uid("trigger")
         yield from trigger_multi(devices, grp)
-        return (yield from read_wo_trigger(devices, grp, name, skip_on_exception))
+        return (
+            yield from read_wo_trigger(
+                devices, grp, name, skip_on_exception, semantics=semantics
+            )
+        )
 
     return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
+
+
+def nested_stream_name(stream_name, leaf, marker="||sub_stream||"):
+    """Attaches `leaf` to the current `stream_name` context, or returns it
+    unprefixed if there is no enclosing context (top of a protocol or
+    sub-protocol build). `marker` is later turned into a `/` by the HDF5
+    writer, nesting `leaf` as a subgroup of whatever `stream_name` currently
+    is.
+    """
+    return f"{stream_name}{marker}{leaf}" if stream_name else leaf
 
 
 def simplify_configs_dict(configs):
@@ -327,7 +367,7 @@ def simplify_configs_dict(configs):
     return confs
 
 
-def get_fit_results(fits, namespace, yielding=False, stream="primary"):
+def get_fit_results(fits, namespace, yielding=False, stream="reading"):
     """
     Updates and reads all the fits that correspond to the given stream and
     resets the fits in the end.
@@ -342,9 +382,11 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
          (Default value = False)
          If True, the fits will be triggered and updated.
     stream : str, optional
-         (Default value = 'primary')
+         (Default value = 'reading')
          The stream on which the regarded fits should run. Only the fits which
-         have `stream_name` equal to `stream` will be used.
+         have `stream_name` equal to `stream` will be used. "reading" is the
+         default `stream` of the protocol's own top-level plots (see
+         `builder_helper_functions.plot_creator`).
     """
     for name, fit in fits.items():
         if yielding and fit.stream_name == stream:
@@ -371,7 +413,7 @@ def make_recoursive_plot_list_of_sub_steps(sub_dict, plot_list=None):
     return plot_list
 
 
-def clear_plots(plots, stream="primary"):
+def clear_plots(plots, stream="reading"):
     """
     Clears all given plots if they correspond to the given stream.
 
@@ -380,7 +422,7 @@ def clear_plots(plots, stream="primary"):
     plots : list
         List of the plots to be cleared.
     stream : str
-         (Default value = 'primary')
+         (Default value = 'reading')
          The stream to which the plots that should be cleared correspond.
     """
     for plot in plots:

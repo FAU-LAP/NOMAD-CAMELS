@@ -9,9 +9,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidgetAction,
     QPushButton,
+    QComboBox,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont, QStandardItem
+from nomad_camels.ui_widgets.combo_box_helpers import (apply_table_cell_combobox_style,populate_semantic_combo,)
 
 from nomad_camels.utility import variables_handling
 
@@ -63,6 +65,8 @@ class Channels_Check_Table(QWidget):
         use_configs=False,
         checkables=None,
         use_aliases=True,
+        combo_boxes=None,
+        combo_data_keys=None,
     ):
         super().__init__(parent)
         if use_configs:
@@ -75,6 +79,8 @@ class Channels_Check_Table(QWidget):
         self.headerLabels = headerLabels or []
         self.checkstrings = checkstrings or []
         self.checkables = checkables or []
+        self.combo_boxes = combo_boxes or {}
+        self.combo_data_keys = combo_data_keys or {}
         self.info_dict = info_dict or {}
         if "channel" not in self.info_dict:
             self.info_dict["channel"] = []
@@ -132,6 +138,11 @@ class Channels_Check_Table(QWidget):
             return
         ind = ind[0]
         if ind.column() == 1:
+            return
+        if (
+            ind.column() < len(self.headerLabels)
+            and self.headerLabels[ind.column()] in self.combo_boxes
+        ):
             return
         if ind.column() == 0 or ind.column() in self.checkables:
             self.menu = QMenu()
@@ -324,27 +335,55 @@ class Channels_Check_Table(QWidget):
                 for lab in self.headerLabels[2:]:
                     if n < len(self.info_dict[lab]):
                         self.info_dict[lab].pop(n)
+                    data_key = self.combo_data_keys.get(lab, "")
+                    if data_key and data_key in self.info_dict:
+                        if n < len(self.info_dict[data_key]):
+                            self.info_dict[data_key].pop(n)
             if name in channel_list:
                 n = channel_list.index(name)
                 for j, lab in enumerate(self.headerLabels[2:]):
                     while len(self.info_dict[lab]) < n + 1:
                         self.info_dict[lab].append(None)
-                    item = self.tableWidget_channels.item(i, 2 + j)
-                    if j + 2 in self.checkables:
-                        t = item.text()
-                        if t == "None":
-                            t = self.value_dict[lab][n]
+                    column = 2 + j
+                    if column in self.checkables:
+                        item = self.tableWidget_channels.item(i, column)
                         self.info_dict[lab][n] = (
                             item.checkState() == Qt.CheckState.Checked
                         )
+                    elif lab in self.combo_boxes:
+                        combo = self.tableWidget_channels.cellWidget(i, column)
+                        data_key = self.combo_data_keys.get(lab, "")
+                        if combo is not None and combo.currentIndex() >= 0:
+                            iri = combo.currentData() or ""
+                            if iri:
+                                label = combo.currentText()
+                            else:
+                                label = ""
+                            self.info_dict[lab][n] = label
+                            if data_key:
+                                if data_key not in self.info_dict:
+                                    self.info_dict[data_key] = []
+                                while len(self.info_dict[data_key]) < n + 1:
+                                    self.info_dict[data_key].append("")
+                                self.info_dict[data_key][n] = iri
+                        else:
+                            self.info_dict[lab][n] = ""
+                            if data_key:
+                                if data_key not in self.info_dict:
+                                    self.info_dict[data_key] = []
+                                while len(self.info_dict[data_key]) < n + 1:
+                                    self.info_dict[data_key].append("")
+                                self.info_dict[data_key][n] = ""
                     else:
+                        item = self.tableWidget_channels.item(i, column)
                         t = item.text()
                         if not t:
                             raise Exception(
-                                f"You need to enter a value for channel {name}!"
-                            )
+                            f"You need to enter a value for channel {name}!"
+                        )
                         if t == "None":
                             t = self.value_dict[lab][n]
+
                         self.info_dict[lab][n] = t
         rems = []
         for channel in channel_list:
@@ -409,31 +448,43 @@ class Channels_Check_Table(QWidget):
                     else:
                         vals.append("")  # Append empty string if index is out of range
             for j in range(len(self.headerLabels[2:])):
-                if j + 2 in self.checkables:
+                column = j + 2
+                lab = self.headerLabels[column]
+                value = vals[j] if vals else ""
+                if value == "None":
+                    value = ""
+                if column in self.checkables:
                     state = (
                         Qt.CheckState.Checked
                         if vals and vals[j] == "True"
                         else Qt.CheckState.Unchecked
                     )
                     item = CheckableTableWidgetItem(checkState=state)
-
-                    # item = QTableWidgetItem()
-                    # # set item checkable by user but set it to be not editable
-                    # item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-                    # item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                    # item.setCheckState(
-                    #     Qt.CheckState.Checked
-                    #     if vals and vals[j] == "True"
-                    #     else Qt.CheckState.Unchecked
-                    # )
-                    self.tableWidget_channels.setItem(n, j + 2, item)
+                    self.tableWidget_channels.setItem(n, column, item)
                     item.setToolTip("Hint: right-click to (un-)check complete column")
+                    if metadata:
+                        item.setToolTip(item.toolTip() + metadata)
+                elif lab in self.combo_boxes:
+                    combo = QComboBox(self.tableWidget_channels)
+                    apply_table_cell_combobox_style(combo)
+                    data_key = self.combo_data_keys.get(lab, "")
+                    data_value = ""
+                    if (
+                        channel in self.info_dict["channel"]
+                        and data_key
+                        and data_key in self.info_dict
+                    ):
+                        n_chan = self.info_dict["channel"].index(channel)
+                        if n_chan < len(self.info_dict[data_key]):
+                            data_value = self.info_dict[data_key][n_chan]
+                    populate_semantic_combo(combo, self.combo_boxes[lab], data_value)
+                    self.tableWidget_channels.setCellWidget(n, column, combo)
                 else:
-                    item = QTableWidgetItem(vals[j] if vals else "")
-                    self.tableWidget_channels.setItem(n, j + 2, item)
+                    item = QTableWidgetItem(value)
+                    self.tableWidget_channels.setItem(n, column, item)
                     self.check_string(item)
-                if metadata:
-                    item.setToolTip(item.toolTip() + metadata)
+                    if metadata:
+                        item.setToolTip(item.toolTip() + metadata)
             n += 1
         self.tableWidget_channels.resizeColumnsToContents()
         self.tableWidget_channels.setSortingEnabled(True)

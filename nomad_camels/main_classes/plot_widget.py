@@ -32,6 +32,7 @@ from PySide6.QtGui import QIcon
 from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
+from nomad_camels.utility import variables_handling
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 from bluesky import plan_stubs as bps
 
@@ -106,7 +107,7 @@ class PlotWidget(QWidget):
     title : str, optional
         The title of the plot, by default ''
     stream_name : str, optional
-        The name of the stream to be used for the plot. Default is 'primary'
+        The name of the stream to be used for the plot.
     fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]], optional
         The fits for the plot, by default None
     do_plot : bool, optional
@@ -163,7 +164,7 @@ class PlotWidget(QWidget):
         ylabel="",
         xlabel="",
         title="",
-        stream_name="primary",
+        stream_name="",
         fits=None,
         do_plot=True,
         multi_stream=False,
@@ -410,7 +411,7 @@ class LiveFit_Eva(LiveFit):
         *,
         name="",
         params=None,
-        stream_name="primary",
+        stream_name="",
         show_in_browser=False,
         web_port=None,
     ):
@@ -1104,7 +1105,7 @@ class MultiLivePlot(LivePlot, QObject):
         ylabel="",
         evaluator=None,
         title="",
-        stream_name="primary",
+        stream_name="",
         do_plot=True,
         fitPlots=None,
         multi_stream=False,
@@ -1293,7 +1294,9 @@ class MultiLivePlot(LivePlot, QObject):
                     == f"{self.stream_name}_fits_readying_{fit.livefit.name}"
                 ):
                     self.descs_fit_readying[doc["uid"]] = fit
-        elif self.multi_stream and doc["name"].startswith(self.stream_name):
+        elif self.multi_stream and variables_handling.stream_matches(
+            doc["name"], self.stream_name, multi_stream=True
+        ):
             self.desc.append(doc["uid"])
 
     def clear_plot(self):

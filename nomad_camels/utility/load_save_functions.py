@@ -127,6 +127,7 @@ standard_pref = {
     "device_driver_path": os.path.join(
         os.getcwd(), "devices", "devices_drivers"
     ).replace("\\", "/"),
+    "experimental_techniques_ontology_path": "",
     "databroker_catalog_name": "CAMELS_CATALOG",
     "driver_repository": "https://github.com/FAU-LAP/CAMELS_drivers",
     "repo_branch": "main",
@@ -579,6 +580,10 @@ def load_protocols_dict(string_dict, prot_dict):
     prot_dict : dict
         dictionary of the finished protocols
     """
+    # "name" comes from the outer dict key, not from prot_data (a stray/stale
+    # "name" entry in prot_data must not override it); "loop_steps"/"plots"
+    # need their own constructors and are handled above the generic loop.
+    non_generic_keys = {"name", "loop_steps", "plots"}
     prot_dict.clear()
     for key in string_dict:
         prot_data = string_dict[key]
@@ -588,40 +593,13 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.load_loop_steps(prot_data["loop_steps"])
         if "plots" in prot_data:
             prot.plots = load_plots([], prot_data["plots"])
-        if "filename" in prot_data:
-            prot.filename = prot_data["filename"]
-        if "variables" in prot_data:
-            prot.variables = prot_data["variables"]
-        if "metadata" in prot_data:
-            prot.metadata = prot_data["metadata"]
-        if "channel_metadata" in prot_data:
-            prot.channel_metadata = prot_data["channel_metadata"]
-        if "config_metadata" in prot_data:
-            prot.config_metadata = prot_data["config_metadata"]
-        if "use_nexus" in prot_data:
-            prot.use_nexus = prot_data["use_nexus"]
-        if "description" in prot_data:
-            prot.description = prot_data["description"]
-        if "export_json" in prot_data:
-            prot.export_json = prot_data["export_json"]
-        if "export_csv" in prot_data:
-            prot.export_csv = prot_data["export_csv"]
-        if "h5_during_run" in prot_data:
-            prot.h5_during_run = prot_data["h5_during_run"]
-        if "use_end_protocol" in prot_data:
-            prot.use_end_protocol = prot_data["use_end_protocol"]
-        if "end_protocol" in prot_data:
-            prot.end_protocol = prot_data["end_protocol"]
-        if "live_variable_update" in prot_data:
-            prot.live_variable_update = prot_data["live_variable_update"]
-        if "allow_live_comments" in prot_data:
-            prot.allow_live_comments = prot_data["allow_live_comments"]
-        if "flyer_data" in prot_data:
-            prot.flyer_data = prot_data["flyer_data"]
-        if "channel_aliases" in prot_data:
-            prot.channel_aliases = prot_data["channel_aliases"]
-        if "instrument_aliases" in prot_data:
-            prot.instrument_aliases = prot_data["instrument_aliases"]
+        # Generic restore for every other attribute - mirrors get_save_str's
+        # generic save (walks obj.__dict__), so a new Measurement_Protocol
+        # attribute is restored automatically without a matching line here.
+        for attr, value in prot_data.items():
+            if attr in non_generic_keys:
+                continue
+            setattr(prot, attr, value)
         prot_dict.update({key: prot})
 
 

@@ -51,6 +51,7 @@ from nomad_camels.bluesky_handling.builder_helper_functions import (
     flyer_creator,
 )
 from nomad_camels.utility import device_handling
+from nomad_camels.utility.semantic_mapping import semantic_mapping_to_json
 
 
 # The default string in the beginning of the protocol including imports etc.
@@ -145,6 +146,7 @@ standard_start_string += """
     if not (dispatcher and publisher):
         from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
         import multiprocessing
+        import queue
         import threading
         import asyncio
         from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
@@ -161,10 +163,17 @@ standard_start_string += """
             daemon=True,
         )
         proxy_proc.start()
-        # Give the proxy 200ms to bind to the ports
-        time.sleep(0.2)
-        # Retrieve the dynamically assigned ports
-        in_port, out_port = port_queue.get()
+        # Retrieve the dynamically assigned ports once the proxy process
+        # reports them; fails fast instead of hanging forever if the process
+        # never binds (e.g. the port/socket is unavailable) or crashes before
+        # reaching that point.
+        try:
+            in_port, out_port = port_queue.get(timeout=10)
+        except queue.Empty:
+            proxy_proc.terminate()
+            raise RuntimeError(
+                "The ZMQ proxy process did not start within 10 seconds."
+            )
         print(f"Proxy started on ports: Publisher={in_port}, Dispatcher={out_port}")
         # Setup Publisher and Dispatcher using the dynamic ports once for all plots and measurements run from the main app.
         # Measurements only create their own if the Python script is run 'standalone', so without the main app.
@@ -257,8 +266,46 @@ def build_protocol(
          (Default value = None)
          Metadata that describes the sample.
     """
+    # The build-scoped state is saved and restored around the actual build, since
+    # sub-protocols call `build_protocol` again from `import_protocol_string`, and
+    # since an exception during the build must not leak the cleared registries.
+    read_channel_names_old = list(variables_handling.read_channel_names)
+    read_channel_sets_old = list(variables_handling.read_channel_sets)
+    semantic_mapping_active_old = variables_handling.semantic_mapping_active
+    variables_handling.read_channel_names.clear()
+    variables_handling.read_channel_sets.clear()
+    variables_handling.semantic_mapping_active = getattr(
+        protocol, "semantic_mapping_enabled", False
+    )
+    try:
+        _build_protocol(protocol, file_path, save_path, catalog, userdata, sampledata)
+    finally:
+        variables_handling.read_channel_names = read_channel_names_old
+        variables_handling.read_channel_sets = read_channel_sets_old
+        variables_handling.semantic_mapping_active = semantic_mapping_active_old
+
+
+def _build_protocol(
+    protocol,
+    file_path,
+    save_path,
+    catalog,
+    userdata,
+    sampledata,
+):
+    """Implementation of `build_protocol`, called with the build-scoped registries
+    of `variables_handling` already cleared. See `build_protocol` for the
+    parameters."""
     # the protocol is converted to a dictionary and saved as a json
     protocol_dict = load_save_functions.get_save_str(protocol)
+    # Note: this deliberately does not check `semantic_mapping_available()`. That
+    # function answers whether the *GUI* can offer ontology classes for selection;
+    # annotations that were already made must be written out even on a machine
+    # that has no ontology file configured.
+    semantic_mapping_json = semantic_mapping_to_json(
+        protocol,
+        enabled=variables_handling.semantic_mapping_active,
+    )
     if not isinstance(file_path, pathlib.Path):
         file_path = pathlib.Path(file_path)
     cprot_path = file_path.with_suffix(".cprot").as_posix()
@@ -273,12 +320,6 @@ def build_protocol(
         save_path = pathlib.Path(save_path)
     if isinstance(save_path, pathlib.WindowsPath):
         save_path = save_path.as_posix()
-
-    # clearing leftovers from former builds
-    read_channel_names_old = list(variables_handling.read_channel_names)
-    read_channel_sets_old = list(variables_handling.read_channel_sets)
-    variables_handling.read_channel_names.clear()
-    variables_handling.read_channel_sets.clear()
 
     # beginning of larger strings
     device_import_string = "\n"
@@ -463,7 +504,10 @@ def build_protocol(
     protocol_string += '\t\t\tmd["protocol_json"] = f.read()\n'
     protocol_string += "\texcept FileNotFoundError:\n"
     protocol_string += "\t\tprint('Could not find protocol configuration file, information will be missing in data.')\n"
-
+    if semantic_mapping_json is not None:
+        protocol_string += (
+            f'\tmd["semantic_mapping"] = {semantic_mapping_json!r}\n'
+    )
     # reading the file itself and adding it to the metadata
     protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
@@ -544,9 +588,6 @@ def build_protocol(
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(protocol_string)
 
-    variables_handling.read_channel_names = read_channel_names_old
-    variables_handling.read_channel_sets = read_channel_sets_old
-
 
 def user_sample_string(userdata, sampledata):
     """Returns the string adding userdata and sampledata to the md.
@@ -602,14 +643,16 @@ def sub_protocol_string(
     # protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
     stream = prot_name
     if data_output == "main stream":
-        stream = "primary"
+        stream = "reading_1"
     if new_stream:
         stream = new_stream
     if variables_handling.preferences.get("nested_data", True):
-        if stream.startswith("Subprotocol_"):
-            stream_str = f'f"{{stream_name}}||subprotocol_stream||{stream}"'
-        else:
-            stream_str = f'"{stream}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream}"'
+        marker = (
+            "||subprotocol_stream||"
+            if stream.startswith("Subprotocol_")
+            else "||sub_stream||"
+        )
+        stream_str = f'helper_functions.nested_stream_name(stream_name, "{stream}", marker="{marker}")'
     else:
         stream_str = f'"{stream}"'
     protocol_string += f"{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {stream_str}, runEngine)\n"
@@ -659,17 +702,20 @@ def make_plots_string_of_protocol(
     if use_own_plots:
         stream = f'"{prot_name}"'
         if data_output == "main stream":
-            stream = '"primary"'
+            stream = '"reading_1"'
         if name:
             stream = f'"{name}"'
         plot_string += builder_helper_functions.get_plot_add_string(
             prot_name, stream, True, n_tabs
         )
     if variables_handling.preferences.get("nested_data", True):
-        if stream.startswith('"Subprotocol_'):
-            stream_str = f'f"{{stream}}||subprotocol_stream||{stream[1:]}'
-        else:
-            stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream[1:]}'
+        leaf = stream[1:-1]
+        marker = (
+            "||subprotocol_stream||"
+            if leaf.startswith("Subprotocol_")
+            else "||sub_stream||"
+        )
+        stream_str = f'helper_functions.nested_stream_name(stream, "{leaf}", marker="{marker}")'
     else:
         stream_str = stream
     if name:

@@ -44,6 +44,7 @@ from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 from nomad_camels.utility.plot_placement import place_widget
+from nomad_camels.utility import variables_handling
 
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
@@ -223,7 +224,7 @@ class PlotWidget(QWidget):
     title : str, optional
         The title of the plot, by default ''
     stream_name : str
-        The name of the bluesky stream to be used for the plot. If multi_stream is True, streams including this name are used. Default is 'primary'
+        The name of the bluesky stream to be used for the plot. If multi_stream is True, streams including this name are used.
     fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]], optional
         The fits for the plot, by default None
     do_plot : bool
@@ -271,7 +272,7 @@ class PlotWidget(QWidget):
         xlabel="",
         ylabel2="",
         title="",
-        stream_name="primary",
+        stream_name="",
         fits=None,
         do_plot=True,
         multi_stream=False,
@@ -717,7 +718,7 @@ class LivePlot(QObject, CallbackBase):
         Whether to use multiple streams. If True, all streams including the `stream_name` are used.
     evaluator : Evaluator
         The evaluator object used to evaluate expressions.
-    stream_name : str, (default: 'primary')
+    stream_name : str
         The name of the bluesky stream to use for the plot.
     y_axes : Dict[str, int], (default: None)
         The y-axis to use for each y_name, the ints should be 1 or 2, if 2, the respective y-value is plotted on the right axis
@@ -749,7 +750,7 @@ class LivePlot(QObject, CallbackBase):
         maxlen=np.inf,
         multi_stream=False,
         evaluator=None,
-        stream_name="primary",
+        stream_name="",
         y_axes=None,
         title="",
         xlabel=None,
@@ -909,14 +910,8 @@ class LivePlot(QObject, CallbackBase):
                     == f"{self.stream_name}_fits_readying_{fit.livefit.name}"
                 ):
                     self.descs_fit_readying[doc["uid"]] = fit
-        elif (
-            self.multi_stream
-            and doc["name"].startswith(self.stream_name)
-            and not doc["name"][len(self.stream_name) :].startswith(
-                "||subprotocol_stream||"
-            )
-            # check if the next part of the string after self.stream name is `||sub_stream||`,
-            # if so it is a sub-stream inside a subprotocol and should be ignored
+        elif self.multi_stream and variables_handling.stream_matches(
+            doc["name"], self.stream_name, multi_stream=True
         ):
             if self.check_if_plot_data_in_descriptor_doc(doc):
                 self.desc.append(doc["uid"])
@@ -1283,7 +1278,7 @@ class PlotWidget_2D(QWidget):
         zlabel="",
         title="",
         maxlen=np.inf,
-        stream_name="primary",
+        stream_name="",
         manual_plot_position=False,
         top_left_x="",
         top_left_y="",
@@ -1525,7 +1520,7 @@ class LivePlot_2D(QObject, CallbackBase):
         *,
         cmap="viridis",
         evaluator=None,
-        stream_name="primary",
+        stream_name="",
         multi_stream=False,
         **kwargs,
     ):
@@ -1607,14 +1602,8 @@ class LivePlot_2D(QObject, CallbackBase):
         if doc["name"] == self.stream_name:
             if self.check_if_2d_plot_data_in_descriptor_doc(doc):
                 self.desc = doc["uid"]
-        elif (
-            self.multi_stream
-            and doc["name"].startswith(self.stream_name)
-            and not doc["name"][len(self.stream_name) :].startswith(
-                "||sub_stream||Subprotocol"
-            )
-            # check if the next part of the string after self.stream name is `||sub_stream||`,
-            # if so it is a sub-stream inside a subprotocol and should be ignored
+        elif self.multi_stream and variables_handling.stream_matches(
+            doc["name"], self.stream_name, multi_stream=True
         ):
             if self.check_if_2d_plot_data_in_descriptor_doc(doc):
                 self.desc.append(doc["uid"])
