@@ -146,7 +146,7 @@ def start_camels(start_proxy_bool=True, actually_exec=True):
     import os
 
     # Ensure there is an active QApplication or QCoreApplication instance
-    app = QCoreApplication.instance()
+    app = QApplication.instance()
     if app is None:
         # sys.argv += ['-platform', 'windows:darkmode=1']
         app = QApplication(sys.argv)

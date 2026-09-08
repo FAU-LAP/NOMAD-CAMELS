@@ -293,13 +293,15 @@ class Set_Panel_Config(Manual_Control_Config):
         -------
 
         """
+        if not name:
+            name = f"group_{len(self.tabs) + 1}"
         tab = Button_Group_Tab(name, group_data, self)
         tab.signal_name_change.connect(self.change_tab_name)
         tab.signal_remove.connect(self.remove_button_group)
         tab.signal_move_left.connect(lambda: self.move_tab(-1))
         tab.signal_move_right.connect(lambda: self.move_tab(1))
         self.tabs.append(tab)
-        self.tab_widget.addTab(tab, "")
+        self.tab_widget.addTab(tab, name)
 
     def change_tab_name(self):
         """ """
@@ -441,6 +443,8 @@ class Button_Group_Tab(QWidget):
     def add_button(self, name="", data=None):
         n = len(self.buttons["labels"])
         label = QLabel("text:")
+        if not name:
+            name = f"button_{n + 1}"
         lineEdit = QLineEdit(name)
         button = QPushButton("remove button")
         button.clicked.connect(lambda state=None, x=n: self.remove_button(x))
