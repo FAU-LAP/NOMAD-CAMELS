@@ -1,4 +1,10 @@
-from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
+from PySide6.QtWidgets import (
+    QDialog,
+    QStyleFactory,
+    QMessageBox,
+    QApplication,
+    QCheckBox,
+)
 from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtGui import QKeyEvent
 
@@ -19,40 +25,122 @@ import secrets
 import hashlib
 import sqlite3
 import os
+import base64
+import ctypes
+from ctypes import wintypes
+
+
+class _DataBlob(ctypes.Structure):
+    _fields_ = [("cbData", wintypes.DWORD), ("pbData", ctypes.POINTER(ctypes.c_byte))]
+
+
+def _protect_api_key(api_key):
+    """Encrypt a key for the current Windows user with DPAPI."""
+    if os.name != "nt":
+        return None
+    raw = api_key.encode("utf-8")
+    source = ctypes.create_string_buffer(raw)
+    source_blob = _DataBlob(len(raw), ctypes.cast(source, ctypes.POINTER(ctypes.c_byte)))
+    protected_blob = _DataBlob()
+    crypt32 = ctypes.windll.crypt32
+    crypt32.CryptProtectData.argtypes = [
+        ctypes.POINTER(_DataBlob),
+        wintypes.LPCWSTR,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(_DataBlob),
+    ]
+    if not crypt32.CryptProtectData(
+        ctypes.byref(source_blob), "NOMAD CAMELS API key", None, None, None, 0, ctypes.byref(protected_blob)
+    ):
+        raise ctypes.WinError()
+    try:
+        return base64.b64encode(ctypes.string_at(protected_blob.pbData, protected_blob.cbData)).decode("ascii")
+    finally:
+        ctypes.windll.kernel32.LocalFree(protected_blob.pbData)
+
+
+def _unprotect_api_key(protected_key):
+    """Return a DPAPI-protected key, or None when it belongs to another user."""
+    if not protected_key or os.name != "nt":
+        return None
+    raw = base64.b64decode(protected_key)
+    source = ctypes.create_string_buffer(raw)
+    source_blob = _DataBlob(len(raw), ctypes.cast(source, ctypes.POINTER(ctypes.c_byte)))
+    clear_blob = _DataBlob()
+    crypt32 = ctypes.windll.crypt32
+    crypt32.CryptUnprotectData.argtypes = [
+        ctypes.POINTER(_DataBlob),
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(_DataBlob),
+    ]
+    if not crypt32.CryptUnprotectData(
+        ctypes.byref(source_blob), None, None, None, None, 0, ctypes.byref(clear_blob)
+    ):
+        return None
+    try:
+        return ctypes.string_at(clear_blob.pbData, clear_blob.cbData).decode("utf-8")
+    finally:
+        ctypes.windll.kernel32.LocalFree(clear_blob.pbData)
+
+
+def _ensure_api_key_schema(cursor):
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS api_keys (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key TEXT NOT NULL,
+            protocol_name TEXT,
+            protected_key TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+    columns = {row[1] for row in cursor.execute("PRAGMA table_info(api_keys)")}
+    if "protocol_name" not in columns:
+        cursor.execute("ALTER TABLE api_keys ADD COLUMN protocol_name TEXT")
+    if "protected_key" not in columns:
+        cursor.execute("ALTER TABLE api_keys ADD COLUMN protected_key TEXT")
 
 
 def create_and_store_api_key(protocol_name=None):
-    """Create a CAMELS API key and store only its hash in the local database.
-
-    The plaintext key is deliberately returned only to the caller. It cannot be
-    recovered from ``CAMELS_API.db`` after this point.
-    """
+    """Create an API key, preserving a Windows-user-encrypted local copy."""
     api_key = secrets.token_urlsafe(40)
     data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path, check_same_thread=False)
     try:
         c = conn.cursor()
-        c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS api_keys (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                key TEXT NOT NULL,
-                protocol_name TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-            """
-        )
+        _ensure_api_key_schema(c)
         conn.commit()
-        # Existing CAMELS installations may have created the table before
-        # protocol-scoped keys were introduced.
-        columns = {row[1] for row in c.execute("PRAGMA table_info(api_keys)")}
-        if "protocol_name" not in columns:
-            c.execute("ALTER TABLE api_keys ADD COLUMN protocol_name TEXT")
-            conn.commit()
         store_api_key(api_key, conn, protocol_name=protocol_name)
     finally:
         conn.close()
     return api_key
+
+
+def load_saved_global_api_key():
+    """Load the newest current-user global API key, if CAMELS saved one."""
+    data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
+    if not os.path.exists(data_base_path):
+        return None
+    conn = sqlite3.connect(data_base_path, check_same_thread=False)
+    try:
+        c = conn.cursor()
+        _ensure_api_key_schema(c)
+        row = c.execute(
+            "SELECT protected_key FROM api_keys WHERE protocol_name IS NULL "
+            "AND protected_key IS NOT NULL ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        conn.commit()
+        return _unprotect_api_key(row[0]) if row else None
+    finally:
+        conn.close()
 
 
 class Settings_Window(Ui_settings_window, QDialog):
@@ -96,6 +184,12 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.pushButton_copy_Api_key_clipboard.clicked.connect(self.copy_to_clipboard)
         self.pushButton_delete_Api_keys.clicked.connect(self.confirm_delete_api_keys)
         self.checkBox_enable_Api.clicked.connect(self.change_enable_API)
+        self.checkBox_keep_Api_key = QCheckBox("Keep current API key", self.right)
+        self.checkBox_keep_Api_key.setToolTip(
+            "When checked, CAMELS keeps the displayed API key and disables key replacement."
+        )
+        self.gridLayout_9.addWidget(self.checkBox_keep_Api_key, 14, 0, 1, 1)
+        self.checkBox_keep_Api_key.toggled.connect(self._update_api_key_controls)
 
         standard_pref = load_save_functions.standard_pref
 
@@ -270,6 +364,8 @@ class Settings_Window(Ui_settings_window, QDialog):
                 self.pushButton_delete_Api_keys.setEnabled(False)
         if "API_port" in settings:
             self.lineEdit_api_port.setText(settings["API_port"])
+        self.checkBox_keep_Api_key.setChecked(settings.get("keep_API_key", True))
+        self._load_saved_api_key()
         self.pushButton_API_docu.clicked.connect(self.open_api_docu)
         self.pushButton_API_docu.setToolTip(
             "If the page does not load, accept your settings and try again. The API server might not be started yet."
@@ -372,6 +468,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "extension_path": self.pathButton_extension_path.get_path(),
             "enable_API": self.checkBox_enable_Api.isChecked(),
             "API_port": self.lineEdit_api_port.text(),
+            "keep_API_key": self.checkBox_keep_Api_key.isChecked(),
             "new_file_every_x_hours": self.checkBox_new_meas_hours.isChecked(),
             "new_file_every_x_hours_value": self.spinBox_new_meas_hours.value(),
             "nested_data": self.checkBox_nested_data_structure.isChecked(),
@@ -398,12 +495,24 @@ class Settings_Window(Ui_settings_window, QDialog):
         # The protocol editor uses the same helper when OASIS access is enabled.
         api_key = create_and_store_api_key()
         self.Api_key_lineEdit.setText(api_key)
-        # Disable the "Generate API Key" button and enable the "Copy to Clipboard" button
-        self.pushButton_generate_Api_key.setEnabled(False)
-        self.pushButton_copy_Api_key_clipboard.setEnabled(True)
-        # Turn the background of the copy_api_key_clipboard button to green
+        self._update_api_key_controls()
+
+    def _load_saved_api_key(self):
+        api_key = load_saved_global_api_key()
+        if api_key:
+            self.Api_key_lineEdit.setText(api_key)
+        self._update_api_key_controls()
+
+    def _update_api_key_controls(self, *_args):
+        api_enabled = self.checkBox_enable_Api.isChecked()
+        has_key = bool(self.Api_key_lineEdit.text())
+        keep_key = self.checkBox_keep_Api_key.isChecked()
+        self.pushButton_generate_Api_key.setEnabled(api_enabled and not (has_key and keep_key))
+        self.pushButton_copy_Api_key_clipboard.setEnabled(api_enabled and has_key)
+        self.pushButton_delete_Api_keys.setEnabled(api_enabled)
+        self.checkBox_keep_Api_key.setEnabled(api_enabled)
         self.pushButton_copy_Api_key_clipboard.setStyleSheet(
-            "background-color: #0db002"
+            "background-color: #0db002" if api_enabled and has_key else ""
         )
 
     def confirm_delete_api_keys(self):
@@ -440,17 +549,12 @@ class Settings_Window(Ui_settings_window, QDialog):
     def change_enable_API(self):
         if self.checkBox_enable_Api.isChecked():
             if self.check_if_api_modules_are_available():
-                self.pushButton_generate_Api_key.setEnabled(True)
-                self.pushButton_delete_Api_keys.setEnabled(True)
                 self.pushButton_API_docu.setEnabled(True)
             else:
                 self.checkBox_enable_Api.setChecked(False)
         else:
-            self.pushButton_generate_Api_key.setEnabled(False)
-            self.pushButton_copy_Api_key_clipboard.setEnabled(False)
-            self.pushButton_delete_Api_keys.setEnabled(False)
             self.pushButton_API_docu.setEnabled(False)
-            self.pushButton_copy_Api_key_clipboard.setStyleSheet("")
+        self._update_api_key_controls()
 
     def open_api_docu(self):
         from nomad_camels.utility import variables_handling
@@ -550,10 +654,11 @@ def hash_api_key(api_key):
 # Store API Key
 def store_api_key(api_key, conn, protocol_name=None):
     hashed_key = hash_api_key(api_key)
+    protected_key = _protect_api_key(api_key)
     c = conn.cursor()
     c.execute(
-        "INSERT INTO api_keys (key, protocol_name) VALUES (?, ?)",
-        (hashed_key, protocol_name),
+        "INSERT INTO api_keys (key, protocol_name, protected_key) VALUES (?, ?, ?)",
+        (hashed_key, protocol_name, protected_key),
     )
     conn.commit()
 
