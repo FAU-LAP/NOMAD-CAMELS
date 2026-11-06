@@ -33,9 +33,11 @@ Changes:
 
 Fixes:
 - Steps following a Simple Sweep now start on a new line in the protocol overview.
+- Limited bluesky to versions below 1.16.0, which is not yet compatible with CAMELS.
 - Removed deprecated calls to `bluesky.callbacks.zmq` that broke installs when using `bluesky > 1.15.1`. Replaced with a new and cleaner implementation of the ZMQ proxy. Cleanup is also improved. ZMQ implementation for testing was adapted accordingly.
 - The build-scoped stream registry is now restored even when building a protocol raises, instead of leaking its cleared state into the next build.
 - A protocol variable's `semantic_mapping` annotation could resolve to only one of its real dataset paths, arbitrarily, whenever its value was read into more than one stream (e.g. once per `reading_N`) - its underlying namespace is one shared, mutable object, not a per-stream copy. It now lists every real path it resolves to, under a plural `paths` key instead of the singular `path`; channel annotations are unaffected. The version written to the file is now `2.2`.
+- CAMELS no longer replaces an already active crash reporter, so crashes during tests now show a traceback.
 
 ### 1.10.9
 Fixes:
