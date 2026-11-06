@@ -128,3 +128,30 @@ def live_plot(main_window):
 def plot_options(main_window, live_plot):
     plot_options = Plot_Options(parent=main_window, livePlot=live_plot)
     return plot_options
+
+@pytest.mark.parametrize("use_bluesky", [True, False])
+def test_log_mode_reaches_data_on_right_axis(qapp, use_bluesky):
+    """The data on the right axis has to be drawn logarithmically as well."""
+    raw = [1.0, 10.0, 100.0, 1000.0]
+    widget = PlotWidget(
+        "x",
+        ["a", "b"],
+        y_axes={"a": 1, "b": 2},
+        title="t",
+        logY2=True,
+        evaluator=MagicMock(),
+        use_bluesky=use_bluesky,
+    )
+    live = widget.livePlot
+    if use_bluesky:
+        live.start({"uid": "u", "time": 0})
+        for i, value in enumerate(raw):
+            live.x_data.append(float(i))
+            live.y_data["a"].append(value)
+            live.y_data["b"].append(value)
+        live.update_plot()
+    else:
+        for i, value in enumerate(raw):
+            live.add_data(float(i), {"a": value, "b": value})
+    assert list(live.current_plots["b"].getData()[1]) == pytest.approx([0, 1, 2, 3])
+    assert list(live.current_plots["a"].getData()[1]) == raw
