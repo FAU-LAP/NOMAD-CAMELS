@@ -15,10 +15,12 @@ from threading import Thread
 import asyncio
 from zmq.error import ZMQError
 from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
-from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
 from nomad_camels.tests.test_helper_functions import ensure_demo_in_devices
-
+import multiprocessing
+import threading
 import socket
+import time
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -40,41 +42,40 @@ def zmq_setup():
     Yields a tuple (publisher, dispatcher) for use in tests.
     Stops the proxy at the end of the session.
     """
-    try:
-        proxy = Proxy(5577, 5578)
-        proxy_created = True
-    except ZMQError:
-        proxy = None  # Use already running proxy.
-        proxy_created = False
+    port_queue = multiprocessing.Queue()
+    # Start the Proxy Process
+    # We store it as proxy_proc so we can terminate it later
+    proxy_proc = multiprocessing.Process(
+        target=run_zmq_proxy,
+        args=(port_queue,),
+        daemon=True,
+    )
+    proxy_proc.start()
+    # Give the proxy 200ms to bind to the ports
+    time.sleep(0.2)
+    # Retrieve the dynamically assigned ports
+    in_port, out_port = port_queue.get()
+    print(f"Proxy started on ports: Publisher={in_port}, Dispatcher={out_port}")
+    # Setup Publisher and Dispatcher using the dynamic ports once for all plots and measurements run from the main app.
+    # Measurements only create their own if the Python script is run 'standalone', so without the main app.
+    publisher = Publisher(f"localhost:{in_port}")
+    dispatcher = RemoteDispatcher(f"localhost:{out_port}")
 
-    def start_proxy():
-        if proxy_created and proxy is not None:
-            proxy.start()
-
-    # Setup dispatcher and its thread.
-    dispatcher = RemoteDispatcher("localhost:5578")
-
-    def start_dispatcher():
-        try:
-            dispatcher.start()
-        except asyncio.exceptions.CancelledError:
-            pass  # Ignore cancellation errors on shutdown.
-
-    # Setup publisher.
-    publisher = Publisher("localhost:5577")
-
-    # Start proxy and dispatcher in daemon threads.
-    proxy_thread = Thread(target=start_proxy, daemon=True)
-    dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
-    proxy_thread.start()
+    # 4. Start Dispatcher in a Thread
+    # We store the thread as dispatcher_thread to join it later
+    dispatcher_thread = threading.Thread(
+        target=dispatcher.start,
+        daemon=True,
+    )
     dispatcher_thread.start()
-
     # Yield the shared objects for tests.
     yield publisher, dispatcher
 
     # Teardown: stop the proxy once all tests have finished.
-    if proxy_created and proxy is not None:
-        proxy.stop()
+    dispatcher.loop.call_soon_threadsafe(dispatcher.loop.stop)
+    dispatcher_thread.join(timeout=2.0)
+    proxy_proc.terminate()
+    proxy_proc.join(timeout=1.0)
 
 
 @pytest.fixture(autouse=True)
