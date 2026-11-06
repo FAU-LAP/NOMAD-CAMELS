@@ -39,6 +39,8 @@ Fixes:
 - The build-scoped stream registry is now restored even when building a protocol raises, instead of leaking its cleared state into the next build.
 - A protocol variable's `semantic_mapping` annotation could resolve to only one of its real dataset paths, arbitrarily, whenever its value was read into more than one stream (e.g. once per `reading_N`) - its underlying namespace is one shared, mutable object, not a per-stream copy. It now lists every real path it resolves to, under a plural `paths` key instead of the singular `path`; channel annotations are unaffected. The version written to the file is now `2.2`.
 - CAMELS no longer replaces an already active crash reporter, so crashes during tests now show a traceback.
+- Closing the main window now waits for the background imports, which prevents a crash when the window is deleted.
+- An API port that is already in use no longer hangs CAMELS when stopping the server, and the port error is now reported.
 
 ### 1.10.9
 Fixes:

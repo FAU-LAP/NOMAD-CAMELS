@@ -792,6 +792,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             a0.ignore()
             return
         self.stop_API_server()
+        if self.databroker_catalog is None:
+            self.importer_thread.wait(30000)
+
         super().closeEvent(a0)
         if self.preferences["autosave"]:
             self.save_state()
