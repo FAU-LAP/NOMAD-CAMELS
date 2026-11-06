@@ -41,6 +41,7 @@ Fixes:
 - CAMELS no longer replaces an already active crash reporter, so crashes during tests now show a traceback.
 - Closing the main window now waits for the background imports, which prevents a crash when the window is deleted.
 - An API port that is already in use no longer hangs CAMELS when stopping the server, and the port error is now reported.
+- The web server of plotly plots now stops together with CAMELS instead of keeping it from exiting.
 
 ### 1.10.9
 Fixes:
