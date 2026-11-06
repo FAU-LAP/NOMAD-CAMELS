@@ -130,7 +130,7 @@ def plot_options(main_window, live_plot):
     return plot_options
 
 @pytest.mark.parametrize("use_bluesky", [True, False])
-def test_log_mode_reaches_data_on_right_axis(qapp, use_bluesky):
+def test_log_mode_reaches_data_on_right_axis(qapp, qtbot, use_bluesky):
     """The data on the right axis has to be drawn logarithmically as well."""
     raw = [1.0, 10.0, 100.0, 1000.0]
     widget = PlotWidget(
@@ -142,6 +142,7 @@ def test_log_mode_reaches_data_on_right_axis(qapp, use_bluesky):
         evaluator=MagicMock(),
         use_bluesky=use_bluesky,
     )
+    qtbot.addWidget(widget)
     live = widget.livePlot
     if use_bluesky:
         live.start({"uid": "u", "time": 0})

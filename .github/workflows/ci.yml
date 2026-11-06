@@ -14,6 +14,7 @@ on:
 
 jobs:
   windows_test:
+    timeout-minutes: 15
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +34,7 @@ jobs:
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
+        run: poetry run pytest -vv --timeout=100 -o faulthandler_timeout=60 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Windows)
         run: |
           ren .coverage .coverage.windows
@@ -45,6 +46,7 @@ jobs:
           include-hidden-files: true
 
   ubuntu_test:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'
@@ -70,7 +72,7 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
+          poetry run pytest -vv --timeout=100 -o faulthandler_timeout=60 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Ubuntu)
         run:  |
           mv .coverage .coverage.ubuntu
@@ -82,6 +84,7 @@ jobs:
           include-hidden-files: true
 
   macos_test:
+    timeout-minutes: 15
     runs-on: macos-latest
     env:
       # tell Qt to use the offscreen plugin
@@ -110,7 +113,7 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
+          poetry run pytest -vv --timeout=100 -o faulthandler_timeout=60 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (macOS)
         run: |
           mv .coverage .coverage.macos
