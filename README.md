@@ -38,6 +38,7 @@ Fixes:
 
 ### 1.10.9
 Fixes:
+- Limited bluesky to versions below 1.16.0, which is not yet compatible with CAMELS.
 - Fixed variables of the protocol not always appearing and being saved. 
 - Updated the suitcase-nomad-camels dependency to 1.3.2: Fixes broken saving of plots to the final data file. Now correctly deals with `numpy` and `const` functions used.
 - Replaced `pkg_resources` with `importlib.metadata` to get the installed version of CAMELS, as the former is deprecated. Now runs with new versions of `setuptools`.
