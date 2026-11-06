@@ -389,6 +389,7 @@ class PlotlyLiveCallback(CallbackBase):
         wait_for_dash_app_event = Event()
         self.setup()
         self.dash_process = Process(
+            daemon=True,
             target=run_dash_app,
             kwargs={
                 "x_name": self.x_name,
@@ -762,6 +763,7 @@ class PlotlyLiveCallback_2d(CallbackBase):
         wait_for_dash_app_event = Event()
         self.setup()
         self.dash_process = Process(
+            daemon=True,
             target=run_dash_app_2d,
             kwargs={
                 "x_name": self.x_name,
