@@ -32,6 +32,7 @@ Changes:
 - Reworked the HDF5/NeXus stream layout under `<entry>/data`: every distinct read now gets its own `reading_1`, `reading_2`, ... subgroup, including what used to be the first one, flattened directly into `data` as the `primary` stream. A `Run Subprotocol` step's data now lives in its own `Subprotocol_<name>` subgroup (named after the step, as before) directly under the enclosing `data`, with its own nested `reading_N` streams inside, instead of being glued onto whichever stream happened to be active around it. This makes the file structure a plain, predictable tree that no longer depends on where a read happens to sit in the protocol.
 
 Fixes:
+- Steps following a Simple Sweep now start on a new line in the protocol overview.
 - Limited bluesky to versions below 1.16.0, which is not yet compatible with CAMELS.
 - Removed deprecated calls to `bluesky.callbacks.zmq` that broke installs when using `bluesky > 1.15.1`. Replaced with a new and cleaner implementation of the ZMQ proxy. Cleanup is also improved. ZMQ implementation for testing was adapted accordingly.
 - The build-scoped stream registry is now restored even when building a protocol raises, instead of leaking its cleared state into the next build.
