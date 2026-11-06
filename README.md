@@ -32,13 +32,13 @@ Changes:
 - Reworked the HDF5/NeXus stream layout under `<entry>/data`: every distinct read now gets its own `reading_1`, `reading_2`, ... subgroup, including what used to be the first one, flattened directly into `data` as the `primary` stream. A `Run Subprotocol` step's data now lives in its own `Subprotocol_<name>` subgroup (named after the step, as before) directly under the enclosing `data`, with its own nested `reading_N` streams inside, instead of being glued onto whichever stream happened to be active around it. This makes the file structure a plain, predictable tree that no longer depends on where a read happens to sit in the protocol.
 
 Fixes:
+- Limited bluesky to versions below 1.16.0, which is not yet compatible with CAMELS.
 - Removed deprecated calls to `bluesky.callbacks.zmq` that broke installs when using `bluesky > 1.15.1`. Replaced with a new and cleaner implementation of the ZMQ proxy. Cleanup is also improved. ZMQ implementation for testing was adapted accordingly.
 - The build-scoped stream registry is now restored even when building a protocol raises, instead of leaking its cleared state into the next build.
 - A protocol variable's `semantic_mapping` annotation could resolve to only one of its real dataset paths, arbitrarily, whenever its value was read into more than one stream (e.g. once per `reading_N`) - its underlying namespace is one shared, mutable object, not a per-stream copy. It now lists every real path it resolves to, under a plural `paths` key instead of the singular `path`; channel annotations are unaffected. The version written to the file is now `2.2`.
 
 ### 1.10.9
 Fixes:
-- Limited bluesky to versions below 1.16.0, which is not yet compatible with CAMELS.
 - Fixed variables of the protocol not always appearing and being saved. 
 - Updated the suitcase-nomad-camels dependency to 1.3.2: Fixes broken saving of plots to the final data file. Now correctly deals with `numpy` and `const` functions used.
 - Replaced `pkg_resources` with `importlib.metadata` to get the installed version of CAMELS, as the former is deprecated. Now runs with new versions of `setuptools`.
