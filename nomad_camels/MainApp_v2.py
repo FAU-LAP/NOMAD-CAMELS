@@ -347,7 +347,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # 4. Start Dispatcher in a Thread
             # We store the thread as self.dispatcher_thread to join it later
             self.dispatcher_thread = threading.Thread(
-                target=self.dispatcher.start,
+                target=self._run_dispatcher,
                 daemon=True,
             )
             self.dispatcher_thread.start()
@@ -776,18 +776,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             a0 (QCloseEvent): The close event.
         """
-        # Clean up ZMQ infrastructure
-        # Stop the dispatcher thread gracefully
-        if hasattr(self, "dispatcher") and self.dispatcher is not None:
-            self.dispatcher.stop()
-            # If you stored the thread, join it to ensure it finishes
-            if hasattr(self, "dispatcher_thread") and self.dispatcher_thread.is_alive():
-                self.dispatcher_thread.join(timeout=1.0)
-
-        # Terminate the proxy process
-        if hasattr(self, "proxy_proc") and self.proxy_proc is not None:
-            self.proxy_proc.terminate()
-            self.proxy_proc.join(timeout=1.0)
         for window in list(self.open_windows):
             window.close()
         if self.open_windows:
@@ -800,6 +788,37 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         super().closeEvent(a0)
         if self.preferences["autosave"]:
             self.save_state()
+        self.stop_zmq()
+
+    def _run_dispatcher(self):
+        """Runs the dispatcher in its thread until `stop_zmq` cancels it."""
+        import asyncio
+
+        try:
+            self.dispatcher.start()
+        except asyncio.CancelledError:
+            pass
+
+    def stop_zmq(self):
+        """Stops the dispatcher thread and the proxy process.
+
+        The dispatcher has to stop in its own thread, because ZMQ aborts the
+        whole process if its context is destroyed while another thread uses it.
+        """
+        import asyncio
+
+        if hasattr(self, "dispatcher_thread") and self.dispatcher_thread.is_alive():
+            loop = self.dispatcher.loop
+
+            def cancel_tasks():
+                for task in asyncio.all_tasks(loop):
+                    task.cancel()
+
+            loop.call_soon_threadsafe(cancel_tasks)
+            self.dispatcher_thread.join(timeout=1.0)
+        if hasattr(self, "proxy_proc") and self.proxy_proc is not None:
+            self.proxy_proc.terminate()
+            self.proxy_proc.join(timeout=1.0)
 
     # --------------------------------------------------
     # User / Sample methods
