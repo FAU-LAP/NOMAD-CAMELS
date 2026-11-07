@@ -45,6 +45,7 @@ Fixes:
 - Samples from older versions no longer create duplicates or get lost when editing samples, shared samples can now be deleted, and older samples are visible to their owners again.
 - Shared samples no longer show "Sample Not Found" when starting a protocol, and the API can select samples by name or ID.
 - Pressing No in the "Sample Not Found" message now cancels the protocol instead of showing an error, and measurements use the sample of the active user if two users have a sample with the same name.
+- Closing CAMELS no longer crashes when stopping the plot proxy, so the state is saved on closing and no proxy process stays behind.
 
 ### 1.10.9
 Fixes:
