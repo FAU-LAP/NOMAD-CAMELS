@@ -439,20 +439,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Raises:
             ValueError: If the given sample does not exist in the sample data.
         """
-        # Check if the sample exists
-        if sample_name not in self.sampledata:
-            import pandas as pd
-
-            # make dataframe with keys of sampledata as index and the values as columns
-            df = pd.DataFrame.from_dict(self.sampledata, orient="index")
-            if sample_name in df["name"]:
-                sample_name = df[df["name"] == sample_name].index[0]
-            elif sample_name in df["sample_id"]:
-                sample_name = df[df["sample_id"] == sample_name].index[0]
-            else:
-                raise ValueError(
-                    f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {self.get_user_name_data()[0]}. Please create this sample first."
-                )
+        # Find the sample, the drop-down shows its display name
+        user = self.get_user_name_data()[0]
+        for key, sample in self.sampledata.items():
+            names = (
+                key,
+                sample.get("display_name"),
+                sample.get("name"),
+                sample.get("sample_id"),
+            )
+            if sample_name in names and sample.get("owner", "") in ("", user):
+                sample_name = sample.get("display_name", key)
+                break
+        else:
+            raise ValueError(
+                f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {user}. Please create this sample first."
+            )
 
         # Set the active sample to the sample name
         self.active_sample = sample_name
@@ -1142,13 +1144,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             dat.set_index("unique_name", inplace=True)
             data_dict = dat.to_dict("index")
-            removers = []
-            for key, value in self.sampledata.items():
-                if not "owner" in value or (
-                    value["owner"] == self.get_user_name_data()[0]
-                    and key not in data_dict
-                ):
-                    removers.append(key)
+            editable_owners = ("", self.get_user_name_data()[0])
+            removers = [
+                key
+                for key, value in self.sampledata.items()
+                if value.get("owner", "") in editable_owners and key not in data_dict
+            ]
             for key in removers:
                 self.sampledata.pop(key)
             self.sampledata.update(dat.to_dict("index"))
@@ -1160,6 +1161,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Refresh the sample combobox with samples that are owned by the active user or have no owner.
         """
+        self.sampledata = load_save_functions.clean_sample_data(
+            self.sampledata, self.get_user_name_data()[0]
+        )
         self.comboBox_sample.clear()
         self.comboBox_sample.addItems(
             sorted(
@@ -2144,6 +2148,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 protocol_name, ask_file=False, variables=variables
             ):
                 self.setCursor(Qt.ArrowCursor)
+                self.pushButton_stop.setEnabled(False)
+                self.still_running = False
                 self.button_area_meas.enable_run_buttons()
                 return
             protocol = self.protocols_dict[protocol_name]
@@ -2735,6 +2741,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
+        if not sampledata:
+            return False
         filename = protocol.filename.format(
             sample=sample,
             sample_id=sampledata.get("sample_id", ""),
@@ -2826,6 +2834,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     if (
                         "display_name" in self.sampledata[s]
                         and self.sampledata[s]["display_name"] == sample
+                        and self.sampledata[s].get("owner", "")
+                        in ("", self.get_user_name_data()[0])
                     ):
                         sampledata = self.sampledata[s]
                         break
@@ -2861,8 +2871,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             protocol_name (str): The name of the protocol to open.
         """
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
-        if not os.path.isfile(path):
-            self.build_protocol(protocol_name, False)
+        if not os.path.isfile(path) and not self.build_protocol(protocol_name, False):
+            return
         variables_handling.open_link(path)
 
     # --------------------------------------------------
