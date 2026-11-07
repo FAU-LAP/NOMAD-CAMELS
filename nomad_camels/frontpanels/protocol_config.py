@@ -753,14 +753,36 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.build_protocol_sequence()
         if copied_step:
             self.copy_loop_step(variables_handling.copied_step.full_name)
-        new_ind = treeView_functions.getItemIndex(
-            self.item_model_sequence, step.full_name
-        )
-        self.treeView_protocol_sequence.selectionModel().select(
-            new_ind, QItemSelectionModel.Select
+        self.select_step(step.full_name)
+        return step
+
+    def select_step(self, name):
+        """Selects the step with the given name and opens its configuration."""
+        index = treeView_functions.getItemIndex(self.item_model_sequence, name)
+        self.treeView_protocol_sequence.selectionModel().setCurrentIndex(
+            index, QItemSelectionModel.ClearAndSelect
         )
         self.tree_click_sequence()
-        return step
+
+    def step_to_select_after_removal(self, index):
+        """Returns the name of the step above the given one, otherwise the one
+        below it, otherwise its parent. Returns None if there is no such step.
+        """
+        parent = self.item_model_sequence.itemFromIndex(index).parent()
+        siblings = parent
+        if siblings is None:
+            siblings = self.item_model_sequence.invisibleRootItem()
+        if index.row() > 0:
+            neighbour = siblings.child(index.row() - 1, 0)
+        elif siblings.rowCount() > 1:
+            neighbour = siblings.child(1, 0)
+        else:
+            neighbour = parent
+        # The branches of an If step are disabled, so they cannot be selected
+        while neighbour is not None and not neighbour.isEnabled():
+            neighbour = neighbour.parent()
+        return None if neighbour is None else neighbour.data()
+
 
     def remove_loop_step(self, ask=True):
         """After updating the loop_step order in the protocol, the
@@ -793,9 +815,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                     QMessageBox.Yes | QMessageBox.No,
                 )
             if not ask or remove_dialog == QMessageBox.Yes:
+                next_step = self.step_to_select_after_removal(ind)
                 self.protocol.remove_loop_step(name)
                 self.build_protocol_sequence()
-                self.check_movability()
+                if next_step is None:
+                    self.configuration_main_widget.setHidden(True)
+                    self.check_movability()
+                else:
+                    self.select_step(next_step)
+
 
     def replace_loop_step(self, step_type="", position=-1, parent=None):
         """ """

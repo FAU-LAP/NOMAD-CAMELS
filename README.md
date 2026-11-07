@@ -46,6 +46,7 @@ Fixes:
 - Shared samples no longer show "Sample Not Found" when starting a protocol, and the API can select samples by name or ID.
 - Pressing No in the "Sample Not Found" message now cancels the protocol instead of showing an error, and measurements use the sample of the active user if two users have a sample with the same name.
 - Closing CAMELS no longer crashes when stopping the plot proxy, so the state is saved on closing and no proxy process stays behind.
+- New and pasted steps are now selected and scrolled into view, and steps pasted several times keep their order. After deleting a step, the step above it is selected.
 
 ### 1.10.9
 Fixes:
