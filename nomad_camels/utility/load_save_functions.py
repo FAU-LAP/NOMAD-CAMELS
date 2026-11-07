@@ -661,6 +661,68 @@ def load_devices_dict(string_dict, devices_dict):
             dev.additional_info = dev_data["additional_info"]
         devices_dict.update({key: dev})
 
+    
+def clean_sample_data(sampledata, active_user=""):
+    """Brings samples from older CAMELS versions to the current format and
+    merges duplicates.
+
+    Samples without an owner stay shared between all users. If a shared sample
+    also exists for the active user, it is merged into the sample of that user.
+    Owner names are cleaned the same way as the name of the active user, so that
+    older samples stay visible to their owner.
+
+    Parameters
+    ----------
+    sampledata : dict
+        the samples, with their unique name as key
+    active_user : str, default ""
+        the name of the active user
+
+    Returns
+    -------
+    cleaned : dict
+        the samples with their current key, without duplicates
+    """
+    # IMPORT clean_filename only if it is needed
+    from nomad_camels.utility.databroker_export import clean_filename
+
+    def text(value):
+        return "" if value is None or value != value else str(value).strip()
+
+    def merge(target, source):
+        target["description"] = target["description"] or source["description"]
+        for field, value in source.items():
+            target.setdefault(field, value)
+
+    cleaned = {}
+    for key, entry in sampledata.items():
+        entry = dict(entry) if isinstance(entry, dict) else {}
+        name = text(entry.get("name")) or key
+        sample_id = text(entry.get("sample_id"))
+        owner = clean_filename(text(entry.get("owner")))
+        display_name = (
+            f"{name} / {sample_id}" if sample_id and sample_id != name else name
+        )
+        entry.update(
+            name=name,
+            sample_id=sample_id,
+            description=text(entry.get("description")),
+            owner=owner,
+            display_name=display_name,
+        )
+        unique_name = f"{display_name}, {owner}"
+        if unique_name in cleaned:
+            merge(cleaned[unique_name], entry)
+        else:
+            cleaned[unique_name] = entry
+    if active_user:
+        for key, entry in list(cleaned.items()):
+            own_sample = cleaned.get(f"{entry['display_name']}, {active_user}")
+            if not entry["owner"] and own_sample is not None:
+                merge(own_sample, entry)
+                cleaned.pop(key)
+    return cleaned
+
 
 def get_most_recent_presets(return_all=False):
     """Goes through all files in the `preset_path` and returns the newest preset.
