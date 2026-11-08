@@ -741,6 +741,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             plot (QWidget): The plot to add.
         """
+        # A plot inside another window, like the value list in the box of a Wait
+        # step, is closed and deleted together with that window
+        if plot.parentWidget() is not None:
+            return
         self.open_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
         plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
