@@ -1126,15 +1126,69 @@ def get_opyd_and_py_file_contents(classname, md, device_name):
     return md
 
 
-def create_venv_run_file_delete_venv(packages, script_to_run):
+def run_python_file(command, cwd=None, timeout=30):
+    """
+    Runs a Python file as part of a protocol, so the protocol can still be stopped
+    while the file runs. Use it with `yield from`, it returns the
+    `subprocess.CompletedProcess` of the file.
+
+    The file is stopped when it runs longer than `timeout` seconds (0 means no limit)
+    or when the protocol is stopped. If the file fails or runs too long, a warning with
+    its error output is logged and the protocol continues.
+    """
+    import logging
+    import subprocess
+    import time
+
+    from bluesky import plan_stubs as bps
+
+    process = subprocess.Popen(
+        command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+    start = time.monotonic()
+    timed_out = False
+    try:
+        while True:
+            try:
+                # also reads the output, so the file never waits for a full pipe
+                stdout, stderr = process.communicate(timeout=0.05)
+                break
+            except subprocess.TimeoutExpired:
+                pass
+            if timeout and time.monotonic() - start > timeout:
+                timed_out = True
+                process.kill()
+                stdout, stderr = process.communicate()
+                break
+            # gives the protocol the chance to react, e.g. to the stop button
+            yield from bps.sleep(0.05)
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.communicate()
+    message = ""
+    if timed_out:
+        message = f"The Python file {command[1]} did not finish within {timeout} s and was stopped. The protocol continues.\n{stderr}"
+    elif process.returncode:
+        message = f"The Python file {command[1]} failed with exit code {process.returncode}. The protocol continues.\n{stderr}"
+
+    if message:
+        logging.warning(message)
+        # also shown in red in the log panel of CAMELS and in the terminal
+        print(f"WARNING: {message}", file=sys.stderr)
+    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+
+
+def create_venv_run_file_delete_venv(packages, script_and_arguments, timeout=30):
     """
     Create a virtual environment, install the specified packages
-    in it, run the specified Python script, and then delete the virtual environment.
+    in it, run the specified Python script with its arguments, and then delete the
+    virtual environment. Use it with `yield from`, like `run_python_file`.
     """
-    import venv
+    import shutil
     import subprocess
     import tempfile
-    import shutil
+    import venv
 
     # Step 1: Create the virtual environment in a temp folder using tempfile
     try:
@@ -1173,19 +1227,20 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
                 ) from e
 
     # Step 3: Run the specified Python script
+    script_to_run = script_and_arguments[0]
     try:
-        result_python_file = subprocess.run(
-            [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
+        result_python_file = yield from run_python_file(
+            [python_executable, *script_and_arguments],
+            cwd=os.path.dirname(script_to_run),
+            timeout=timeout,
         )
-    except Exception as e:
-        raise Exception(f"Error running script {script_to_run}: {e}") from e
-
-    # Step 4: Delete the virtual environment
-    try:
-        if os.path.exists(temp_folder):
-            shutil.rmtree(temp_folder)
-    except Exception as e:
-        raise Exception(f"Error deleting temporary folder: {e}") from e
+    finally:
+        # Step 4: Delete the virtual environment, also when the protocol is stopped
+        try:
+            if os.path.exists(temp_folder):
+                shutil.rmtree(temp_folder)
+        except Exception as e:
+            raise Exception(f"Error deleting temporary folder: {e}") from e
     return result_python_file
 
 

@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
+from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 import os
 from nomad_camels.utility import variables_handling
 
@@ -66,6 +67,8 @@ class Execute_Python_File(Loop_Step):
             if "use_camels_python" in step_info
             else False
         )
+        # Seconds after which the Python file is stopped, 0 means no limit
+        self.timeout = step_info["timeout"] if "timeout" in step_info else 30
 
     def get_protocol_short_string(self, n_tabs=0):
         short_string = super().get_protocol_short_string(n_tabs)
@@ -101,22 +104,24 @@ class Execute_Python_File(Loop_Step):
             variables_string = variables_string[:-1]
         else:
             variables_string = ""
+        timeout_string = f'timeout=eva.eval("{self.timeout}")'
         if self.use_existing_env:
             protocol_string += (
-                f"{tabs}result_python_file = subprocess.run(['"
+                f"{tabs}result_python_file = yield from helper_functions.run_python_file(["
                 f'r"{os.path.abspath(self.python_exe_path)}", '
                 f'r"{os.path.abspath(self.file_path)}", '
                 f"{variables_string}], "
                 f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
-                f"capture_output=True, text=True)\n"
+                f"{timeout_string})\n"
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
             )
 
         if self.use_specific_packages:
             protocol_string += (
-                f"{tabs}result_python_file = helper_functions.create_venv_run_file_delete_venv({self.python_packages_versions}, "
-                f'r"{os.path.abspath(self.file_path)}", '
-                f"{variables_string})\n"
+                f"{tabs}result_python_file = yield from helper_functions.create_venv_run_file_delete_venv({self.python_packages_versions}, "
+                f'[r"{os.path.abspath(self.file_path)}", '
+                f"{variables_string}], "
+                f"{timeout_string})\n"
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
             )
 
@@ -124,12 +129,12 @@ class Execute_Python_File(Loop_Step):
             import sys
 
             protocol_string += (
-                f"{tabs}result_python_file = subprocess.run(["
+                f"{tabs}result_python_file = yield from helper_functions.run_python_file(["
                 f'r"{os.path.abspath(sys.executable)}", '
                 f'r"{os.path.abspath(self.file_path)}", '
                 f"{variables_string}], "
                 f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
-                f"capture_output=True, text=True)\n"
+                f"{timeout_string})\n"
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
             )
         return protocol_string
@@ -183,6 +188,10 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.python_packages_versions_label = QLabel("Python Packages and Versions")
         self.passing_variables_label = QLabel("Variables to pass to the Python file")
         self.read_variables_label = QLabel("Values returned by the Python file.")
+        self.label_timeout = QLabel("Timeout (s)")
+        self.lineEdit_timeout = Variable_Box(self)
+        self.lineEdit_timeout.setText(str(self.loop_step.timeout))
+        self.lineEdit_timeout.textChanged.connect(self.update_timeout)
 
         # Path_Button_Edit widgets setup
         self.path_button_edit_python_file = Path_Button_Edit()
@@ -261,6 +270,9 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.add_remove_table_returned_values_variables.setToolTip(
             "The Python file must return a dictionary.\nSpecify the keys of the dictionary that are returned from the Python file after execution."
         )
+        timeout_tooltip = "The Python file is stopped if it runs longer than this many seconds.\n0 means no limit."
+        self.label_timeout.setToolTip(timeout_tooltip)
+        self.lineEdit_timeout.setToolTip(timeout_tooltip)
 
         # Initial paths setup
         self.path_button_edit_python_file.set_path(self.loop_step.file_path)
@@ -319,6 +331,8 @@ class Execute_Python_File_Config(Loop_Step_Config):
         layout.addWidget(self.add_remove_table_variables_passing, 8, 0, 1, 2)
         layout.addWidget(self.read_variables_label, 9, 0, 1, 2)
         layout.addWidget(self.add_remove_table_returned_values_variables, 10, 0, 1, 2)
+        layout.addWidget(self.label_timeout, 11, 0)
+        layout.addWidget(self.lineEdit_timeout, 11, 1)
 
         # Set the selected radio button from the loop step
         if self.loop_step.radio_button_selected is not None:
@@ -339,6 +353,9 @@ class Execute_Python_File_Config(Loop_Step_Config):
 
     def update_file_path(self, path):
         self.loop_step.file_path = path
+
+    def update_timeout(self, text):
+        self.loop_step.timeout = text
 
     def update_python_packages(self):
         self.loop_step.python_packages_versions = (
