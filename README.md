@@ -50,6 +50,7 @@ Fixes:
 - Close Plots no longer fails after a protocol with a Wait step that waits for a condition was run several times. The error also stopped running measurements and could crash CAMELS on closing.
 - The Execute Python File step now has a timeout, 30 s by default, also for existing steps, and 0 means no limit. A running Python file can now be stopped with the Stop button, and a failing Python file logs a warning with its error message instead of failing silently.
 - The Execute Python File modes "Use existing python environment" and "Use specific packages" now work. The first failed with a SyntaxError, the second failed when variables were passed and lost the values returned by the file.
+- Ticking "ready" on a queued protocol while another protocol runs no longer freezes CAMELS, also not when the run is paused, and the next protocol in the queue is no longer removed without running.
 
 ### 1.10.9
 Fixes:

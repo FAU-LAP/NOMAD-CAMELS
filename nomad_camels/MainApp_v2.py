@@ -2124,6 +2124,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             variables (dict): The variables for the protocol.
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
         """
+        # A protocol is still running, it starts the next ready protocol when it ends.
+        # Waiting for it here would freeze CAMELS until then.
+        if self.still_running:
+            return
+
         # Add a 2 second wait time to ensure that the run engine has fully stopped. This makes long queues more stable.
         import time
 
