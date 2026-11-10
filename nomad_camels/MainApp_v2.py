@@ -2055,13 +2055,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             file_ending = ".nxs"
         else:
             file_ending = ".h5"
-        filename = protocol.filename.format(
-            sample=sample,
-            sample_id=sampledata.get("sample_id", ""),
-            user=user,
-            protocol=protocol_name,
-            session=session,
-            time=self.formatted_iso_time(self._protocol_start_time),
+        # A decimal point in a number becomes "p", e.g. 0.5 gives 0p5
+        variable_values = {
+            name: (
+                str(value).replace(".", "p")
+                if isinstance(variables_handling.get_data(str(value)), float)
+                else value
+            )
+            for name, value in protocol.variables.items()
+        }
+        filename = protocol.filename.format_map(
+            dict(
+                variable_values,
+                sample=sample,
+                sample_id=sampledata.get("sample_id", ""),
+                user=user,
+                protocol=protocol_name,
+                session=session,
+                time=self.formatted_iso_time(self._protocol_start_time),
+            )
         )
         filename = clean_filename(filename)
         parts = [self.preferences["meas_files_path"], user, sample]
@@ -2771,14 +2783,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
         if not sampledata:
             return False
-        filename = protocol.filename.format(
-            sample=sample,
-            sample_id=sampledata.get("sample_id", ""),
-            user=user,
-            protocol=protocol_name,
-            session=protocol.session_name,
-            time=self.formatted_iso_time(self._protocol_start_time),
+        # A decimal point in a number becomes "p", e.g. 0.5 gives 0p5
+        variable_values = {
+            name: (
+                str(value).replace(".", "p")
+                if isinstance(variables_handling.get_data(str(value)), float)
+                else value
+            )
+            for name, value in protocol.variables.items()
+        }
+        # protocol variables can be used too, the names below take precedence
+        filename = protocol.filename.format_map(
+            dict(
+                variable_values,
+                sample=sample,
+                sample_id=sampledata.get("sample_id", ""),
+                user=user,
+                protocol=protocol_name,
+                session=protocol.session_name,
+                time=self.formatted_iso_time(self._protocol_start_time),
+            )
         )
+
         session_name = (protocol.session_name or "").strip()
         parts = [self.preferences["meas_files_path"], user, sample]
         if session_name:
