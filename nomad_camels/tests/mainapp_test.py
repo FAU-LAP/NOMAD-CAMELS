@@ -21,6 +21,7 @@ def app(qtbot):
         app = QApplication([])
     window = MainWindow(start_proxy_bool=False)
     qtbot.addWidget(window)
+    qtbot.waitUntil(window.importer_thread.isFinished, timeout=60000)
     return window
 
 
