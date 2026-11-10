@@ -10,7 +10,6 @@ from PySide6.QtGui import QIcon
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 
 from nomad_camels.utility.plot_placement import place_widget
-from nomad_camels.utility import variables_handling
 from importlib import resources
 from nomad_camels import graphics
 
@@ -30,7 +29,7 @@ class Values_List_Plot(QWidget):
         epoch="run",
         namespace=None,
         title="",
-        stream_name="",
+        stream_name="primary",
         parent=None,
         plot_all_available=True,
         top_left_x=None,
@@ -111,7 +110,7 @@ class Live_List(QObject, CallbackBase):
         *,
         epoch="run",
         namespace=None,
-        stream_name="",
+        stream_name="primary",
         parent=None,
         plot_all_available=False,
         **kwargs,
@@ -173,8 +172,14 @@ class Live_List(QObject, CallbackBase):
         """
         if doc["name"] == self.stream_name:
             self.desc.append(doc["uid"])
-        elif self.multi_stream and variables_handling.stream_matches(
-            doc["name"], self.stream_name, multi_stream=True
+        elif (
+            self.multi_stream
+            and doc["name"].startswith(self.stream_name)
+            and not doc["name"][len(self.stream_name) :].startswith(
+                "||subprotocol_stream||"
+            )
+            # check if the next part of the string after self.stream name is `||sub_stream||`,
+            # if so it is a sub-stream inside a subprotocol and should be ignored
         ):
             self.desc.append(doc["uid"])
 
