@@ -41,6 +41,7 @@ Fixes:
 - The Execute Python File step now has a timeout, 30 s by default, also for existing steps, and 0 means no limit. A running Python file can now be stopped with the Stop button, and a failing Python file logs a warning with its error message instead of failing silently.
 - The Execute Python File modes "Use existing python environment" and "Use specific packages" now work. The first failed with a SyntaxError, the second failed when variables were passed and lost the values returned by the file.
 - Ticking "ready" on a queued protocol while another protocol runs no longer freezes CAMELS, also not when the run is paused, and the next protocol in the queue is no longer removed without running.
+- CAMELS no longer waits forever at startup if the plot proxy process does not start; it stops with an error after 10 seconds. The same applies to protocols run on their own as Python scripts.
 
 ### 1.10.9
 Fixes:
