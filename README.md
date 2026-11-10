@@ -26,6 +26,7 @@ Features:
 - The semantic mapping is now written whenever it is enabled for a protocol. Previously it also required a loadable ontology file to be configured locally, so a protocol that was annotated elsewhere lost its annotations silently. Selecting ontology classes in the GUI still needs the ontology.
 - The `semantic_mapping` document gained the step and the data key of each annotated channel; the version written to the file is now `2.0`, reflecting the added dataset paths. Without the step, two read steps annotating one channel differently produced two indistinguishable entries.
 - Writing the annotations to the datasets no longer needs `bluesky >= 1.11.0`. It used to rely on a private `RunBundler` hook only present from that version; it now uses a plain `RunEngine.subscribe` document callback instead, which works with any bluesky version CAMELS supports (`>= 1.9.0`).
+- Protocol variables can now be used in the filename, e.g. `laserpower_{laserpower}mW` gives `laserpower_10mW`. The value at the start of the protocol is used, including values set for a queued run or through the API. A decimal point in a number becomes `p`, so 0.5 gives `0p5`. The new Insert button next to the filename adds these names and the protocol's variables without typing.
 
 Changes:
 - `Set Channels` no longer offers semantic mapping. A set channel is never read, so it never had a dataset to annotate; it only ever showed up unresolved, without adding value.
