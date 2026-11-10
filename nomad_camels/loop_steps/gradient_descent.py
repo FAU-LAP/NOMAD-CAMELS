@@ -116,10 +116,7 @@ class Gradient_Descent_Step(Loop_Step):
         """Adds the call of creating the plots if self.plot_steps."""
         add_main_string = ""
         if self.plot_steps:
-            leaf = variables_handling.register_reading_stream(
-                ("step_stream", self.full_name)
-            )
-            stream = f'"{leaf}"'
+            stream = f'"{self.name}"'
             add_main_string += builder_helper_functions.get_plot_add_string(
                 self.name, stream
             )
@@ -158,13 +155,10 @@ class Gradient_Descent_Step(Loop_Step):
         else:
             setter = f'devs["{name}"]'
 
-        leaf = variables_handling.register_reading_stream(
-            ("step_stream", self.full_name)
-        )
         if variables_handling.preferences.get("nested_data", True):
-            stream = f'helper_functions.nested_stream_name(stream_name, "{leaf}")'
+            stream = f'"{self.name}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{self.name}"'
         else:
-            stream = f'"{leaf}"'
+            stream = f'"{self.name}"'
 
         protocol_string += f'{tabs}yield from helper_functions.gradient_descent(eva.eval("{self.n_steps}"), eva.eval("{self.threshold}"), eva.eval("{self.start_val}"), {func_text}, eva, {setter}, channels, eva.eval("{self.min_step}"), eva.eval("{self.max_step}"), eva.eval("{self.min_val}"), eva.eval("{self.max_val}"), {stream}, eva.eval("{self.learning_rate}"), eva.eval("{self.momentum}"))\n'
         return protocol_string
