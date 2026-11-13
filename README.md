@@ -21,7 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.11.1
 
 Features:
-- The dynamic filenames of 1.11.0 can now also use protocol variables, e.g. `laserpower_{laserpower}mW` gives `laserpower_10mW`. The value at the start of the protocol is used, including values set for a queued run or through the API. A decimal point in a number becomes `p`, so 0.5 gives `0p5`. The new Insert button next to the filename adds these names and the protocol's variables without typing.
+- The dynamic filenames added in 1.10.8 can now also use protocol variables, e.g. `laserpower_{laserpower}mW` gives `laserpower_10mW`. The value at the start of the protocol is used, including values set for a queued run or through the API. A decimal point in a number becomes `p`, so 0.5 gives `0p5`. The new Insert button next to the filename adds these names and the protocol's variables without typing.
 
 Fixes:
 - The logarithmic setting of the right y-axis is now also applied to the plotted data.
