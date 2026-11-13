@@ -309,6 +309,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if start_proxy_bool:
             from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
             import multiprocessing
+            import queue
             import threading
             import asyncio
             from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
@@ -326,10 +327,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 daemon=True,
             )
             self.proxy_proc.start()
-            # Give the proxy 200ms to bind to the ports
-            time.sleep(0.2)
-            # Retrieve the dynamically assigned ports
-            in_port, out_port = port_queue.get()
+            # Retrieve the dynamically assigned ports once the proxy process
+            # reports them; fails fast instead of hanging forever if the
+            # process never binds (e.g. the port/socket is unavailable) or
+            # crashes before reaching that point.
+            try:
+                in_port, out_port = port_queue.get(timeout=10)
+            except queue.Empty:
+                self.proxy_proc.terminate()
+                raise RuntimeError(
+                    "The ZMQ proxy process did not start within 10 seconds."
+                )
             print(f"Proxy started on ports: Publisher={in_port}, Dispatcher={out_port}")
             # Setup Publisher and Dispatcher using the dynamic ports once for all plots and measurements run from the main app.
             # Measurements only create their own if the Python script is run 'standalone', so without the main app.
@@ -339,7 +347,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # 4. Start Dispatcher in a Thread
             # We store the thread as self.dispatcher_thread to join it later
             self.dispatcher_thread = threading.Thread(
-                target=self.dispatcher.start,
+                target=self._run_dispatcher,
                 daemon=True,
             )
             self.dispatcher_thread.start()
@@ -431,20 +439,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Raises:
             ValueError: If the given sample does not exist in the sample data.
         """
-        # Check if the sample exists
-        if sample_name not in self.sampledata:
-            import pandas as pd
-
-            # make dataframe with keys of sampledata as index and the values as columns
-            df = pd.DataFrame.from_dict(self.sampledata, orient="index")
-            if sample_name in df["name"]:
-                sample_name = df[df["name"] == sample_name].index[0]
-            elif sample_name in df["sample_id"]:
-                sample_name = df[df["sample_id"] == sample_name].index[0]
-            else:
-                raise ValueError(
-                    f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {self.get_user_name_data()[0]}. Please create this sample first."
-                )
+        # Find the sample, the drop-down shows its display name
+        user = self.get_user_name_data()[0]
+        for key, sample in self.sampledata.items():
+            names = (
+                key,
+                sample.get("display_name"),
+                sample.get("name"),
+                sample.get("sample_id"),
+            )
+            if sample_name in names and sample.get("owner", "") in ("", user):
+                sample_name = sample.get("display_name", key)
+                break
+        else:
+            raise ValueError(
+                f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {user}. Please create this sample first."
+            )
 
         # Set the active sample to the sample name
         self.active_sample = sample_name
@@ -731,6 +741,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             plot (QWidget): The plot to add.
         """
+        # A plot inside another window, like the value list in the box of a Wait
+        # step, is closed and deleted together with that window
+        if plot.parentWidget() is not None:
+            return
         self.open_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
         plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
@@ -766,27 +780,49 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             a0 (QCloseEvent): The close event.
         """
-        # Clean up ZMQ infrastructure
-        # Stop the dispatcher thread gracefully
-        if hasattr(self, "dispatcher") and self.dispatcher is not None:
-            self.dispatcher.stop()
-            # If you stored the thread, join it to ensure it finishes
-            if hasattr(self, "dispatcher_thread") and self.dispatcher_thread.is_alive():
-                self.dispatcher_thread.join(timeout=1.0)
-
-        # Terminate the proxy process
-        if hasattr(self, "proxy_proc") and self.proxy_proc is not None:
-            self.proxy_proc.terminate()
-            self.proxy_proc.join(timeout=1.0)
         for window in list(self.open_windows):
             window.close()
         if self.open_windows:
             a0.ignore()
             return
         self.stop_API_server()
+        if self.databroker_catalog is None:
+            self.importer_thread.wait(30000)
+
         super().closeEvent(a0)
         if self.preferences["autosave"]:
             self.save_state()
+        self.stop_zmq()
+
+    def _run_dispatcher(self):
+        """Runs the dispatcher in its thread until `stop_zmq` cancels it."""
+        import asyncio
+
+        try:
+            self.dispatcher.start()
+        except asyncio.CancelledError:
+            pass
+
+    def stop_zmq(self):
+        """Stops the dispatcher thread and the proxy process.
+
+        The dispatcher has to stop in its own thread, because ZMQ aborts the
+        whole process if its context is destroyed while another thread uses it.
+        """
+        import asyncio
+
+        if hasattr(self, "dispatcher_thread") and self.dispatcher_thread.is_alive():
+            loop = self.dispatcher.loop
+
+            def cancel_tasks():
+                for task in asyncio.all_tasks(loop):
+                    task.cancel()
+
+            loop.call_soon_threadsafe(cancel_tasks)
+            self.dispatcher_thread.join(timeout=1.0)
+        if hasattr(self, "proxy_proc") and self.proxy_proc is not None:
+            self.proxy_proc.terminate()
+            self.proxy_proc.join(timeout=1.0)
 
     # --------------------------------------------------
     # User / Sample methods
@@ -1131,13 +1167,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             dat.set_index("unique_name", inplace=True)
             data_dict = dat.to_dict("index")
-            removers = []
-            for key, value in self.sampledata.items():
-                if not "owner" in value or (
-                    value["owner"] == self.get_user_name_data()[0]
-                    and key not in data_dict
-                ):
-                    removers.append(key)
+            editable_owners = ("", self.get_user_name_data()[0])
+            removers = [
+                key
+                for key, value in self.sampledata.items()
+                if value.get("owner", "") in editable_owners and key not in data_dict
+            ]
             for key in removers:
                 self.sampledata.pop(key)
             self.sampledata.update(dat.to_dict("index"))
@@ -1149,6 +1184,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Refresh the sample combobox with samples that are owned by the active user or have no owner.
         """
+        self.sampledata = load_save_functions.clean_sample_data(
+            self.sampledata, self.get_user_name_data()[0]
+        )
         self.comboBox_sample.clear()
         self.comboBox_sample.addItems(
             sorted(
@@ -2017,13 +2055,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             file_ending = ".nxs"
         else:
             file_ending = ".h5"
-        filename = protocol.filename.format(
-            sample=sample,
-            sample_id=sampledata.get("sample_id", ""),
-            user=user,
-            protocol=protocol_name,
-            session=session,
-            time=self.formatted_iso_time(self._protocol_start_time),
+        # A decimal point in a number becomes "p", e.g. 0.5 gives 0p5
+        variable_values = {
+            name: (
+                str(value).replace(".", "p")
+                if isinstance(variables_handling.get_data(str(value)), float)
+                else value
+            )
+            for name, value in protocol.variables.items()
+        }
+        filename = protocol.filename.format_map(
+            dict(
+                variable_values,
+                sample=sample,
+                sample_id=sampledata.get("sample_id", ""),
+                user=user,
+                protocol=protocol_name,
+                session=session,
+                time=self.formatted_iso_time(self._protocol_start_time),
+            )
         )
         filename = clean_filename(filename)
         parts = [self.preferences["meas_files_path"], user, sample]
@@ -2086,6 +2136,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             variables (dict): The variables for the protocol.
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
         """
+        # A protocol is still running, it starts the next ready protocol when it ends.
+        # Waiting for it here would freeze CAMELS until then.
+        if self.still_running:
+            return
+
         # Add a 2 second wait time to ensure that the run engine has fully stopped. This makes long queues more stable.
         import time
 
@@ -2133,6 +2188,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 protocol_name, ask_file=False, variables=variables
             ):
                 self.setCursor(Qt.ArrowCursor)
+                self.pushButton_stop.setEnabled(False)
+                self.still_running = False
                 self.button_area_meas.enable_run_buttons()
                 return
             protocol = self.protocols_dict[protocol_name]
@@ -2724,14 +2781,30 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
-        filename = protocol.filename.format(
-            sample=sample,
-            sample_id=sampledata.get("sample_id", ""),
-            user=user,
-            protocol=protocol_name,
-            session=protocol.session_name,
-            time=self.formatted_iso_time(self._protocol_start_time),
+        if not sampledata:
+            return False
+        # A decimal point in a number becomes "p", e.g. 0.5 gives 0p5
+        variable_values = {
+            name: (
+                str(value).replace(".", "p")
+                if isinstance(variables_handling.get_data(str(value)), float)
+                else value
+            )
+            for name, value in protocol.variables.items()
+        }
+        # protocol variables can be used too, the names below take precedence
+        filename = protocol.filename.format_map(
+            dict(
+                variable_values,
+                sample=sample,
+                sample_id=sampledata.get("sample_id", ""),
+                user=user,
+                protocol=protocol_name,
+                session=protocol.session_name,
+                time=self.formatted_iso_time(self._protocol_start_time),
+            )
         )
+
         session_name = (protocol.session_name or "").strip()
         parts = [self.preferences["meas_files_path"], user, sample]
         if session_name:
@@ -2815,6 +2888,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     if (
                         "display_name" in self.sampledata[s]
                         and self.sampledata[s]["display_name"] == sample
+                        and self.sampledata[s].get("owner", "")
+                        in ("", self.get_user_name_data()[0])
                     ):
                         sampledata = self.sampledata[s]
                         break
@@ -2850,8 +2925,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             protocol_name (str): The name of the protocol to open.
         """
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
-        if not os.path.isfile(path):
-            self.build_protocol(protocol_name, False)
+        if not os.path.isfile(path) and not self.build_protocol(protocol_name, False):
+            return
         variables_handling.open_link(path)
 
     # --------------------------------------------------

@@ -849,6 +849,9 @@ class LivePlot(QObject, CallbackBase):
                 pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
             )
             self.ax2_viewbox.addItem(plot)
+            plot.setLogMode(
+                self.plotItem.getAxis("bottom").logMode, self.ax2_axis.logMode
+            )
         else:
             self.current_plots[y] = self.plotItem.plot(
                 [],
@@ -2054,6 +2057,9 @@ class LivePlot_NoBluesky(QObject):
                             ),
                         )
                         self.ax2_viewbox.addItem(plot)
+                        plot.setLogMode(
+                            self.plotItem.getAxis("bottom").logMode, self.ax2_axis.logMode
+                        )
                     else:
                         self.current_plots[y] = self.plotItem.plot(
                             [],

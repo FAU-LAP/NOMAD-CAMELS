@@ -192,3 +192,25 @@ def test_import_thread(qtbot):
     thread.quit()
     thread.wait()
     thread.deleteLater()
+
+
+def test_closing_camels_stops_zmq_without_a_crash(tmp_path):
+    """ZMQ used to abort the process when closing, before the state was saved."""
+    code = (
+        "from nomad_camels.CAMELS_start import start_camels\n"
+        "window = start_camels(actually_exec=False)\n"
+        "thread, proxy = window.dispatcher_thread, window.proxy_proc\n"
+        "window.close()\n"
+        "assert not thread.is_alive()\n"
+        "assert not proxy.is_alive()\n"
+        "print('closed without a crash')\n"
+    )
+    log = tmp_path / "close.log"
+    with open(log, "w") as output:
+        subprocess.run(
+            [sys.executable, "-c", code],
+            stdout=output,
+            stderr=subprocess.STDOUT,
+            timeout=60,
+        )
+    assert "closed without a crash" in log.read_text()

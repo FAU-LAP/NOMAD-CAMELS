@@ -18,6 +18,30 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.11.1
+
+Features:
+- The dynamic filenames added in 1.10.8 can now also use protocol variables, e.g. `laserpower_{laserpower}mW` gives `laserpower_10mW`. The value at the start of the protocol is used, including values set for a queued run or through the API. A decimal point in a number becomes `p`, so 0.5 gives `0p5`. The new Insert button next to the filename adds these names and the protocol's variables without typing.
+
+Fixes:
+- The logarithmic setting of the right y-axis is now also applied to the plotted data.
+- Steps following a Simple Sweep now start on a new line in the protocol overview.
+- Limited bluesky to versions below 1.16.0, which is not yet compatible with CAMELS.
+- CAMELS no longer replaces an already active crash reporter, so crashes during tests now show a traceback.
+- Closing the main window now waits for the background imports, which prevents a crash when the window is deleted.
+- An API port that is already in use no longer hangs CAMELS when stopping the server, and the port error is now reported.
+- The web server of plotly plots now stops together with CAMELS instead of keeping it from exiting.
+- Samples from older versions no longer create duplicates or get lost when editing samples, shared samples can now be deleted, and older samples are visible to their owners again.
+- Shared samples no longer show "Sample Not Found" when starting a protocol, and the API can select samples by name or ID.
+- Pressing No in the "Sample Not Found" message now cancels the protocol instead of showing an error, and measurements use the sample of the active user if two users have a sample with the same name.
+- Closing CAMELS no longer crashes when stopping the plot proxy, so the state is saved on closing and no proxy process stays behind.
+- New and pasted steps are now selected and scrolled into view, and steps pasted several times keep their order. After deleting a step, the step above it is selected.
+- Close Plots no longer fails after a protocol with a Wait step that waits for a condition was run several times. The error also stopped running measurements and could crash CAMELS on closing.
+- The Execute Python File step now has a timeout, 30 s by default, also for existing steps, and 0 means no limit. A running Python file can now be stopped with the Stop button, and a failing Python file logs a warning with its error message instead of failing silently.
+- The Execute Python File modes "Use existing python environment" and "Use specific packages" now work. The first failed with a SyntaxError, the second failed when variables were passed and lost the values returned by the file.
+- Ticking "ready" on a queued protocol while another protocol runs no longer freezes CAMELS, also not when the run is paused, and the next protocol in the queue is no longer removed without running.
+- CAMELS no longer waits forever at startup if the plot proxy process does not start; it stops with an error after 10 seconds. The same applies to protocols run on their own as Python scripts.
+
 ### 1.11.0
 
 Fixes:

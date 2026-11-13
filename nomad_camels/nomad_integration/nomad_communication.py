@@ -19,7 +19,7 @@ try:
     if sys.__stdout__ is None:
         with open("faulthandler.log", "w") as fh:
             faulthandler.enable(file=fh)
-    else:
+    elif not faulthandler.is_enabled():
         faulthandler.enable()
 except Exception:
     # Fallback if the check fails

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QMessageBox, QStyle
+from PySide6.QtWidgets import QWidget, QMessageBox, QStyle, QMenu, QToolButton
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QIcon
 
@@ -557,6 +557,18 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.setupUi(self)
         self.protocol = protocol
         self.lineEdit_filename.setText(self.protocol.filename)
+        # Button next to the filename to insert the names that are filled in when the protocol runs
+        self.button_insert_filename = QToolButton(self.general)
+        self.button_insert_filename.setText("Insert")
+        self.button_insert_filename.setToolTip(
+            "Insert a name that is filled in when the protocol runs.\nFor a protocol variable, its name is added in front of the value."
+        )
+        self.button_insert_filename.setPopupMode(QToolButton.InstantPopup)
+        self.button_insert_filename.setMenu(QMenu(self.button_insert_filename))
+        self.button_insert_filename.menu().aboutToShow.connect(self.update_filename_menu)
+        self.button_insert_filename.menu().triggered.connect(self.insert_in_filename)
+        self.horizontalLayout_3.addWidget(self.button_insert_filename)
+
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
         self.variable_table.set_protocol(self.protocol)
@@ -702,6 +714,26 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             result = msgBox.exec()
             if result != QMessageBox.Yes:
                 self.checkBox_no_config.setChecked(False)
+
+    def update_filename_menu(self):
+        """Fills the insert menu of the filename with the names that are filled in
+        when the protocol runs, followed by the variables of the protocol."""
+        menu = self.button_insert_filename.menu()
+        menu.clear()
+        fixed_names = ["time", "session", "protocol", "user", "sample_id", "sample"]
+        for name in fixed_names:
+            menu.addAction(f"{{{name}}}").setData(f"{{{name}}}")
+        # a variable with one of the names above would not be used in the filename
+        variables = [name for name in self.protocol.variables if name not in fixed_names]
+        if variables:
+            menu.addSeparator()
+        for name in variables:
+            menu.addAction(f"{{{name}}}").setData(f"{name}_{{{name}}}")
+
+    def insert_in_filename(self, action):
+        """Inserts the text of the chosen menu entry at the cursor of the filename."""
+        self.lineEdit_filename.insert(action.data())
+        self.lineEdit_filename.setFocus()
 
     def add_variable(self):
         """Add a variable to the list, given a unique name, then updates

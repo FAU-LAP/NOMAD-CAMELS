@@ -299,7 +299,7 @@ class FastapiThread(QThread):
 
         try:
             await self.server.serve()
-        except Exception as e:
+        except (Exception, SystemExit) as e:
             print(f"Error starting FastAPI: {e}")
             self.port_error_signal.emit(f"Failed to start server: {e}")
 

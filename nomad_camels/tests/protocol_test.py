@@ -13,6 +13,7 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.utility.treeView_functions import getItemIndex
 from threading import Thread
 import asyncio
+import queue
 from zmq.error import ZMQError
 from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
@@ -51,10 +52,15 @@ def zmq_setup():
         daemon=True,
     )
     proxy_proc.start()
-    # Give the proxy 200ms to bind to the ports
-    time.sleep(0.2)
-    # Retrieve the dynamically assigned ports
-    in_port, out_port = port_queue.get()
+    # Retrieve the dynamically assigned ports once the proxy process reports
+    # them; fails fast instead of hanging forever if the process never binds
+    # (e.g. the port/socket is unavailable) or crashes before reaching that
+    # point.
+    try:
+        in_port, out_port = port_queue.get(timeout=10)
+    except queue.Empty:
+        proxy_proc.terminate()
+        raise RuntimeError("The ZMQ proxy process did not start within 10 seconds.")
     print(f"Proxy started on ports: Publisher={in_port}, Dispatcher={out_port}")
     # Setup Publisher and Dispatcher using the dynamic ports once for all plots and measurements run from the main app.
     # Measurements only create their own if the Python script is run 'standalone', so without the main app.
@@ -141,9 +147,8 @@ def test_for_loop(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move_in():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
         assert len(prot.loop_steps) == 1
-
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
@@ -615,18 +620,20 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move_in():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
         print(len(prot.loop_steps))
 
     select_step_by_name(conf, "Set Variables (Set_Variables)")
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     select_step_by_name(conf, "Read Channels (Read_Channels)")
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     select_step_by_name(conf, "Wait (Wait)")
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
@@ -707,9 +714,8 @@ def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
         assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
-
+    qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move)
 
     with qtbot.waitSignal(conf.accepted) as blocker:
@@ -748,9 +754,8 @@ def test_while_loop(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move_in():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
         assert len(prot.loop_steps) == 1
-
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()

@@ -153,9 +153,9 @@ class Simple_Sweep(For_Loop_Step):
 
     def get_protocol_short_string(self, n_tabs=0):
         """The read and sweep channels and the sweep values are specified."""
-        vals = super().get_protocol_short_string(n_tabs)[:-1].split(" for ")[-1]
+        vals = super().get_protocol_short_string(n_tabs).rstrip(":\n").split(" for ")[-1]
         tabs = "\t" * n_tabs
-        short_string = f"{tabs}Sweep '{self.name}' {self.sweep_channel}:\n{tabs}\tRead: {self.read_channels}\n{tabs}\tValues: {vals}"
+        short_string = f"{tabs}Sweep '{self.name}' {self.sweep_channel}:\n{tabs}\tRead: {self.read_channels}\n{tabs}\tValues: {vals}\n"
         return short_string
 
 
