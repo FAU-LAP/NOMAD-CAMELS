@@ -67,6 +67,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     fake_signal = Signal(int)
     protocol_finished_signal = Signal()
     start_timer_signal = Signal()
+    remote_agent_state_signal = Signal(str, str)
 
     def __init__(self, parent=None, start_proxy_bool=True):
         """
@@ -154,6 +155,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Initialize fastAPI server variables
         self.fastapi_thread = None
         self.current_api_port = None
+
+        # OASIS remote control: outbound connection, see api/remote_agent.py
+        self.remote_agent = None
+        self.remote_agent_routes = None
+        self.remote_agent_state = ("stopped", "")
+        self.remote_agent_state_signal.connect(self._on_remote_agent_state)
 
         # Initialize saving and state variables
         self.__save_dict__ = {}
@@ -247,6 +254,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.launch_hdf5_exporter
         )
         self.actionQuit.triggered.connect(self.close)
+        self.actionRemote_control = self.menuTools.addAction("OASIS Remote Control...")
+        self.actionRemote_control.triggered.connect(self.open_remote_control)
+        QTimer.singleShot(0, self.start_remote_agent)
 
         # Connect push buttons for manual and measurement controls
         self.pushButton_add_manual.clicked.connect(self.add_manual_control)
@@ -321,7 +331,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if start_proxy_bool:
             from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
             import multiprocessing
-            import threading
             import asyncio
             from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 
@@ -396,29 +405,116 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.current_api_port = api_port
             # Initialize the FastAPI server thread
             self.fastapi_thread = FastapiThread(self, api_port)
-            # Connect signals for error, protocol start, user/sample/session setting, and protocol queueing
             self.fastapi_thread.port_error_signal.connect(self.clear_fastapi_thread)
-            self.fastapi_thread.start_protocol_signal.connect(self.run_protocol)
-            self.fastapi_thread.close_plots_signal.connect(self.close_plots)
-            self.fastapi_thread.save_protocol_variables_signal.connect(
-                self.save_protocol_variables
-            )
-            self.fastapi_thread.set_user_signal.connect(self.set_user)
-            self.fastapi_thread.set_sample_signal.connect(self.set_sample)
-            self.fastapi_thread.set_session_signal.connect(self.set_session)
-            self.fastapi_thread.queue_protocol_signal.connect(self.queue_protocol)
-            self.fastapi_thread.remove_queue_protocol_signal.connect(
-                self.remove_queue_protocol
-            )
-            self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
-            self.fastapi_thread.queue_protocol_with_variables_signal.connect(
-                self.queue_protocol_with_variables_signal
-            )
-            self.fastapi_thread.change_variables_queued_protocol_signal.connect(
-                self.change_variables_queued_protocol
-            )
+            self._connect_api_signals(self.fastapi_thread)
             # Start the API server thread
             self.fastapi_thread.start()
+
+    def _connect_api_signals(self, api_thread):
+        """Connect the GUI slots that the API routes trigger through signals."""
+        api_thread.start_protocol_signal.connect(self.run_protocol)
+        api_thread.close_plots_signal.connect(self.close_plots)
+        api_thread.save_protocol_variables_signal.connect(self.save_protocol_variables)
+        api_thread.set_user_signal.connect(self.set_user)
+        api_thread.set_sample_signal.connect(self.set_sample)
+        api_thread.set_session_signal.connect(self.set_session)
+        api_thread.queue_protocol_signal.connect(self.queue_protocol)
+        api_thread.remove_queue_protocol_signal.connect(self.remove_queue_protocol)
+        api_thread.set_checkbox_signal.connect(self.set_checkbox)
+        api_thread.queue_protocol_with_variables_signal.connect(
+            self.queue_protocol_with_variables_signal
+        )
+        api_thread.change_variables_queued_protocol_signal.connect(
+            self.change_variables_queued_protocol
+        )
+
+    # --------------------------------------------------
+    # OASIS remote control
+    # --------------------------------------------------
+    def start_remote_agent(self):
+        """Connect to OASIS if remote control is enabled and paired.
+
+        The agent runs the API routes in-process, so it works without the
+        local API server and opens no port on this computer.
+        """
+        self.stop_remote_agent()
+        try:
+            from nomad_camels.api import remote_config
+        except ImportError:
+            return
+        config = remote_config.load_config()
+        if not (config.enabled and config.paired):
+            return
+        try:
+            from nomad_camels.api.api import FastapiThread
+            from nomad_camels.api.remote_agent import RemoteAgent
+            from nomad_camels import __version__
+
+            token = remote_config.unprotect_token(config.token)
+            url = remote_config.agent_url(config.oasis_url)
+            context = (
+                remote_config.ssl_context(config.ca_file)
+                if url.startswith("wss://")
+                else None
+            )
+        except ImportError:
+            self._on_remote_agent_state(
+                "stopped",
+                "The packages for remote control are missing. Install nomad-camels[api].",
+            )
+            return
+        except remote_config.RemoteConfigError as exc:
+            self._on_remote_agent_state("stopped", str(exc))
+            return
+        if self.remote_agent_routes is None:
+            # A route host that is never served; only the agent calls it.
+            self.remote_agent_routes = FastapiThread(
+                self, self.preferences.get("API_port", 5000)
+            )
+            self._connect_api_signals(self.remote_agent_routes)
+        self.remote_agent = RemoteAgent(
+            url,
+            token,
+            self.remote_agent_routes.get_agent_app(),
+            ssl_context=context,
+            camels_version=__version__,
+            on_state=self.remote_agent_state_signal.emit,
+            measurement_provider=self.get_measurement_status,
+        )
+        self.remote_agent.start()
+
+    def stop_remote_agent(self):
+        if self.remote_agent is not None:
+            self.remote_agent.stop()
+            self.remote_agent = None
+            self._on_remote_agent_state("stopped", "")
+
+    def _on_remote_agent_state(self, state, detail):
+        self.remote_agent_state = (state, detail)
+        if state == "online":
+            text = "OASIS remote control: connected"
+        elif state == "stopped" and not detail:
+            text = ""
+        else:
+            text = f"OASIS remote control: {state}. {detail}".strip()
+        self.statusBar().showMessage(text)
+
+    def open_remote_control(self):
+        """Open the dialog for pairing with OASIS and enabling remote control."""
+        try:
+            from nomad_camels.frontpanels.remote_control_dialog import (
+                Remote_Control_Dialog,
+            )
+        except ImportError:
+            warn_popup.WarnPopup(
+                self,
+                "Remote control needs the API packages. Install nomad-camels[api].",
+                "Remote control",
+                info_icon=True,
+            )
+            return
+        dialog = Remote_Control_Dialog(self)
+        dialog.exec()
 
     def save_protocol_variables(self, protocol_name, variables):
         """Persist API-provided defaults on the GUI thread.
@@ -828,6 +924,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             a0.ignore()
             return
         self.stop_API_server()
+        self.stop_remote_agent()
         super().closeEvent(a0)
         if self.preferences["autosave"]:
             self.save_state()

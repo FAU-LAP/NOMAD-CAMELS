@@ -12,6 +12,7 @@ import uuid
 from pydantic import BaseModel, Field
 import math
 import asyncio
+import secrets
 import threading
 import socket
 from datetime import datetime, timezone
@@ -95,6 +96,12 @@ def protocol_run_response(protocol_uuid: str) -> dict:
     }
 
 
+# Credential used by the in-process OASIS remote agent (see remote_agent.py).
+# It never leaves this process and is only accepted by the agent's own app
+# instance, whose credential dependency is overridden.
+REMOTE_AGENT_KEY = "remote-agent-" + secrets.token_urlsafe(24)
+
+
 def validate_api_key(api_key: str) -> bool:
     """
     Validate the given API key by checking its hashed value in the database.
@@ -132,6 +139,9 @@ def validate_api_key(api_key: str) -> bool:
 
 def get_api_key_protocol_scope(api_key: str):
     """Return the protocols allowed by a key, or ``None`` for a global key."""
+    if api_key == REMOTE_AGENT_KEY:
+        # The remote agent sees every protocol enabled for OASIS remote control.
+        return None
     data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path)
     try:
@@ -310,6 +320,7 @@ class FastapiThread(QThread):
         self.api_port = api_port
         self.protocol_runs = {}  # Dictionary to store the protocol runs
         self.app = None
+        self._agent_app = None
         self.server = None
         self.loop = None  # Custom asyncio loop
         self._plot_caches = {}
@@ -344,8 +355,7 @@ class FastapiThread(QThread):
         This method initializes the FastAPI application, defines all the API routes, creates a new
         asyncio event loop, and starts the Uvicorn server until completion.
         """
-        self.app = FastAPI()  # Initialize FastAPI app
-        self.define_routes(self.app)  # Define the API routes
+        self.app = self.build_app()
 
         self.loop = (
             asyncio.new_event_loop()
@@ -389,6 +399,25 @@ class FastapiThread(QThread):
             self.server.should_exit = True  # Signals Uvicorn to stop
         self.quit()  # Quit the QThread
         self.wait()  # Ensure the thread has fully stopped
+
+    def build_app(self) -> FastAPI:
+        """Create a FastAPI app with all CAMELS routes."""
+        app = FastAPI()
+        self.define_routes(app)
+        return app
+
+    def get_agent_app(self) -> FastAPI:
+        """Return the app used in-process by the OASIS remote agent.
+
+        It is a separate instance that is never served on a port. Its
+        credential check is replaced, because the agent is authenticated by
+        its device token at the OASIS broker instead of a CAMELS API key.
+        """
+        if self._agent_app is None:
+            app = self.build_app()
+            app.dependency_overrides[validate_credentials] = lambda: REMOTE_AGENT_KEY
+            self._agent_app = app
+        return self._agent_app
 
     def define_routes(self, app: FastAPI):
         """
