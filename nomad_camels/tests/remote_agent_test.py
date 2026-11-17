@@ -178,7 +178,7 @@ def test_operations_and_errors(broker, camels_app):
         assert escape["error"]["code"] == "not_found"
 
         status = command(broker, "get_measurement_status", None, "c6")
-        assert status["result"] == {"status": "Idle", "protocol_name": ""}
+        assert status["result"] == {"status": "Idle", "protocol_name": "", "remote_control_paused": False}
     finally:
         agent.stop()
 
@@ -272,6 +272,8 @@ def test_paused_control_allows_only_reading(broker, control_app, qtbot):
         qtbot.wait(100)
         assert thread.started_runs == [] and thread.stopped == []
         assert command(broker, "list_protocols", None, "r1")["status"] == "completed"
+        status = command(broker, "get_measurement_status", None, "r3")["result"]
+        assert status["remote_control_paused"] is True
         assert command(broker, "get_plot_data", None, "r2")["result"] == {"open_plot_count": 0, "plots": []}
     finally:
         agent.stop()

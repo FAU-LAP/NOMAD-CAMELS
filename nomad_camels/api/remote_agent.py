@@ -429,6 +429,12 @@ class RemoteAgent:
             raise CommandError("invalid_parameters", "The payload must be an object.")
         if operation.control and self.control_paused:
             raise CommandError("paused", "Remote control is paused on the lab computer.")
+        if name == "get_measurement_status":
+            result = await self._request(operation, payload)
+            if isinstance(result, dict):
+                # Lets OASIS show why it cannot start or stop anything.
+                result["remote_control_paused"] = bool(self.control_paused)
+            return result
         if name != "start_measurement":
             return await self._request(operation, payload)
         # One start at a time, and a repeated run_id starts nothing again.
