@@ -196,6 +196,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.active_controls = {}
         self.open_plots = []
+        # Data copies of the open plots, read by the API and the OASIS agent.
+        from nomad_camels.main_classes.remote_plot_cache import PlotCacheRegistry
+
+        self.plot_caches = PlotCacheRegistry()
 
         # User and sample data
         self.sampledata = {}
@@ -414,6 +418,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """Connect the GUI slots that the API routes trigger through signals."""
         api_thread.start_protocol_signal.connect(self.run_protocol)
         api_thread.close_plots_signal.connect(self.close_plots)
+        api_thread.stop_protocol_signal.connect(self.stop_protocol)
         api_thread.save_protocol_variables_signal.connect(self.save_protocol_variables)
         api_thread.set_user_signal.connect(self.set_user)
         api_thread.set_sample_signal.connect(self.set_sample)
@@ -481,7 +486,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             on_state=self.remote_agent_state_signal.emit,
             measurement_provider=self.get_measurement_status,
         )
+        self.remote_agent.control_paused = config.control_paused
         self.remote_agent.start()
+
+    def set_remote_control_paused(self, paused):
+        """Pause or allow remote changes; reading stays possible."""
+        from nomad_camels.api import remote_config
+
+        config = remote_config.load_config()
+        config.control_paused = bool(paused)
+        remote_config.save_config(config)
+        if self.remote_agent is not None:
+            self.remote_agent.control_paused = bool(paused)
+        self._on_remote_agent_state(*self.remote_agent_state)
 
     def stop_remote_agent(self):
         if self.remote_agent is not None:
@@ -493,6 +510,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.remote_agent_state = (state, detail)
         if state == "online":
             text = "OASIS remote control: connected"
+            if self.remote_agent is not None and self.remote_agent.control_paused:
+                text += " (paused: OASIS can only watch)"
         elif state == "stopped" and not detail:
             text = ""
         else:
@@ -869,11 +888,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
         plot.reopened.connect(lambda x=plot: self.open_windows.append(x))
         cache = getattr(getattr(plot, "livePlot", None), "remote_plot_cache", None)
-        if cache is not None and self.fastapi_thread is not None:
+        if cache is not None:
+            # Registered on the main window, so both the local API server and
+            # the OASIS remote agent see it, whichever of them is running.
             cache_id = str(id(plot))
-            self.fastapi_thread.register_plot_cache(cache_id, cache)
+            self.plot_caches.register(cache_id, cache)
             plot.closing.connect(
-                lambda plot_cache_id=cache_id: self.fastapi_thread.unregister_plot_cache(plot_cache_id)
+                lambda plot_cache_id=cache_id: self.plot_caches.unregister(plot_cache_id)
+            )
+            plot.reopened.connect(
+                lambda plot_cache_id=cache_id, plot_cache=cache: self.plot_caches.register(
+                    plot_cache_id, plot_cache
+                )
             )
         self.add_to_open_windows(plot)
 
@@ -2288,6 +2314,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not self.build_protocol(
                 protocol_name, ask_file=False, variables=variables
             ):
+                self._set_measurement_status(status="Failed")
                 self.setCursor(Qt.ArrowCursor)
                 self.button_area_meas.enable_run_buttons()
                 return
@@ -2840,6 +2867,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """Return a copy without accessing Qt widgets from the API thread."""
         with self._measurement_status_lock:
             return dict(self._measurement_status)
+
+    def measurement_busy(self):
+        """Whether a protocol is being prepared, running or paused."""
+        if self.get_measurement_status().get("status") in ("Preparing", "Running"):
+            return True
+        engine = getattr(self, "run_engine", None)
+        return engine is not None and engine.state != "idle"
 
     def close_old_queue_devices(self):
         """

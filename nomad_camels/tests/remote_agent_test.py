@@ -183,6 +183,124 @@ def test_operations_and_errors(broker, camels_app):
         agent.stop()
 
 
+@pytest.fixture
+def control_app(tmp_path, monkeypatch):
+    """Agent app whose main window can be made busy; run records go to tmp."""
+    from nomad_camels.utility import load_save_functions
+
+    monkeypatch.setattr(load_save_functions, "appdata_path", str(tmp_path))
+    main_window = MagicMock()
+    main_window.protocols_dict = {
+        "remote": SimpleNamespace(name="remote", description="", variables={"n": 3}, oasis_remote_control=True),
+    }
+    main_window.busy = False
+    main_window.measurement_busy = lambda: main_window.busy
+    main_window.running_protocol = main_window.protocols_dict["remote"]
+    main_window.get_measurement_status.return_value = {"status": "Running", "protocol_name": "remote"}
+    thread = FastapiThread(main_window, api_port=8000)
+    thread.started_runs = []
+    thread.stopped = []
+    thread.start_protocol_signal.connect(lambda *args: thread.started_runs.append(args))
+    thread.stop_protocol_signal.connect(lambda: thread.stopped.append(True))
+    thread.saved = []
+    thread.save_protocol_variables_signal.connect(lambda *args: thread.saved.append(args))
+    return main_window, thread
+
+
+def test_control_operations(broker, control_app, qtbot):
+    main_window, thread = control_app
+    agent = make_agent(broker, thread.get_agent_app())
+    agent.start()
+    try:
+        wait_state(agent, remote_agent.STATE_ONLINE)
+        run_id = "0f8fad5b-d9cb-469f-a165-70867728950e"
+        started = command(broker, "start_measurement",
+                          {"protocol": "remote", "variables": {"n": 5}, "run_id": run_id}, "s1")
+        assert started["status"] == "completed", started
+        assert started["result"]["run_id"] == run_id
+        # The signal reaches the GUI thread through its event loop.
+        qtbot.waitUntil(lambda: thread.started_runs == [("remote", run_id, {"n": 5})])
+
+        # The same run_id again (a retry) starts nothing.
+        again = command(broker, "start_measurement",
+                        {"protocol": "remote", "variables": {"n": 5}, "run_id": run_id}, "s2")
+        assert again["result"]["duplicate"] is True
+        qtbot.wait(100)
+        assert len(thread.started_runs) == 1
+
+        # A second measurement while one is running is refused, with CAMELS' reason.
+        main_window.busy = True
+        busy = command(broker, "start_measurement", {"protocol": "remote", "variables": {}}, "s3")
+        assert busy["error"] == {"code": "busy", "message": "Another measurement is running in CAMELS."}
+
+        unknown_variable = command(broker, "start_measurement",
+                                   {"protocol": "remote", "variables": {"x": 1}}, "s4")
+        assert unknown_variable["error"]["code"] in ("invalid_parameters", "busy")
+
+        stopped = command(broker, "stop_measurement", None, "s5")
+        assert stopped["result"] == {"status": "stopping", "protocol_name": "remote"}
+        qtbot.waitUntil(lambda: thread.stopped == [True])
+
+        main_window.busy = False
+        idle = command(broker, "stop_measurement", None, "s6")
+        assert idle["result"] == {"status": "idle"}
+
+        saved = command(broker, "save_protocol_parameters",
+                        {"protocol": "remote", "variables": {"n": 7}}, "s7")
+        assert saved["status"] == "completed"
+        qtbot.waitUntil(lambda: thread.saved == [("remote", {"n": 7})])
+
+        not_object = command(broker, "save_protocol_parameters",
+                             {"protocol": "remote", "variables": [1]}, "s8")
+        assert not_object["error"]["code"] == "invalid_parameters"
+    finally:
+        agent.stop()
+
+
+def test_paused_control_allows_only_reading(broker, control_app, qtbot):
+    main_window, thread = control_app
+    agent = make_agent(broker, thread.get_agent_app())
+    agent.control_paused = True
+    agent.start()
+    try:
+        wait_state(agent, remote_agent.STATE_ONLINE)
+        for i, operation in enumerate(
+            ["start_measurement", "stop_measurement", "save_protocol_parameters", "close_plots"]
+        ):
+            result = command(broker, operation, {"protocol": "remote", "variables": {}}, f"p{i}")
+            assert result["error"]["code"] == "paused", operation
+        qtbot.wait(100)
+        assert thread.started_runs == [] and thread.stopped == []
+        assert command(broker, "list_protocols", None, "r1")["status"] == "completed"
+        assert command(broker, "get_plot_data", None, "r2")["result"] == {"open_plot_count": 0, "plots": []}
+    finally:
+        agent.stop()
+
+
+def test_plot_data_through_the_agent(broker, control_app):
+    from nomad_camels.main_classes.remote_plot_cache import RemotePlotCache
+
+    main_window, thread = control_app
+    cache = RemotePlotCache(title="IV", x_label="V", y_label="I", y_names=["I"])
+    thread.register_plot_cache("p1", cache)
+    for i in range(3):
+        cache.append(i, {"I": i * 2})
+    agent = make_agent(broker, thread.get_agent_app())
+    agent.start()
+    try:
+        wait_state(agent, remote_agent.STATE_ONLINE)
+        first = command(broker, "get_plot_data", None, "d1")["result"]["plots"][0]
+        assert first["x"] == [0, 1, 2] and first["traces"][0]["y"] == [0, 2, 4]
+        cache.append(3, {"I": 6})
+        cursor = {"p1": {"generation": first["generation"], "since": first["end"], "version": first["version"]}}
+        # The cursor is sent as an object and reaches CAMELS as JSON.
+        new = command(broker, "get_plot_data", {"cursor": cursor}, "d2")["result"]["plots"][0]
+        assert new["reset"] is False and new["x"] == [3] and new["traces"][0]["y"] == [6]
+        assert "fits" not in new
+    finally:
+        agent.stop()
+
+
 def test_invalid_token_stops_retrying(broker, camels_app):
     agent = make_agent(broker, camels_app, token="bad")
     agent.start()

@@ -35,6 +35,9 @@ class RemoteConfig:
     device_id: str = ""
     device_name: str = ""
     token: dict | None = None  # {"scheme": "dpapi" | "file", "data": "..."}
+    # Staff at the lab computer can pause remote control: CAMELS stays
+    # connected and readable, but refuses operations that change anything.
+    control_paused: bool = False
 
     @property
     def paired(self) -> bool:

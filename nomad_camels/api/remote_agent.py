@@ -39,21 +39,55 @@ CLOSE_UNSUPPORTED_VERSION = 4426
 
 @dataclass(frozen=True)
 class Operation:
+    """One allowed CAMELS route.
+
+    Args:
+        params: Payload fields inserted into the path (non-empty strings).
+        query: ``(payload field, query name)`` pairs for the query string.
+        body: Payload fields sent as the JSON body.
+        control: The operation changes CAMELS state; refused while remote
+            control is paused on the lab computer.
+    """
+
     method: str
     path: str
     params: tuple[str, ...] = ()
+    query: tuple[tuple[str, str], ...] = ()
+    body: tuple[str, ...] = ()
+    control: bool = False
 
 
-# The complete whitelist. Operations that change CAMELS state are added in
-# later phases, together with their safeguards.
+# The complete whitelist. There is no generic forwarding.
 OPERATIONS: dict[str, Operation] = {
+    # Reading
     "get_service_info": Operation("GET", "/api/v1/info"),
     "list_protocols": Operation("GET", "/api/v1/protocols"),
     "get_protocol_schema": Operation("GET", "/api/v1/protocols/{protocol}/schema", ("protocol",)),
     "get_protocol_definition": Operation("GET", "/api/v1/protocols/{protocol}/JSON", ("protocol",)),
     "get_run_status": Operation("GET", "/api/v1/protocols/results/{run_id}", ("run_id",)),
     "get_measurement_status": Operation("GET", "/api/v1/gui/measurement-status"),
+    "get_plot_count": Operation("GET", "/api/v1/gui/plots"),
+    "get_plot_data": Operation("GET", "/api/v1/gui/plot-caches", query=(("cursor", "cursor"),)),
+    "get_pid_plots": Operation("GET", "/api/v1/gui/pid-plots", query=(("protocol", "protocol_name"),)),
+    # Changing
+    "save_protocol_parameters": Operation(
+        "POST", "/api/v1/protocols/{protocol}/parameters", ("protocol",), body=("variables",), control=True
+    ),
+    "start_measurement": Operation(
+        "POST",
+        "/api/v1/actions/run/protocols/{protocol}",
+        ("protocol",),
+        query=(("run_id", "protocol_uuid"),),
+        body=("variables",),
+        control=True,
+    ),
+    "stop_measurement": Operation("POST", "/api/v1/actions/stop", control=True),
+    "close_plots": Operation("POST", "/api/v1/gui/plots/close", control=True),
 }
+
+# Remembered results of started runs, so that a repeated start command with
+# the same run_id (for example a retry after a lost answer) starts nothing.
+MAX_REMEMBERED_RUNS = 200
 
 # Agent states shown in the CAMELS settings.
 STATE_STOPPED = "stopped"
@@ -92,14 +126,55 @@ def build_path(operation: Operation, payload: dict) -> str:
     return operation.path.format(**values)
 
 
-def error_for_status(status_code: int) -> CommandError:
+def build_query(operation: Operation, payload: dict) -> dict:
+    query = {}
+    for field, name in operation.query:
+        value = payload.get(field)
+        if value is None:
+            continue
+        if isinstance(value, (dict, list)):
+            value = json.dumps(value)
+        if not isinstance(value, (str, int, float)) or isinstance(value, bool):
+            raise CommandError("invalid_parameters", f"'{field}' has an invalid type.")
+        query[name] = str(value)
+    return query
+
+
+def build_body(operation: Operation, payload: dict):
+    if not operation.body:
+        return None
+    body = {}
+    for field in operation.body:
+        value = payload.get(field, {})
+        if not isinstance(value, dict):
+            raise CommandError("invalid_parameters", f"'{field}' must be an object.")
+        body[field] = value
+    return body
+
+
+def error_for_status(status_code: int, detail: str = "") -> CommandError:
+    detail = detail[:300]
     if status_code == 404:
-        return CommandError("not_found", "Not found.")
+        return CommandError("not_found", detail or "Not found.")
     if status_code in (400, 422):
-        return CommandError("invalid_parameters", "The parameters were rejected.")
+        return CommandError("invalid_parameters", detail or "The parameters were rejected.")
     if status_code == 409:
-        return CommandError("busy", "Another measurement is running.")
-    return CommandError("internal", f"CAMELS answered with HTTP {status_code}.")
+        return CommandError("busy", detail or "Another measurement is running.")
+    return CommandError("internal", detail or f"CAMELS answered with HTTP {status_code}.")
+
+
+def response_detail(response) -> str:
+    """The ``detail`` text of a FastAPI error response, if it has one."""
+    try:
+        detail = response.json().get("detail")
+    except (ValueError, AttributeError):
+        return ""
+    if isinstance(detail, str):
+        return detail
+    if isinstance(detail, list) and detail and isinstance(detail[0], dict):
+        # Validation errors: report the first one.
+        return str(detail[0].get("msg", ""))
+    return ""
 
 
 class RemoteAgent:
@@ -136,6 +211,11 @@ class RemoteAgent:
         self._loop: asyncio.AbstractEventLoop | None = None
         self._task: asyncio.Task | None = None
         self._started = threading.Event()
+        # Set from the GUI thread; read before each operation that changes
+        # CAMELS state.
+        self.control_paused = False
+        self._started_runs: dict[str, dict] = {}
+        self._start_lock: asyncio.Lock | None = None
 
     # ------------------------------------------------------------------
     # Thread control
@@ -347,10 +427,33 @@ class RemoteAgent:
             raise CommandError("unknown_operation", f"Operation {name!r} is not allowed.")
         if not isinstance(payload, dict):
             raise CommandError("invalid_parameters", "The payload must be an object.")
+        if operation.control and self.control_paused:
+            raise CommandError("paused", "Remote control is paused on the lab computer.")
+        if name != "start_measurement":
+            return await self._request(operation, payload)
+        # One start at a time, and a repeated run_id starts nothing again.
+        if self._start_lock is None:
+            self._start_lock = asyncio.Lock()
+        async with self._start_lock:
+            run_id = payload.get("run_id")
+            if isinstance(run_id, str) and run_id in self._started_runs:
+                return {**self._started_runs[run_id], "duplicate": True}
+            result = await self._request(operation, payload)
+            if isinstance(run_id, str) and run_id:
+                self._started_runs[run_id] = result
+                while len(self._started_runs) > MAX_REMEMBERED_RUNS:
+                    self._started_runs.pop(next(iter(self._started_runs)))
+            return result
+
+    async def _request(self, operation: Operation, payload: dict):
         path = build_path(operation, payload)
-        response = await self._client.request(operation.method, path, timeout=30)
+        query = build_query(operation, payload)
+        body = build_body(operation, payload)
+        response = await self._client.request(
+            operation.method, path, params=query or None, json=body, timeout=30
+        )
         if response.status_code >= 300:
-            raise error_for_status(response.status_code)
+            raise error_for_status(response.status_code, response_detail(response))
         try:
             return response.json()
         except ValueError:

@@ -4,6 +4,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
 from nomad_camels.utility import load_save_functions
+from nomad_camels.main_classes.remote_plot_cache import PlotCacheRegistry
 import uvicorn
 import sqlite3
 import os
@@ -304,6 +305,7 @@ class FastapiThread(QThread):
     queue_protocol_with_variables_signal = Signal(str, dict, int, str)
     change_variables_queued_protocol_signal = Signal(str, dict, int)
     close_plots_signal = Signal()
+    stop_protocol_signal = Signal()
     save_protocol_variables_signal = Signal(str, dict)
 
     def __init__(self, main_window, api_port):
@@ -323,30 +325,32 @@ class FastapiThread(QThread):
         self._agent_app = None
         self.server = None
         self.loop = None  # Custom asyncio loop
-        self._plot_caches = {}
-        self._plot_caches_lock = threading.Lock()
+        # The open plots are registered on the main window, so that this
+        # server and the OASIS remote agent read the same plots.
+        registry = getattr(main_window, "plot_caches", None)
+        self._plot_caches = (
+            registry if isinstance(registry, PlotCacheRegistry) else PlotCacheRegistry()
+        )
         self.api_started_at = datetime.now(timezone.utc).isoformat()
 
     def register_plot_cache(self, cache_id, cache):
         """Register a Qt-independent live-plot cache from the GUI thread."""
-        with self._plot_caches_lock:
-            self._plot_caches[cache_id] = cache
+        self._plot_caches.register(cache_id, cache)
 
     def unregister_plot_cache(self, cache_id):
-        with self._plot_caches_lock:
-            self._plot_caches.pop(cache_id, None)
+        self._plot_caches.unregister(cache_id)
 
-    def get_plot_cache_snapshots(self):
-        """Read only plain-Python copies; never access a Qt widget here."""
-        with self._plot_caches_lock:
-            caches = list(self._plot_caches.items())
-        plots = []
-        for cache_id, cache in caches:
-            try:
-                plots.append({"id": cache_id, **cache.snapshot()})
-            except (AttributeError, RuntimeError, TypeError, ValueError):
-                continue
-        return sanitize_dict({"open_plot_count": len(plots), "plots": plots})
+    def get_plot_cache_snapshots(self, cursors=None):
+        """Read only plain-Python copies; never access a Qt widget here.
+
+        ``cursors`` maps plot ids to the client's position, so that only new
+        points are returned (see ``RemotePlotCache.snapshot``).
+        """
+        return sanitize_dict(self._plot_caches.snapshots(cursors))
+
+    def measurement_busy(self):
+        busy = getattr(self.main_window, "measurement_busy", None)
+        return callable(busy) and busy() is True
 
     def run(self):
         """
@@ -460,6 +464,24 @@ class FastapiThread(QThread):
             ):
                 raise HTTPException(status_code=404, detail="Protocol not found")
             return protocol
+
+        start_lock = threading.Lock()
+
+        def require_idle():
+            """Refuse to start a second measurement while one is running.
+
+            Marks CAMELS as preparing at once, so that a second request that
+            arrives before the GUI thread starts the protocol is refused too.
+            """
+            with start_lock:
+                if self.measurement_busy():
+                    raise HTTPException(
+                        status_code=409,
+                        detail="Another measurement is running in CAMELS.",
+                    )
+                mark = getattr(self.main_window, "_set_measurement_status", None)
+                if callable(mark):
+                    mark(status="Preparing", progress=0.0)
 
         def require_global_api_key(api_key: str):
             """Protect legacy global-control endpoints from protocol-scoped keys."""
@@ -633,10 +655,39 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/gui/plot-caches")
         async def get_live_plot_caches(
+            cursor: str | None = None,
             api_key: str = Depends(validate_credentials),
         ):
-            """Return thread-safe data copies for all supported 1D Qt plots."""
-            return JSONResponse(content=self.get_plot_cache_snapshots())
+            """Return thread-safe data copies for all supported 1D Qt plots.
+
+            ``cursor`` is a JSON object mapping each plot id to
+            ``{"generation", "since", "version"}`` from the previous reply.
+            Then only new points are returned. Without it, every plot is
+            returned from its first point (in chunks; see ``more``).
+            """
+            cursors = None
+            if cursor:
+                try:
+                    cursors = json.loads(cursor)
+                except ValueError:
+                    raise HTTPException(status_code=400, detail="cursor must be JSON.")
+            return JSONResponse(content=self.get_plot_cache_snapshots(cursors))
+
+        @app.post("/api/v1/actions/stop")
+        async def stop_measurement(
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Stop (abort) the running protocol, like the Stop button.
+
+            Only a protocol exposed to OASIS remote control can be stopped.
+            """
+            if not self.measurement_busy():
+                return JSONResponse(content={"status": "idle"})
+            running = getattr(self.main_window, "running_protocol", None)
+            name = getattr(running, "name", None) or self.main_window.get_measurement_status().get("protocol_name", "")
+            get_oasis_protocol(str(name), api_key)
+            self.stop_protocol_signal.emit()
+            return JSONResponse(content={"status": "stopping", "protocol_name": str(name)})
 
         @app.post("/api/v1/gui/plots/close")
         async def close_open_plots(
@@ -756,6 +807,7 @@ class FastapiThread(QThread):
                 JSONResponse: A JSON response with a URL to check the protocol run status.
             """
             get_oasis_protocol(protocol_name, api_key)
+            require_idle()
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
 
@@ -808,6 +860,7 @@ class FastapiThread(QThread):
                         status_code=400,
                         detail=f"Variable {key} is not accepted by the protocol {protocol_name}",
                     )
+            require_idle()
 
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)

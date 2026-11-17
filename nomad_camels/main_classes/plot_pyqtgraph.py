@@ -44,6 +44,7 @@ from bluesky.callbacks.core import get_obj_fields, CallbackBase
 from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
+from nomad_camels.main_classes.remote_plot_cache import RemotePlotCache, plotly_style
 from nomad_camels.utility.plot_placement import place_widget
 
 
@@ -196,52 +197,33 @@ class ListDeque_skip:
         self.counter_value = 0
 
 
-class RemotePlotCache:
-    """Thread-safe, Qt-independent data copy for remote plot consumers."""
+def _color_name(value):
+    """Return a pyqtgraph color specification as ``#rrggbb``."""
+    try:
+        return pg.mkColor(value).name()
+    except Exception:
+        return None
 
-    def __init__(self, *, title, x_label, y_label, y_axes):
-        self._lock = threading.Lock()
-        self._snapshot = {
-            "title": title,
-            "x_label": x_label,
-            "y_label": y_label,
-            "traces": [],
-        }
-        self._y_axes = dict(y_axes or {})
 
-    def update(self, x_data, y_data):
-        def json_values(values):
-            normalized = []
-            for value in values:
-                if hasattr(value, "tolist"):
-                    value = value.tolist()
-                elif hasattr(value, "item"):
-                    try:
-                        value = value.item()
-                    except (TypeError, ValueError):
-                        pass
-                normalized.append(value)
-            return normalized
+def remote_style_of_item(item):
+    """Read the appearance of a ``PlotDataItem`` for the remote copy.
 
-        x_values = json_values(x_data)
-        traces = []
-        for name, values in y_data.items():
-            y_values = json_values(values)
-            count = min(len(x_values), len(y_values))
-            traces.append({
-                "name": str(name),
-                "x": x_values[-count:] if count else [],
-                "y": y_values[-count:] if count else [],
-                "line": {"visible": False},
-                "marker": {"visible": True, "symbol": "circle", "size": 8},
-                "axis": "y2" if self._y_axes.get(name, 1) == 2 else "y",
-            })
-        with self._lock:
-            self._snapshot["traces"] = traces
-
-    def snapshot(self):
-        with self._lock:
-            return copy.deepcopy(self._snapshot)
+    Must run in the GUI thread.
+    """
+    opts = item.opts
+    pen = pg.mkPen(opts.get("pen"))
+    symbol_pen = pg.mkPen(opts.get("symbolPen"))
+    symbol_brush = pg.mkBrush(opts.get("symbolBrush"))
+    return plotly_style(
+        line_color=pen.color().name(),
+        line_width=max(1.0, float(pen.widthF())),
+        pen_style=pen.style().name,
+        symbol=opts.get("symbol"),
+        symbol_size=opts.get("symbolSize") or 10,
+        symbol_color=symbol_brush.color().name(),
+        symbol_line_color=symbol_pen.color().name(),
+        visible=item.isVisible(),
+    )
 
 
 class PlotWidget(QWidget):
@@ -688,13 +670,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
                 ]
             linestylewidge.setCurrentText(linestyle)
             linestylewidge.currentTextChanged.connect(
-                lambda text, item=item: item.setPen(
-                    pg.mkPen(
-                        color=item.opts["pen"].color(),
-                        width=item.opts["pen"].width(),
-                        style=linestyles[text],
-                    )
-                )
+                lambda text, item=item: self.change_linestyle(item, text)
             )
             self.tableWidget.setCellWidget(i, 2, linestylewidge)
 
@@ -702,6 +678,16 @@ class Plot_Options(Ui_Plot_Options, QWidget):
             colorwidge = QPushButton(color.name())
             colorwidge.clicked.connect(lambda state, n=i: self.change_color(n))
             self.tableWidget.setCellWidget(i, 3, colorwidge)
+
+    def change_linestyle(self, item, text):
+        item.setPen(
+            pg.mkPen(
+                color=item.opts["pen"].color(),
+                width=item.opts["pen"].width(),
+                style=linestyles[text],
+            )
+        )
+        self.livePlot.publish_remote_appearance()
 
     def change_symbol(self, symbol, row):
         """
@@ -717,6 +703,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         name = self.tableWidget.item(row, 0).text()
         self.change_color(row, just_update=True)
         self.all_items[name].setSymbol(symbols[symbol])
+        self.livePlot.publish_remote_appearance()
 
     def change_color(self, row, just_update=False):
         """
@@ -741,6 +728,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.all_items[name].opts["pen"].setColor(color)
         self.all_items[name].setSymbolPen(pg.mkPen(color=color))
         self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
+        self.livePlot.publish_remote_appearance()
 
     def set_log(self):
         """
@@ -871,6 +859,8 @@ class LivePlot(QObject, CallbackBase):
             x_label=xlabel or x_name or "sequence #",
             y_label=ylabel or str(remote_y_names[0] if remote_y_names else "value"),
             y_axes=self.y_axes,
+            y_names=list(y_names or []),
+            maxlen=maxlen,
         )
         self.maxlen = maxlen
         self.stream_name = stream_name
@@ -1095,7 +1085,10 @@ class LivePlot(QObject, CallbackBase):
         for y in new_y:
             self.y_data[y].append(new_y[y])
         self.x_data.append(new_x)
-        self.remote_plot_cache.update(self.x_data, self.y_data)
+        # Mirror the point only if the deque kept it (see skip_n_points).
+        skip = self.x_data.skip_n_points
+        if skip <= 0 or self.x_data.counter_value % skip == 0:
+            self.remote_plot_cache.append(new_x, new_y)
         browser_plot = getattr(self, "browser_plot_callback", None)
         if browser_plot is not None:
             # The Qt plot has already resolved formulas and fit quantities.
@@ -1132,7 +1125,36 @@ class LivePlot(QObject, CallbackBase):
             if not y in self.current_plots:
                 self.add_plot(y)
             self.current_plots[y].setData(plot_x, plot_y)
+        self.publish_remote_appearance()
         self.new_data_signal.emit()
+
+    def publish_remote_appearance(self):
+        """Copy curve styles and axis settings to the remote plot cache.
+
+        Runs in the GUI thread, after data updates and Plot Options changes.
+        """
+        try:
+            styles = {
+                str(name): remote_style_of_item(item)
+                for name, item in self.current_plots.items()
+            }
+            item = self.plotItem
+            meta = {
+                "x_log": bool(item.getAxis("bottom").logMode),
+                "y_log": bool(item.getAxis("left").logMode),
+                "background": _color_name(pg.getConfigOption("background")),
+                "foreground": _color_name(pg.getConfigOption("foreground")),
+                "x_label": item.getAxis("bottom").labelText or "",
+                "y_label": item.getAxis("left").labelText or "",
+                "title": item.titleLabel.text or "",
+            }
+            if self.ax2_viewbox is not None:
+                right = item.getAxis("right")
+                meta["y2_log"] = bool(right.logMode)
+                meta["y2_label"] = right.labelText or ""
+            self.remote_plot_cache.set_appearance(styles, meta)
+        except Exception:
+            logging.debug("Could not read the plot appearance", exc_info=True)
 
     def stop(self, doc):
         if not self.x_data:
@@ -1153,7 +1175,7 @@ class LivePlot(QObject, CallbackBase):
         self.x_data = ListDeque_skip(maxlen=self.maxlen)
         for y in self.y_data:
             self.y_data[y] = ListDeque_skip(maxlen=self.maxlen)
-        self.remote_plot_cache.update(self.x_data, self.y_data)
+        self.remote_plot_cache.clear()
         for fit in self.fitPlots:
             fit.clear_plot()
         self.update_plot()
@@ -1268,12 +1290,28 @@ class LiveFitPlot(CallbackBase):
     def clear_plot(self):
         if self.plot:
             self.plot.setData([], [])
+            self._publish_remote_fit([], [])
         for text in self.text_objects:
             self.viewbox.removeItem(text)
         self.text_objects = []
 
+    def _publish_remote_fit(self, x_data, y_data):
+        """Copy the fit curve into the remote cache of the parent plot."""
+        parent = getattr(self, "parent_plot", None)
+        cache = getattr(parent, "remote_plot_cache", None)
+        if cache is None or self.plot is None:
+            return
+        try:
+            axis = "y2" if self.viewbox is getattr(parent, "ax2_viewbox", None) else "y"
+            cache.set_fit(
+                self.livefit.name, x_data, y_data, remote_style_of_item(self.plot), axis
+            )
+        except Exception:
+            logging.debug("Could not copy the fit for OASIS", exc_info=True)
+
     def update_plot(self):
         self.plot.setData(self.x_data, self.y_data)
+        self._publish_remote_fit(self.x_data, self.y_data)
         if self.display_values:
             for text in self.text_objects:
                 self.viewbox.removeItem(text)

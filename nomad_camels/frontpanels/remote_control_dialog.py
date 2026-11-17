@@ -75,6 +75,14 @@ class Remote_Control_Dialog(QDialog):
         self.label_state.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.checkBox_enable = QCheckBox("Enable remote control")
         self.checkBox_enable.toggled.connect(self.set_enabled)
+        self.checkBox_pause = QCheckBox(
+            "Pause remote control: OASIS can watch, but not start, stop or change anything"
+        )
+        self.checkBox_pause.setToolTip(
+            "For work at the instrument. The connection stays open; OASIS still sees "
+            "the measurement status and the plots."
+        )
+        self.checkBox_pause.toggled.connect(self.set_paused)
         self.pushButton_unpair = QPushButton("Unpair this computer")
         self.pushButton_unpair.clicked.connect(self.unpair)
 
@@ -83,6 +91,7 @@ class Remote_Control_Dialog(QDialog):
         state_layout.addRow("Device", self.label_device)
         state_layout.addRow("State", self.label_state)
         state_layout.addRow(self.checkBox_enable)
+        state_layout.addRow(self.checkBox_pause)
         state_layout.addRow(self.pushButton_unpair)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Close)
@@ -115,6 +124,10 @@ class Remote_Control_Dialog(QDialog):
         self.checkBox_enable.setChecked(self.config.enabled and paired)
         self.checkBox_enable.blockSignals(False)
         self.checkBox_enable.setEnabled(paired)
+        self.checkBox_pause.blockSignals(True)
+        self.checkBox_pause.setChecked(self.config.control_paused)
+        self.checkBox_pause.blockSignals(False)
+        self.checkBox_pause.setEnabled(paired)
         self.pushButton_unpair.setEnabled(paired)
         self.pushButton_pair.setText("Pair again" if paired else "Pair")
         self.show_state(*self.main_window.remote_agent_state)
@@ -123,6 +136,8 @@ class Remote_Control_Dialog(QDialog):
         text = STATE_TEXT.get(state, state)
         if detail and state != "online":
             text = f"{text}: {detail}"
+        if state == "online" and self.config.control_paused:
+            text += " (remote control paused)"
         self.label_state.setText(text)
 
     def show_error(self, message):
@@ -160,6 +175,11 @@ class Remote_Control_Dialog(QDialog):
             self.main_window.start_remote_agent()
         else:
             self.main_window.stop_remote_agent()
+        self.update_view()
+
+    def set_paused(self, paused):
+        self.main_window.set_remote_control_paused(paused)
+        self.config = remote_config.load_config()
         self.update_view()
 
     def unpair(self):
