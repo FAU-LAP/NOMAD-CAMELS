@@ -170,3 +170,55 @@ def test_style_is_read_from_the_qt_plot(qtbot):
 
     live.clear_plot()
     assert live.remote_plot_cache.snapshot()["x"] == []
+
+
+def test_run_info_and_change_token():
+    registry = PlotCacheRegistry()
+    cache = RemotePlotCache(title="t", x_label="x", y_label="y", y_names=["a"])
+    token = registry.change_token()
+    registry.register("p", cache)
+    assert registry.change_token() != token
+    token = registry.change_token()
+    cache.append(1, {"a": 2})
+    assert registry.change_token() != token
+
+    first = cache.snapshot()
+    assert first["info"] == {}
+    cache.set_info({"protocol": "IV", "state": "running", "variables": {"n": 3}})
+    token = registry.change_token()
+    # Unchanged info changes nothing.
+    cache.set_info({"state": "running"})
+    assert registry.change_token() == token
+    current = cache.snapshot(since=first["end"], generation=first["generation"], version=first["version"])
+    assert current["info"] == {"protocol": "IV", "state": "running", "variables": {"n": 3}}
+    cache.set_info({"state": "finished"})
+    later = cache.snapshot(since=current["end"], generation=current["generation"], version=current["version"])
+    assert later["info"]["state"] == "finished" and later["info"]["protocol"] == "IV"
+    # No change: the info is not sent again.
+    assert "info" not in cache.snapshot(since=later["end"], generation=later["generation"], version=later["version"])
+    registry.unregister("p")
+    assert registry.ids() == []
+
+
+def test_run_info_overlay_in_the_plot_window(qtbot):
+    pytest.importorskip("pyqtgraph")
+    from nomad_camels.main_classes.plot_pyqtgraph import PlotWidget
+
+    plot = PlotWidget("time", ["value"], title="IV curve")
+    qtbot.addWidget(plot)
+    plot.show()
+    overlay = plot.run_info_overlay
+    assert not overlay.isVisible()
+    plot.set_run_info({"protocol": "IV", "started": "2026-11-19T14:03:22+01:00", "state": "running",
+                       "variables": {"n": 3}})
+    assert overlay.isVisible() and not overlay.details.isVisible()
+    assert overlay.button.text() == "IV · started 2026-11-19 14:03:22 · Running"
+    overlay.button.click()
+    assert overlay.details.isVisible() and "n = 3" in overlay.details.text()
+    # Inside the plot area, in the top right corner.
+    assert overlay.parent() is plot.plot_widget
+    assert overlay.geometry().right() <= plot.plot_widget.width()
+    plot.set_run_info({"state": "finished", "ended": "2026-11-19T14:05:00+01:00"})
+    assert "Finished" in overlay.button.text() and "Ended" in overlay.details.text()
+    assert plot.livePlot.remote_plot_cache.info["state"] == "finished"
+    assert plot.livePlot.remote_plot_cache.info["protocol"] == "IV"

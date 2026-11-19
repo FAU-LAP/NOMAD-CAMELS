@@ -6,6 +6,10 @@ against the CAMELS API routes in-process (``httpx.ASGITransport``). Only the
 operations listed in ``OPERATIONS`` can be run; there is no generic
 forwarding.
 
+When plots or the measurement status change, the agent sends a short
+``changed`` message (no data). OASIS then asks for the new data at once, so
+the dashboard is updated without polling.
+
 See ``docs/camels_remote_protocol.md`` in the OASIS repository.
 """
 
@@ -31,6 +35,12 @@ MAX_MESSAGE_BYTES = 1024 * 1024
 PING_INTERVAL_SECONDS = 20
 HELLO_TIMEOUT_SECONDS = 15
 MAX_BACKOFF_SECONDS = 60
+# Changes are looked for this often (in-process, no network traffic) ...
+CHANGE_CHECK_SECONDS = 0.1
+# ... and reported at most this often.
+MIN_CHANGE_INTERVAL_SECONDS = 0.2
+# Announced in the hello, so OASIS knows it can wait for ``changed``.
+FEATURES = ["changes", "live_update"]
 
 CLOSE_REVOKED = 4401
 CLOSE_REPLACED = 4409
@@ -69,6 +79,7 @@ OPERATIONS: dict[str, Operation] = {
     "get_plot_count": Operation("GET", "/api/v1/gui/plots"),
     "get_plot_data": Operation("GET", "/api/v1/gui/plot-caches", query=(("cursor", "cursor"),)),
     "get_pid_plots": Operation("GET", "/api/v1/gui/pid-plots", query=(("protocol", "protocol_name"),)),
+    "get_live_update": Operation("GET", "/api/v1/gui/live", query=(("cursor", "cursor"),)),
     # Changing
     "save_protocol_parameters": Operation(
         "POST", "/api/v1/protocols/{protocol}/parameters", ("protocol",), body=("variables",), control=True
@@ -83,6 +94,7 @@ OPERATIONS: dict[str, Operation] = {
     ),
     "stop_measurement": Operation("POST", "/api/v1/actions/stop", control=True),
     "close_plots": Operation("POST", "/api/v1/gui/plots/close", control=True),
+    "close_plot": Operation("POST", "/api/v1/gui/plots/{plot_id}/close", ("plot_id",), control=True),
 }
 
 # Remembered results of started runs, so that a repeated start command with
@@ -197,6 +209,7 @@ class RemoteAgent:
         camels_version: str = "",
         on_state: Callable[[str, str], None] | None = None,
         measurement_provider: Callable[[], dict] | None = None,
+        change_provider: Callable[[], object] | None = None,
     ):
         self.url = url
         self._token = token
@@ -205,6 +218,8 @@ class RemoteAgent:
         self.camels_version = camels_version
         self.on_state = on_state
         self.measurement_provider = measurement_provider
+        # Returns a value that differs whenever plots or status changed.
+        self.change_provider = change_provider
         self.state = STATE_STOPPED
         self.detail = ""
         self._thread: threading.Thread | None = None
@@ -297,6 +312,8 @@ class RemoteAgent:
                         ping_interval=PING_INTERVAL_SECONDS,
                         ping_timeout=PING_INTERVAL_SECONDS,
                         max_size=MAX_MESSAGE_BYTES,
+                        # permessage-deflate: plot data compresses well.
+                        compression="deflate",
                         open_timeout=20,
                         user_agent_header="NOMAD-CAMELS remote agent",
                     ) as ws:
@@ -347,6 +364,7 @@ class RemoteAgent:
                 camels_version=self.camels_version,
                 hostname=socket.gethostname(),
                 operations=sorted(OPERATIONS),
+                features=FEATURES,
                 measurement=self._measurement(),
             )
         )
@@ -357,6 +375,9 @@ class RemoteAgent:
         self._set_state(STATE_ONLINE, f"session {welcome.get('session_id', '')}")
 
         tasks: set[asyncio.Task] = set()
+        if self.change_provider is not None:
+            watcher = asyncio.ensure_future(self._watch_changes(send))
+            tasks.add(watcher)
         try:
             while True:
                 raw = await ws.recv()  # raises ConnectionClosed
@@ -376,6 +397,30 @@ class RemoteAgent:
         finally:
             for task in tasks:
                 task.cancel()
+
+    def _change_token(self):
+        try:
+            return self.change_provider()
+        except Exception:
+            log.exception("remote agent: reading the change state failed")
+            return None
+
+    async def _watch_changes(self, send) -> None:
+        """Send ``changed`` when plots or the measurement status changed."""
+        loop = asyncio.get_running_loop()
+        last = self._change_token()
+        last_paused = self.control_paused
+        last_sent = 0.0
+        while True:
+            await asyncio.sleep(CHANGE_CHECK_SECONDS)
+            token = self._change_token()
+            if token == last and self.control_paused == last_paused:
+                continue
+            if loop.time() - last_sent < MIN_CHANGE_INTERVAL_SECONDS:
+                # Reported with the next check after the interval.
+                continue
+            last, last_paused, last_sent = token, self.control_paused, loop.time()
+            await send(envelope("changed"))
 
     def _measurement(self):
         if self.measurement_provider is None:
@@ -429,11 +474,12 @@ class RemoteAgent:
             raise CommandError("invalid_parameters", "The payload must be an object.")
         if operation.control and self.control_paused:
             raise CommandError("paused", "Remote control is paused on the lab computer.")
-        if name == "get_measurement_status":
+        if name in ("get_measurement_status", "get_live_update"):
             result = await self._request(operation, payload)
-            if isinstance(result, dict):
+            status = result.get("status") if name == "get_live_update" and isinstance(result, dict) else result
+            if isinstance(status, dict):
                 # Lets OASIS show why it cannot start or stop anything.
-                result["remote_control_paused"] = bool(self.control_paused)
+                status["remote_control_paused"] = bool(self.control_paused)
             return result
         if name != "start_measurement":
             return await self._request(operation, payload)

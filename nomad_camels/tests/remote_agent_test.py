@@ -476,3 +476,41 @@ def test_remote_control_dialog(qtbot, tmp_path, monkeypatch):
     assert not remote_config.load_config().paired
     assert dialog.label_device.text() == "not paired"
     dialog.close()
+
+
+def test_changes_are_pushed_and_live_update(broker, control_app, qtbot):
+    from nomad_camels.main_classes.remote_plot_cache import RemotePlotCache
+
+    main_window, thread = control_app
+    registry = thread._plot_caches
+    cache = RemotePlotCache(title="IV", x_label="V", y_label="I", y_names=["I"])
+    thread.register_plot_cache("p1", cache)
+    closed = []
+    thread.close_plot_signal.connect(closed.append)
+    agent = remote_agent.RemoteAgent(
+        broker.url, TOKEN, thread.get_agent_app(), camels_version="test",
+        change_provider=registry.change_token,
+    )
+    agent.start()
+    try:
+        wait_state(agent, remote_agent.STATE_ONLINE)
+        assert "changes" in broker.messages[0]["features"]
+        cache.append(0, {"I": 1})
+        broker.wait_for(lambda m: m.get("type") == "changed", timeout=2)
+        count = sum(m.get("type") == "changed" for m in broker.messages)
+        time.sleep(0.5)
+        # Nothing changed: nothing is sent.
+        assert sum(m.get("type") == "changed" for m in broker.messages) == count
+
+        live = command(broker, "get_live_update", None, "l1")["result"]
+        assert live["status"]["status"] == "Running"
+        assert live["status"]["remote_control_paused"] is False
+        assert live["plots"]["plots"][0]["x"] == [0]
+
+        missing = command(broker, "close_plot", {"plot_id": "nope"}, "l2")
+        assert missing["error"]["code"] == "not_found"
+        done = command(broker, "close_plot", {"plot_id": "p1"}, "l3")
+        assert done["status"] == "completed"
+        qtbot.waitUntil(lambda: closed == ["p1"])
+    finally:
+        agent.stop()

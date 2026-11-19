@@ -190,6 +190,15 @@ class Settings_Window(Ui_settings_window, QDialog):
         )
         self.gridLayout_9.addWidget(self.checkBox_keep_Api_key, 14, 0, 1, 1)
         self.checkBox_keep_Api_key.toggled.connect(self._update_api_key_controls)
+        self.checkBox_API_allow_network = QCheckBox(
+            "Allow API access from other computers", self.right
+        )
+        self.checkBox_API_allow_network.setToolTip(
+            "Off: only programs on this computer can use the API (recommended).\n"
+            "On: other computers in the network can reach the API port; they still need an API key.\n"
+            "OASIS remote control does not need this."
+        )
+        self.gridLayout_9.addWidget(self.checkBox_API_allow_network, 15, 0, 1, 1)
 
         standard_pref = load_save_functions.standard_pref
 
@@ -365,6 +374,9 @@ class Settings_Window(Ui_settings_window, QDialog):
         if "API_port" in settings:
             self.lineEdit_api_port.setText(settings["API_port"])
         self.checkBox_keep_Api_key.setChecked(settings.get("keep_API_key", True))
+        self.checkBox_API_allow_network.setChecked(
+            bool(settings.get("API_allow_network", False))
+        )
         self._load_saved_api_key()
         self.pushButton_API_docu.clicked.connect(self.open_api_docu)
         self.pushButton_API_docu.setToolTip(
@@ -469,6 +481,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "enable_API": self.checkBox_enable_Api.isChecked(),
             "API_port": self.lineEdit_api_port.text(),
             "keep_API_key": self.checkBox_keep_Api_key.isChecked(),
+            "API_allow_network": self.checkBox_API_allow_network.isChecked(),
             "new_file_every_x_hours": self.checkBox_new_meas_hours.isChecked(),
             "new_file_every_x_hours_value": self.spinBox_new_meas_hours.value(),
             "nested_data": self.checkBox_nested_data_structure.isChecked(),

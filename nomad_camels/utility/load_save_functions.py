@@ -148,6 +148,7 @@ standard_pref = {
     "new_file_each_run": True,
     "enable_API": False,
     "API_port": "5000",
+    "API_allow_network": False,
     "last_shown_notes": "0.0.0",
     "new_file_every_x_hours": False,
     "new_file_every_x_hours_value": 24,

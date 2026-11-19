@@ -29,6 +29,9 @@ from PySide6.QtWidgets import (
     QColorDialog,
     QWidgetAction,
     QHBoxLayout,
+    QVBoxLayout,
+    QFrame,
+    QToolButton,
 )
 from PySide6.QtCore import Signal, QObject, QEvent, Qt
 from PySide6.QtGui import QIcon, QColor, QTransform, QAction, QActionGroup
@@ -224,6 +227,109 @@ def remote_style_of_item(item):
         symbol_line_color=symbol_pen.color().name(),
         visible=item.isVisible(),
     )
+
+
+RUN_STATE_LABELS = {
+    "running": "Running",
+    "finished": "Finished",
+    "aborted": "Aborted",
+    "failed": "Failed",
+}
+
+
+def _display_time(value):
+    """``2026-11-19T14:03:22+01:00`` -> ``2026-11-19 14:03:22``."""
+    text = str(value or "")
+    return text[:19].replace("T", " ") if len(text) >= 19 else text
+
+
+def run_info_summary(info):
+    """One line: protocol, start time and state of the run of a plot."""
+    parts = [str(info.get("protocol") or "")]
+    if info.get("started"):
+        parts.append("started " + _display_time(info["started"]))
+    state = info.get("state")
+    if state:
+        parts.append(RUN_STATE_LABELS.get(state, str(state)))
+    return " · ".join(part for part in parts if part)
+
+
+def run_info_html(info):
+    """The details shown when the run info of a plot is expanded."""
+    from html import escape
+
+    rows = [("Protocol", info.get("protocol"))]
+    rows.append(("Started", _display_time(info.get("started"))))
+    if info.get("ended"):
+        rows.append(("Ended", _display_time(info.get("ended"))))
+    rows.append(("State", RUN_STATE_LABELS.get(info.get("state"), info.get("state"))))
+    html = "".join(
+        f"<b>{escape(name)}:</b> {escape(str(value))}<br>" for name, value in rows if value
+    )
+    variables = info.get("variables") or {}
+    if variables:
+        html += "<b>Parameters:</b>" + "".join(
+            f"<br>&nbsp;&nbsp;{escape(str(name))} = {escape(str(value))}"
+            for name, value in variables.items()
+        )
+    else:
+        html += "<b>Parameters:</b> none"
+    return html
+
+
+class RunInfoOverlay(QFrame):
+    """Collapsible box in the top right corner of a plot: protocol, start
+    time, state and parameters of the run the plot belongs to."""
+
+    def __init__(self, host):
+        super().__init__(host)
+        self.host = host
+        self.setObjectName("runInfoOverlay")
+        self.setStyleSheet(
+            "#runInfoOverlay{background:rgba(255,255,255,225);border:1px solid #888;border-radius:4px}"
+            "#runInfoOverlay QLabel,#runInfoOverlay QToolButton{color:#000;background:transparent;border:none}"
+        )
+        self.button = QToolButton(self)
+        self.button.setCheckable(True)
+        self.button.setArrowType(Qt.RightArrow)
+        self.button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.button.setToolTip("Show or hide the run information")
+        self.details = QLabel(self)
+        self.details.setTextFormat(Qt.RichText)
+        self.details.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.details.hide()
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(4, 2, 6, 4)
+        layout.setSpacing(2)
+        layout.addWidget(self.button)
+        layout.addWidget(self.details)
+        self.button.toggled.connect(self._toggle)
+        host.installEventFilter(self)
+        self.hide()
+
+    def set_info(self, info):
+        self.button.setText(run_info_summary(info))
+        self.details.setText(run_info_html(info))
+        self.show()
+        self._place()
+
+    def _toggle(self, expanded):
+        self.button.setArrowType(Qt.DownArrow if expanded else Qt.RightArrow)
+        self.details.setVisible(expanded)
+        self._place()
+
+    def _place(self):
+        self.adjustSize()
+        width = min(self.sizeHint().width(), max(120, self.host.width() - 20))
+        height = min(self.sizeHint().height(), max(30, self.host.height() - 20))
+        self.resize(width, height)
+        self.move(max(0, self.host.width() - width - 10), 8)
+        self.raise_()
+
+    def eventFilter(self, watched, event):
+        if watched is self.host and event.type() == QEvent.Resize and self.isVisible():
+            self._place()
+        return False
 
 
 class PlotWidget(QWidget):
@@ -495,6 +601,7 @@ class PlotWidget(QWidget):
         self.layout().addWidget(self.lineEdit_skip_n_points, 2, 4)
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
+        self.run_info_overlay = RunInfoOverlay(self.plot_widget)
         # self.setMinimumSize(500, 400)
         if manual_plot_position:
             place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
@@ -507,6 +614,14 @@ class PlotWidget(QWidget):
         if not self.isVisible():
             self.show()
             self.reopened.emit()
+
+    def set_run_info(self, info):
+        """Show the run this plot belongs to, here and in OASIS."""
+        self.run_info = {**getattr(self, "run_info", {}), **info}
+        self.run_info_overlay.set_info(self.run_info)
+        cache = getattr(self.livePlot, "remote_plot_cache", None)
+        if cache is not None:
+            cache.set_info(self.run_info)
 
     def make_toolbar(self):
         """Creates the toolbar for the plot widget. This toolbar is based on the context menu of the plot. The View All is connected with `auto_range`."""
@@ -1457,6 +1572,7 @@ class PlotWidget_2D(QWidget):
         self.layout().addWidget(self.pushButton_clear, 2, 0)
         self.layout().addWidget(label_n_data, 2, 1)
         self.layout().addWidget(self.lineEdit_n_data, 2, 2)
+        self.run_info_overlay = RunInfoOverlay(self.graphics_layout)
         self.make_toolbar()
         if manual_plot_position:
             place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
@@ -1623,6 +1739,11 @@ class PlotWidget_2D(QWidget):
     
     def clear_plot(self):
         self.livePlot.clear_plot()
+
+    def set_run_info(self, info):
+        """Show the run this plot belongs to."""
+        self.run_info = {**getattr(self, "run_info", {}), **info}
+        self.run_info_overlay.set_info(self.run_info)
 
     def closeEvent(self, event):
         # Close the heatmap window if it is open

@@ -68,6 +68,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     protocol_finished_signal = Signal()
     start_timer_signal = Signal()
     remote_agent_state_signal = Signal(str, str)
+    # End state ("finished", "aborted", "failed") and the plots of a run, for
+    # their run info; may be emitted from the run engine thread.
+    run_ended_signal = Signal(str, object)
 
     def __init__(self, parent=None, start_proxy_bool=True):
         """
@@ -144,6 +147,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # progress bar in the main window. FastAPI must not read Qt widgets
         # from its own thread.
         self._measurement_status_lock = threading.Lock()
+        # Run info (protocol, start, state, variables) shown with the plots
+        # of the current run, and those plots.
+        self._current_run_info = None
+        self._current_run_plots = []
+        self._last_built_variables = {}
+        self.current_api_network = None
         self._measurement_status = {
             "status": "Idle",
             "protocol_name": "",
@@ -161,6 +170,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.remote_agent_routes = None
         self.remote_agent_state = ("stopped", "")
         self.remote_agent_state_signal.connect(self._on_remote_agent_state)
+        self.run_ended_signal.connect(self._end_run_info)
 
         # Initialize saving and state variables
         self.__save_dict__ = {}
@@ -407,6 +417,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
 
             self.current_api_port = api_port
+            self.current_api_network = bool(self.preferences.get("API_allow_network", False))
             # Initialize the FastAPI server thread
             self.fastapi_thread = FastapiThread(self, api_port)
             self.fastapi_thread.port_error_signal.connect(self.clear_fastapi_thread)
@@ -418,6 +429,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """Connect the GUI slots that the API routes trigger through signals."""
         api_thread.start_protocol_signal.connect(self.run_protocol)
         api_thread.close_plots_signal.connect(self.close_plots)
+        api_thread.close_plot_signal.connect(self.close_plot)
         api_thread.stop_protocol_signal.connect(self.stop_protocol)
         api_thread.save_protocol_variables_signal.connect(self.save_protocol_variables)
         api_thread.set_user_signal.connect(self.set_user)
@@ -485,9 +497,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             camels_version=__version__,
             on_state=self.remote_agent_state_signal.emit,
             measurement_provider=self.get_measurement_status,
+            change_provider=self.remote_change_token,
         )
         self.remote_agent.control_paused = config.control_paused
         self.remote_agent.start()
+
+    def remote_change_token(self):
+        """Differs whenever a plot or the measurement status changed.
+
+        Read by the remote agent thread; touches no Qt widget.
+        """
+        return (self.plot_caches.change_token(), self.get_measurement_status())
 
     def set_remote_control_paused(self, paused):
         """Pause or allow remote changes; reading stays possible."""
@@ -884,6 +904,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             plot (QWidget): The plot to add.
         """
         self.open_plots.append(plot)
+        if self._current_run_info is not None and hasattr(plot, "set_run_info"):
+            plot.set_run_info(self._current_run_info)
+            self._current_run_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
         plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
         plot.reopened.connect(lambda x=plot: self.open_windows.append(x))
@@ -902,6 +925,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 )
             )
         self.add_to_open_windows(plot)
+
+    def close_plot(self, plot_id):
+        """Close one plot window; ``plot_id`` as in ``self.plot_caches``."""
+        for plot in list(self.open_plots):
+            if str(id(plot)) == str(plot_id):
+                plot.close()
+                return
+
+    def _end_run_info(self, state, plots):
+        """Mark the plots of an ended run as ended (GUI thread)."""
+        info = {"state": state, "ended": datetime.now().astimezone().isoformat(timespec="seconds")}
+        for plot in plots:
+            try:
+                plot.set_run_info(info)
+            except RuntimeError:
+                # The window was deleted.
+                pass
 
     def close_plots(self):
         """
@@ -1478,7 +1518,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not self.current_api_port:
                 self.start_API_server(self.preferences["API_port"])
             else:
-                if self.current_api_port != self.preferences["API_port"]:
+                if self.current_api_port != self.preferences["API_port"] or (
+                    self.current_api_network
+                    != bool(self.preferences.get("API_allow_network", False))
+                ):
                     self.stop_API_server()
                     self.start_API_server(self.preferences["API_port"])
         else:
@@ -2320,6 +2363,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
             protocol = self.protocols_dict[protocol_name]
             self.running_protocol = protocol
+            self._current_run_plots = []
+            self._current_run_info = {
+                "protocol": protocol_name,
+                "started": datetime.now().astimezone().isoformat(timespec="seconds"),
+                "ended": None,
+                "state": "running",
+                "variables": dict(self._last_built_variables),
+            }
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
             name = os.path.basename(path)[:-3]
             spec = importlib.util.spec_from_file_location(name, path)
@@ -2744,6 +2795,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_finished_part_2()
 
     def protocol_finished_part_2(self):
+        if self.get_measurement_status().get("status") == "Failed":
+            run_state = "failed"
+        elif self._was_aborted:
+            run_state = "aborted"
+        else:
+            run_state = "finished"
+        if self._current_run_info is not None:
+            # Taken now, so that a queued next run keeps its own plots.
+            plots, self._current_run_plots = self._current_run_plots, []
+            self._current_run_info = None
+            self.run_ended_signal.emit(run_state, plots)
         if self._was_aborted and self.running_protocol.use_end_protocol:
             try:
                 self.run_engine(
@@ -2926,6 +2988,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 else:
                     raise e
         protocol.variables = variables or protocol.variables
+        self._last_built_variables = dict(protocol.variables or {})
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(

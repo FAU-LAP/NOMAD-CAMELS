@@ -305,6 +305,7 @@ class FastapiThread(QThread):
     queue_protocol_with_variables_signal = Signal(str, dict, int, str)
     change_variables_queued_protocol_signal = Signal(str, dict, int)
     close_plots_signal = Signal()
+    close_plot_signal = Signal(str)
     stop_protocol_signal = Signal()
     save_protocol_variables_signal = Signal(str, dict)
 
@@ -376,9 +377,13 @@ class FastapiThread(QThread):
         This asynchronous method configures Uvicorn with the FastAPI application and attempts to
         serve the API. In case of an error, it emits a port error signal.
         """
+        # Only this computer can reach the API unless the user allows other
+        # computers in the settings. OASIS remote control does not need it.
+        preferences = getattr(self.main_window, "preferences", None) or {}
+        host = "0.0.0.0" if preferences.get("API_allow_network") else "127.0.0.1"
         config = uvicorn.Config(
             self.app,
-            host="0.0.0.0",
+            host=host,
             port=int(self.api_port),
             log_level="info",
             reload=False,
@@ -672,6 +677,39 @@ class FastapiThread(QThread):
                 except ValueError:
                     raise HTTPException(status_code=400, detail="cursor must be JSON.")
             return JSONResponse(content=self.get_plot_cache_snapshots(cursors))
+
+        @app.get("/api/v1/gui/live")
+        async def get_live_update(
+            cursor: str | None = None,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Measurement status and the new plot points in one reply.
+
+            ``cursor`` works as for ``/api/v1/gui/plot-caches``.
+            """
+            cursors = None
+            if cursor:
+                try:
+                    cursors = json.loads(cursor)
+                except ValueError:
+                    raise HTTPException(status_code=400, detail="cursor must be JSON.")
+            return JSONResponse(
+                content={
+                    "status": sanitize_dict(self.main_window.get_measurement_status()),
+                    "plots": self.get_plot_cache_snapshots(cursors),
+                }
+            )
+
+        @app.post("/api/v1/gui/plots/{plot_id}/close")
+        async def close_one_plot(
+            plot_id: str,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Close one CAMELS plot window; ``plot_id`` as in the plot caches."""
+            if plot_id not in self._plot_caches.ids():
+                raise HTTPException(status_code=404, detail="This plot is not open in CAMELS.")
+            self.close_plot_signal.emit(plot_id)
+            return JSONResponse(content={"closed_plot_id": plot_id, "status": "requested"})
 
         @app.post("/api/v1/actions/stop")
         async def stop_measurement(

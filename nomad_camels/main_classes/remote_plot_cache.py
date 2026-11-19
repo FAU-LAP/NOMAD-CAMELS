@@ -7,6 +7,9 @@ API thread and the OASIS remote agent can read at any time.
 Data is append-only with a cursor, so a client asks only for the points it has
 not seen yet. ``generation`` changes whenever the plot is cleared; a client
 with an outdated generation receives the plot from the beginning again.
+
+Every change increases a counter, so the remote agent can tell OASIS that
+there is something new without sending the data itself.
 """
 
 from __future__ import annotations
@@ -131,7 +134,14 @@ class RemotePlotCache:
         self._y: dict[str, list] = {name: [] for name in self._order}
         self._styles: dict[str, dict] = {}
         self._fits: dict[str, dict] = {}
+        self._info: dict = {}
         self._version = 0
+        self._changes = 0
+
+    @property
+    def changes(self) -> int:
+        """Increases with every change of data, appearance or run info."""
+        return self._changes
 
     @property
     def generation(self) -> str:
@@ -155,6 +165,7 @@ class RemotePlotCache:
                 for values_list in self._y.values():
                     del values_list[:drop]
                 self._offset += drop
+            self._changes += 1
 
     def clear(self) -> None:
         with self._lock:
@@ -164,6 +175,7 @@ class RemotePlotCache:
             self._y = {name: [] for name in self._order}
             self._fits = {}
             self._version += 1
+            self._changes += 1
 
     def set_appearance(self, styles: dict[str, dict], meta: dict) -> None:
         """Store curve styles and axis settings read in the GUI thread."""
@@ -173,6 +185,24 @@ class RemotePlotCache:
                 self._styles = dict(styles)
                 self._meta = new_meta
                 self._version += 1
+                self._changes += 1
+
+    def set_info(self, info: dict) -> None:
+        """Store the run this plot belongs to (protocol, times, state,
+        variables); the given keys replace the stored ones."""
+        with self._lock:
+            new_info = {**self._info, **{str(k): json_value(v) if not isinstance(v, dict)
+                                          else {str(n): json_value(x) for n, x in v.items()}
+                                          for k, v in info.items()}}
+            if new_info != self._info:
+                self._info = new_info
+                self._version += 1
+                self._changes += 1
+
+    @property
+    def info(self) -> dict:
+        with self._lock:
+            return dict(self._info)
 
     def set_fit(self, name: str, x, y, style: dict, axis: str = "y") -> None:
         """Replace the curve of one fit; empty data removes it."""
@@ -181,6 +211,7 @@ class RemotePlotCache:
                 removed = self._fits.pop(str(name), None)
                 if removed is not None:
                     self._version += 1
+                    self._changes += 1
                 return
             self._fits[str(name)] = {
                 "name": str(name),
@@ -190,6 +221,7 @@ class RemotePlotCache:
                 **style,
             }
             self._version += 1
+            self._changes += 1
 
     def snapshot(self, since=None, generation=None, version=None, max_values=None) -> dict:
         """Return the points from index ``since`` on.
@@ -237,6 +269,7 @@ class RemotePlotCache:
             }
             if reset or version != self._version:
                 result["fits"] = [dict(fit) for fit in self._fits.values()]
+                result["info"] = dict(self._info)
             return result
 
 
@@ -246,14 +279,27 @@ class PlotCacheRegistry:
     def __init__(self):
         self._lock = threading.Lock()
         self._caches: dict[str, RemotePlotCache] = {}
+        self._changes = 0
 
     def register(self, cache_id: str, cache: RemotePlotCache) -> None:
         with self._lock:
             self._caches[str(cache_id)] = cache
+            self._changes += 1
 
     def unregister(self, cache_id: str) -> None:
         with self._lock:
-            self._caches.pop(str(cache_id), None)
+            if self._caches.pop(str(cache_id), None) is not None:
+                self._changes += 1
+
+    def ids(self) -> list[str]:
+        with self._lock:
+            return list(self._caches)
+
+    def change_token(self) -> tuple:
+        """Differs from the previous value whenever a plot was opened,
+        closed or changed. Cheap; meant to be compared often."""
+        with self._lock:
+            return (self._changes, tuple((key, cache.changes) for key, cache in self._caches.items()))
 
     def snapshots(self, cursors: dict | None = None) -> dict:
         """Return the new points of every plot.
