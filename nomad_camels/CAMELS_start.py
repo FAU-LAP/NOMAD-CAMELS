@@ -129,6 +129,26 @@ class ImportThread(QThread):
         from nomad_camels import MainApp_v2
 
 
+WINDOWS_APP_ID = "FAU-LAP.NOMAD-CAMELS"
+
+
+def set_windows_app_id():
+    """Give CAMELS its own taskbar entry and icon on Windows.
+
+    Without an explicit AppUserModelID, Windows groups the windows under the
+    Python interpreter and shows the Python icon. Must run before the first
+    window is created.
+    """
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(WINDOWS_APP_ID)
+    except (AttributeError, OSError):
+        pass
+
+
 def start_camels(start_proxy_bool=True, actually_exec=True):
     """
     Launch the NOMAD CAMELS application with a loading screen.
@@ -145,6 +165,7 @@ def start_camels(start_proxy_bool=True, actually_exec=True):
     """
     import os
 
+    set_windows_app_id()
     # Ensure there is an active QApplication or QCoreApplication instance
     app = QCoreApplication.instance()
     if app is None:
